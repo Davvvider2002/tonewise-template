@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ToneWise AI — Wind and Brass Coach</title>
+<title>ToneWise — AI Wind &amp; Brass Coach</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -31,10 +31,10 @@ body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-s
 /* ── PAGES ─────────────────────────────────────────── */
 .page{display:none;position:relative;z-index:1}
 .page.active{display:block}
-#page-auth.active{display:flex!important}
+#page-auth.active{display:flex}
 
 /* ── AUTH ──────────────────────────────────────────── */
-#page-auth{min-height:100vh;align-items:center;justify-content:center;padding:2rem 1rem}
+#page-auth{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;flex-direction:column}
 .auth-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:400px;text-align:center}
 .logo-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:1.5rem}
 .logo-spin{width:38px;height:38px;border-radius:50%;background:conic-gradient(from 180deg,#7f77dd,#1d9e75,#ef9f27,#7f77dd);display:flex;align-items:center;justify-content:center;animation:spin 8s linear infinite}
@@ -356,6 +356,153 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
 .modal-close:hover{color:var(--text)}
 .modal-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:6px}
 .modal-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:1.2rem}
+
+/* ══ MOBILE RESPONSIVE ════════════════════════════════ */
+@media(max-width:600px){
+  .app-body{padding:1rem .75rem 5rem}
+  .topbar{padding:10px 1rem;gap:8px}
+  .topbar-email{display:none}
+  .logo-spin{width:22px!important;height:22px!important}
+  .logo-inner{width:11px!important;height:11px!important}
+  .topbar-logo{font-size:15px}
+  .mode-tabs{gap:4px}
+  .mtab{padding:6px 11px;font-size:11px}
+  .card{padding:1rem}
+  .metro-bpm-display{font-size:38px}
+  .prog-grid{grid-template-columns:1fr 1fr}
+  .score-breakdown{grid-template-columns:1fr 1fr}
+  .fing-note-select{gap:4px}
+  .fing-note-btn{padding:4px 9px;font-size:11px}
+  #gene-wrap{bottom:70px;right:12px}
+  #gene-btn{width:44px;height:44px}
+  .modal-box{padding:1.25rem}
+  .session-banner{flex-wrap:wrap;gap:6px}
+  .topbar-right{gap:6px}
+  .btn-sm{padding:4px 9px;font-size:11px}
+  .pills{gap:5px}
+  .pill{padding:4px 10px;font-size:11px}
+  .record-zone{padding:.75rem 0}
+  .rbtn{width:72px;height:72px}
+  .pnote{font-size:36px}
+  .pmeta{gap:8px;flex-wrap:wrap}
+  /* hide non-essential topbar items on very small screens */
+  #btn-upgrade-top{display:none!important}
+}
+@media(max-width:400px){
+  .mtab.pro-tab::after{display:none}
+  .app-body{padding:.75rem .5rem 5rem}
+}
+
+/* ══ ADMIN PAGE ═══════════════════════════════════════ */
+#page-admin{min-height:100vh;padding-bottom:4rem}
+.admin-topbar{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;border-bottom:0.5px solid var(--border);background:rgba(9,9,15,.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100}
+.admin-badge{font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(239,159,39,.15);color:var(--amber);border:0.5px solid rgba(239,159,39,.3);font-family:'DM Mono',monospace}
+.admin-body{max-width:900px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.admin-section{margin-bottom:2rem}
+.admin-section-title{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;font-family:'DM Mono',monospace;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.admin-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.admin-stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px}
+.admin-stat-val{font-size:24px;font-weight:500;color:var(--text);line-height:1}
+.admin-stat-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);font-family:'DM Mono',monospace;border-bottom:0.5px solid var(--border)}
+.admin-table td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2);vertical-align:middle}
+.admin-table tr:hover td{background:rgba(255,255,255,.02)}
+.admin-table tr:last-child td{border-bottom:none}
+.atag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace}
+.atag-pro{background:rgba(127,119,221,.15);color:var(--pl);border:0.5px solid rgba(127,119,221,.25)}
+.atag-free{background:rgba(88,88,128,.15);color:var(--text2);border:0.5px solid var(--border)}
+.atag-admin{background:rgba(239,159,39,.15);color:var(--amber);border:0.5px solid rgba(239,159,39,.25)}
+.atag-inactive{background:rgba(216,90,48,.1);color:var(--coral);border:0.5px solid rgba(216,90,48,.2)}
+.admin-action-btn{padding:4px 10px;border-radius:5px;font-size:11px;border:0.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s;margin-right:4px}
+.admin-action-btn:hover{color:var(--text);border-color:var(--border2);background:var(--bg3)}
+.admin-action-btn.danger{color:var(--coral);border-color:rgba(216,90,48,.3)}
+.admin-action-btn.danger:hover{background:rgba(216,90,48,.08)}
+.admin-action-btn.success{color:var(--tl);border-color:rgba(29,158,117,.3)}
+.admin-action-btn.success:hover{background:rgba(29,158,117,.08)}
+.admin-search{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;margin-bottom:12px;transition:border-color .2s}
+.admin-search:focus{border-color:var(--purple)}
+.admin-search::placeholder{color:var(--text3)}
+.admin-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-input-group{display:flex;flex-direction:column;gap:5px}
+.admin-input-group label{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
+.admin-input-group input,.admin-input-group select{background:var(--bg3);border:0.5px solid var(--border2);border-radius:7px;padding:8px 12px;color:var(--text);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;width:100%;transition:border-color .2s}
+.admin-input-group input:focus,.admin-input-group select:focus{border-color:var(--purple)}
+.admin-input-group select option{background:var(--bg3)}
+.admin-save-btn{padding:9px 20px;background:var(--purple);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;font-family:'Instrument Sans',sans-serif;cursor:pointer;transition:all .2s;margin-top:10px}
+.admin-save-btn:hover{background:#6a63cc}
+.admin-notice{background:rgba(239,159,39,.07);border:0.5px solid rgba(239,159,39,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.55}
+.admin-notice strong{color:var(--amber)}
+#admin-btn-wrap{display:none}
+@media(max-width:600px){
+  .admin-config-grid{grid-template-columns:1fr}
+  .admin-stats-grid{grid-template-columns:1fr 1fr}
+  .admin-topbar{padding:10px 1rem}
+  .admin-body{padding:1rem .75rem 4rem}
+  .admin-table{font-size:12px}
+  .admin-table th,.admin-table td{padding:7px 8px}
+}
+
+/* ══ MUSIC NOTATION STAFF ═════════════════════════════ */
+.notation-wrap{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:16px;margin:12px 0;overflow-x:auto}
+.notation-wrap h4{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.notation-staff-svg{display:block;width:100%;max-width:660px;min-width:300px}
+.staff-line{stroke:#9897b2;stroke-width:0.8;opacity:.6}
+.note-head{fill:var(--text)}
+.note-head.sharp{fill:var(--teal)}
+.note-head.flat{fill:var(--blue)}
+.note-head.off{fill:var(--coral)}
+.note-stem{stroke:var(--text);stroke-width:1.2}
+.note-label{font-size:9px;fill:var(--text3);font-family:'DM Mono',monospace;text-anchor:middle}
+.ledger-line{stroke:#9897b2;stroke-width:0.8}
+.clef-text{font-size:42px;fill:var(--text2);font-family:serif}
+.time-sig{font-size:18px;fill:var(--text2);font-family:serif;font-weight:bold;text-anchor:middle}
+.bar-line{stroke:var(--text3);stroke-width:1;opacity:.5}
+.notation-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text3)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+
+/* ══ AFFILIATE PAGE ═══════════════════════════════════ */
+#page-affiliate{min-height:100vh}
+.aff-body{max-width:740px;margin:0 auto;padding:1.5rem 1rem 5rem}
+.aff-hero{background:linear-gradient(135deg,rgba(127,119,221,.12),rgba(29,158,117,.07));border:0.5px solid rgba(127,119,221,.2);border-radius:14px;padding:1.5rem;margin-bottom:1.2rem;text-align:center}
+.aff-hero h2{font-family:'DM Serif Display',serif;font-size:24px;font-weight:400;color:var(--text);margin-bottom:6px}
+.aff-hero p{font-size:13px;color:var(--text2);line-height:1.6;max-width:480px;margin:0 auto}
+.aff-stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:1.2rem}
+.aff-stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px;text-align:center}
+.aff-stat-val{font-size:22px;font-weight:500;color:var(--text);font-family:'DM Serif Display',serif}
+.aff-stat-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:3px}
+.aff-code-box{background:var(--bg3);border:0.5px solid rgba(127,119,221,.3);border-radius:10px;padding:14px 16px;margin-bottom:1rem}
+.aff-code-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:6px}
+.aff-code-row{display:flex;align-items:center;gap:8px}
+.aff-code-val{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--pl);flex:1;letter-spacing:.06em}
+.aff-copy-btn{padding:6px 14px;border-radius:6px;border:0.5px solid rgba(127,119,221,.3);background:rgba(127,119,221,.1);color:var(--pl);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.aff-copy-btn:hover{background:rgba(127,119,221,.2)}
+.aff-copy-btn.copied{background:rgba(29,158,117,.15);color:var(--tl);border-color:rgba(29,158,117,.3)}
+.aff-link-box{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:1rem}
+.aff-link-val{font-family:'DM Mono',monospace;font-size:12px;color:var(--text2);word-break:break-all;margin-bottom:8px;line-height:1.5}
+.aff-tiers{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:1.2rem}
+.aff-tier{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:12px;text-align:center}
+.aff-tier.active{border-color:var(--teal);background:rgba(29,158,117,.06)}
+.aff-tier-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:4px}
+.aff-tier-req{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:6px}
+.aff-tier-pct{font-size:20px;font-weight:500;color:var(--tl)}
+.aff-referral-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:8px}
+.aff-referral-table th{text-align:left;padding:7px 10px;font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.05em;border-bottom:0.5px solid var(--border)}
+.aff-referral-table td{padding:9px 10px;border-bottom:0.5px solid var(--border);color:var(--text2)}
+.aff-referral-table tr:last-child td{border-bottom:none}
+.aff-empty{font-size:13px;color:var(--text3);text-align:center;padding:2rem 0;font-family:'DM Mono',monospace}
+.aff-payout-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.aff-payout-input{flex:1;min-width:160px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 13px;color:var(--text);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none}
+.aff-payout-input:focus{border-color:var(--purple)}
+.aff-tab-nav{display:flex;gap:6px;margin-bottom:1rem;border-bottom:0.5px solid var(--border);padding-bottom:10px}
+.aff-tab-btn{padding:6px 14px;border-radius:7px;border:0.5px solid transparent;background:transparent;color:var(--text2);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s}
+.aff-tab-btn.on{background:rgba(127,119,221,.1);border-color:rgba(127,119,221,.25);color:var(--pl)}
+.aff-section{display:none}.aff-section.on{display:block}
+@media(max-width:600px){
+  .aff-tiers{grid-template-columns:1fr 1fr}
+  .aff-stats{grid-template-columns:1fr 1fr}
+}
 </style>
 </head>
 <body>
@@ -446,8 +593,8 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
     <span class="topbar-logo">Tone<em>Wise</em></span>
     <span class="topbar-plan plan-free" id="plan-badge">Free</span>
     <select id="inst-sel" onchange="setInstrument(this.value)"
-      style="background:var(--bg3);border:0.5px solid var(--border2);border-radius:7px;
-             color:var(--text2);font-size:11px;padding:4px 8px;cursor:pointer;outline:none;max-width:130px;">
+      aria-label="Select your instrument"
+      style="background:var(--bg3);border:0.5px solid var(--border2);border-radius:7px;color:var(--text2);font-size:11px;font-family:'Instrument Sans',sans-serif;padding:4px 8px;cursor:pointer;outline:none;max-width:130px;">
       <option value="Trumpet">Trumpet</option>
       <option value="Saxophone">Saxophone</option>
       <option value="Clarinet">Clarinet</option>
@@ -460,7 +607,9 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
     <nav class="topbar-right" aria-label="Account">
       <span class="topbar-email" id="topbar-email"></span>
       <button class="btn-sm btn-upgrade" id="btn-upgrade-top" onclick="openUpgrade()" aria-label="Upgrade to Pro">Upgrade to Pro</button>
-      <span id="admin-btn-wrap" style="display:none"><button class="btn-sm" style="background:rgba(239,159,39,.12);color:var(--amber);border-color:rgba(239,159,39,.3)" onclick="openAdmin()">Admin</button></span>
+      <span id="admin-btn-wrap" style="display:none">
+        <button class="btn-sm" style="background:rgba(239,159,39,.12);color:var(--amber);border-color:rgba(239,159,39,.3)" onclick="openAdmin()" aria-label="Admin console">Admin</button>
+      </span>
       <button class="btn-sm btn-logout" onclick="signOut()" aria-label="Log out">Log out</button>
     </nav>
   </header>
@@ -490,13 +639,14 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
       <button class="mtab pro-tab" role="tab" aria-selected="false" onclick="setTab('upload')"  id="tab-upload">Score recording</button>
       <button class="mtab pro-tab" role="tab" aria-selected="false" onclick="setTab('progress')" id="tab-progress">Progress</button>
       <button class="mtab"    role="tab" aria-selected="false" onclick="setTab('log')"      id="tab-log">Session log</button>
+      <button class="mtab"    role="tab" aria-selected="false" onclick="openAffiliate()"  id="tab-affiliate">Refer & Earn</button>
     </nav>
 
     <!-- ── PANEL: AI COACHING ─────────────────────────── -->
     <section class="mode-panel on" id="panel-coach" role="tabpanel" aria-labelledby="tab-coach">
       <div class="card">
         <h2>Live practice session</h2>
-        <p>Select your level, then press Record and play your trumpet. Claude listens to your pitch and gives you spoken coaching feedback.</p>
+        <p>Select your level, then press Record and play your trumpet. ToneWise AI listens to your pitch and gives you spoken coaching feedback.</p>
         <div class="pills" role="group" aria-label="Skill level">
           <button class="pill on" onclick="setPill(this,'level')">Beginner</button>
           <button class="pill" onclick="setPill(this,'level')">Intermediate</button>
@@ -535,9 +685,9 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
         <div class="timer-label" id="time-remain" aria-live="polite">3:00 remaining</div>
       </div>
 
-      <div class="feedback" role="region" aria-label="Claude coaching">
-        <h3>Claude coaching</h3>
-        <div class="ftext" id="coach-text">Start recording and play a note or phrase. Claude will analyse your pitch and give spoken coaching advice.</div>
+      <div class="feedback" role="region" aria-label="ToneWise coaching">
+        <h3>ToneWise coaching</h3>
+        <div class="ftext" id="coach-text">Start recording and play a note or phrase. ToneWise AI will analyse your pitch and give you spoken coaching.</div>
       </div>
 
       <!-- status -->
@@ -551,7 +701,7 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
     <section class="mode-panel" id="panel-ear" role="tabpanel" aria-labelledby="tab-ear">
       <div class="card">
         <h2>AI ear training</h2>
-        <p>ToneWise generates an exercise and plays the actual notes. Listen, then identify what you heard.</p>
+        <p>ToneWise generates an exercise and plays the actual notes through your speakers. Listen, then identify what you heard.</p>
         <div class="pills" role="group" aria-label="Exercise type">
           <button class="pill on" onclick="setPill(this,'ear')">Intervals</button>
           <button class="pill" onclick="setPill(this,'ear')">Scales</button>
@@ -568,7 +718,7 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
       <div class="feedback" role="region" aria-label="Ear training exercise">
         <h3>Your exercise</h3>
         <div class="ftext" id="ear-text">Press Generate and Play to start your ear training exercise.</div>
-        <div id="ear-status" style="font-size:11px;color:var(--tl);font-family:'DM Mono',monospace;margin-top:8px;min-height:16px"></div>
+        <div id="ear-tones-status" style="font-size:11px;color:var(--tl);font-family:'DM Mono',monospace;margin-top:8px;min-height:16px"></div>
         <div id="ear-answer" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(29,158,117,.1);border:0.5px solid rgba(29,158,117,.3);border-radius:8px;font-size:14px;font-weight:500;color:var(--tl)"></div>
       </div>
     </section>
@@ -576,7 +726,7 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
     <!-- ── PANEL: ASK ─────────────────────────────────── -->
     <section class="mode-panel" id="panel-ask" role="tabpanel" aria-labelledby="tab-ask">
       <div class="card">
-        <h2>Ask your AI trumpet teacher</h2>
+        <h2>Ask your AI <span id="inst-ask-label">trumpet</span> teacher</h2>
         <p>Ask anything about trumpet technique, music theory, or practice strategy. All answers spoken aloud.</p>
         <div class="quick-asks" role="group" aria-label="Quick questions">
           <button class="qa" onclick="setQ(this.textContent)">High notes</button>
@@ -590,8 +740,8 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
           <button onclick="askTeacher()">Ask</button>
         </div>
       </div>
-      <div class="feedback" role="region" aria-label="Claude's answer">
-        <h3>Claude's answer</h3>
+      <div class="feedback" role="region" aria-label="ToneWise AI answer">
+        <h3>ToneWise AI answer</h3>
         <div class="ftext" id="ask-text">Ask any question above to get expert guidance from your AI trumpet teacher.</div>
       </div>
     </section>
@@ -641,14 +791,19 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
     <section class="mode-panel" id="panel-fing" role="tabpanel" aria-labelledby="tab-fing">
       <div class="fing-card">
         <h2 style="margin-bottom:8px" id="fing-chart-title">Trumpet fingering chart</h2>
-        <p id="fing-chart-desc">Select a note — Gene reads the fingering aloud.</p>
-        <div class="fing-note-select" role="group" aria-label="Select note"></div>
+        <p id="fing-chart-desc">Select a note to see the valve combination. Gene will read it aloud.</p>
+        <div class="fing-note-select" role="group" aria-label="Select note">
+          <!-- populated by buildFingeringChart() -->
+        </div>
         <div class="fing-diagram" role="img" aria-label="Instrument diagram">
           <div class="fing-name" id="fing-note-name" aria-live="polite">Select a note</div>
           <div class="fing-alt" id="fing-alt"></div>
+          <!-- dynamic diagram rendered by buildInstrumentDiagram() -->
           <div id="fing-visual" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:0.5rem 0"></div>
         </div>
-        <p id="fing-legend" style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-top:8px">Active = purple</p>
+        <p id="fing-legend" style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-top:8px">
+          Active = purple · Inactive = dark
+        </p>
       </div>
     </section>
 
@@ -660,7 +815,7 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
       <div id="upload-pro-content" style="display:none">
         <div class="card">
           <h2>Score a recording</h2>
-          <p>Upload an audio file of your practice or performance. Claude will analyse each note, grade your accuracy, timing, and dynamics, then export a full PDF report.</p>
+          <p>Upload an audio file of your practice or performance. ToneWise AI will analyse each note, grade your accuracy, timing, and dynamics, then export a full PDF report.</p>
           <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload audio file — click or drag and drop" onclick="document.getElementById('upload-input').click()" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('upload-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect x="3" y="7" width="26" height="18" rx="3" stroke="#9897b2" stroke-width="1.2"/>
@@ -696,15 +851,28 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
           <div class="score-breakdown" id="score-breakdown"></div>
           <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin:10px 0 5px">NOTES DETECTED</div>
           <div class="score-notes-list" id="score-notes-list"></div>
+
+          <!-- MUSIC NOTATION DISPLAY -->
+          <div class="notation-wrap" id="notation-wrap" style="display:none">
+            <h4>Performance — music notation view</h4>
+            <svg class="notation-staff-svg" id="notation-svg" viewBox="0 0 680 180" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div class="notation-legend">
+              <div class="legend-item"><div class="legend-dot" style="background:var(--text)"></div>In tune</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div>Sharp</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div>Flat</div>
+              <div class="legend-item"><div class="legend-dot" style="background:var(--coral)"></div>Off (&gt;20¢)</div>
+            </div>
+          </div>
+
           <!-- On-screen music notation staff -->
-          <div id="notation-wrap" style="display:none;background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px;margin:12px 0;overflow-x:auto">
+          <div id="notation-wrap" style="display:none;background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px;margin:10px 0;overflow-x:auto">
             <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Performance — music notation</div>
-            <svg id="notation-svg" viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:280px;display:block"></svg>
-            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px">
-              <span style="color:var(--text2)">&#9679; In tune</span>
+            <svg id="notation-svg" viewBox="0 0 680 160" style="width:100%;min-width:280px;display:block" xmlns="http://www.w3.org/2000/svg"></svg>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px;color:var(--text3)">
+              <span>&#9679; In tune</span>
               <span style="color:var(--tl)">&#9679; Sharp</span>
               <span style="color:var(--blue)">&#9679; Flat</span>
-              <span style="color:var(--coral)">&#9679; Off (&gt;20c)</span>
+              <span style="color:var(--coral)">&#9679; Off (&gt;20&#162;)</span>
             </div>
           </div>
           <div class="feedback" style="margin-top:10px">
@@ -764,8 +932,8 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
 
         <!-- AI weekly summary -->
         <div class="feedback">
-          <h3>Claude's weekly summary</h3>
-          <div class="ftext" id="prog-summary">Complete a few sessions to receive a personalised weekly summary from Claude.</div>
+          <h3>ToneWise weekly summary</h3>
+          <div class="ftext" id="prog-summary">Complete a few sessions to receive a personalised weekly summary from ToneWise AI.</div>
           <button class="tbtn" style="margin-top:10px" onclick="getWeeklySummary()">Generate summary</button>
         </div>
       </div>
@@ -783,7 +951,7 @@ input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;
     </section>
 
   </main>
-  <footer>ToneWise AI · Powered by Claude (Anthropic) · Web Audio API · WCAG 2.2 AA</footer>
+  <footer>ToneWise AI · ToneWise AI · Web Audio API · Web Audio API · WCAG 2.2 AA</footer>
 </div>
 
 <!-- ══ UPGRADE MODAL ══════════════════════════════════ -->
@@ -829,23 +997,35 @@ const STRIPE_MONTHLY  = '#';   // replace with Stripe Payment Link
 const STRIPE_ANNUAL   = '#';
 const PAYPAL_MONTHLY  = '#';
 const PAYPAL_ANNUAL   = '#';
-const FREE_SESSIONS   = 5;
-const ADMIN_EMAIL     = 'godigitsall@gmail.com';
+const FREE_SESSIONS   = 10; // 10 free sessions per month
+
+/* ── ADMIN CONFIG ──────────────────────────────────── */
+/* Set your admin email below — this user gets the     */
+/* Admin button and full access to the admin console.  */
+const ADMIN_EMAIL = 'godigitsall@gmail.com'; // ✓ CONFIGURED
 
 /* ════════════════════════════════════════════════════════
    SUPABASE INIT
 ═══════════════════════════════════════════════════════════ */
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+    storageKey: 'tonewise-auth',
+    flowType: 'implicit'
+  }
+});
 
 /* ════════════════════════════════════════════════════════
    STATE
 ═══════════════════════════════════════════════════════════ */
 let user = null, isPro = false, isAdmin = false;
-var currentInstrument = 'Trumpet';
 let sessionsUsed = 0;
 let recording = false, audioCtx = null, analyser = null, micStream = null;
 let pitchWorker = null, animFrame = null;
-let currentLevel = 'Beginner', currentEarType = 'Intervals';
+let currentLevel = 'Beginner', currentEarType = 'Intervals', currentInstrument = 'Trumpet';
 let voiceOn = true, lastFeedback = '', coachTimer = null, sessionTimer = null, timeLeft = 180;
 let sessionLog = [], sessionPitchData = [], sessionNotes = [];
 
@@ -862,90 +1042,150 @@ let geneSilent = false, geneQueue = [], geneTimeout = null;
 // Score result state
 let scoreResult = null;
 
+// Prevents loadApp running twice simultaneously
+let appLoading = false;
+
 /* ════════════════════════════════════════════════════════
    AUTH
 ═══════════════════════════════════════════════════════════ */
-// Immediately check for existing session (handles page refresh)
-var appLoading=false;
-(async function(){
-  try{
-    var r=await sb.auth.getSession();
-    var sess=r.data&&r.data.session?r.data.session:null;
-    if(sess&&sess.user){ user=sess.user; await loadApp(); }
-    else { showPage('auth'); }
-  }catch(err){ showPage('auth'); }
+// Step 1: Immediate session check on page load
+(async () => {
+  try {
+    const { data: { session } } = await sb.auth.getSession();
+    if(session?.user){
+      user = session.user;
+      await loadApp();
+    } else {
+      showPage('auth');
+    }
+  } catch(err) {
+    console.error('Session check failed:', err);
+    showPage('auth');
+  }
 })();
 
-// Listen for runtime auth events
-sb.auth.onAuthStateChange(async function(event,session){
-  if(event==='TOKEN_REFRESHED') return;
-  if(event==='SIGNED_OUT'){
-    user=null; isPro=false; isAdmin=false; appLoading=false;
-    showPage('auth'); return;
+// Step 2: Runtime auth event listener
+sb.auth.onAuthStateChange(async (event, session) => {
+  // Token silently refreshed — user is already in the app, do nothing
+  if(event === 'TOKEN_REFRESHED') return;
+
+  // User signed out — clear state and show login
+  if(event === 'SIGNED_OUT'){
+    user = null; isPro = false; isAdmin = false;
+    appLoading = false;
+    showPage('auth');
+    return;
   }
-  var newUser=session?session.user:null;
-  if(newUser&&newUser.id!==(user?user.id:null)&&!appLoading){
-    user=newUser; await loadApp();
+
+  // New sign-in — only load if it is actually a different user
+  const newUser = session ? session.user : null;
+  if(newUser && newUser.id !== (user ? user.id : null) && !appLoading){
+    user = newUser;
+    await loadApp();
   }
 });
 async function signIn(){
-  var e=$('email-in').value.trim(), p=$('pass-in').value;
-  if(!e||!p){ showError('Please enter your email and password.'); return; }
-  var errEl=$('auth-error');
-  if(errEl){ errEl.style.display='none'; errEl.textContent=''; }
-  var btn=document.querySelector('#form-signin .btn-primary');
-  if(btn){ btn.textContent='Signing in...'; btn.disabled=true; }
-  try{
-    var r=await sb.auth.signInWithPassword({email:e,password:p});
-    if(btn){ btn.textContent='Sign in'; btn.disabled=false; }
-    if(r.error){
-      var msg=(r.error.message||'').toLowerCase();
-      if(msg.includes('invalid')||msg.includes('credentials'))
-        showError('Incorrect email or password.');
-      else if(msg.includes('confirmed'))
-        showError('Please confirm your email first. Check your inbox.');
-      else showError(r.error.message||'Sign in failed.');
+  const e = $('email-in').value.trim();
+  const p = $('pass-in').value;
+  if(!e || !p){ showError('Please enter your email and password.'); return; }
+  // Clear any previous error
+  const errEl = $('auth-error');
+  if(errEl){ errEl.style.display = 'none'; errEl.textContent = ''; }
+  // Show loading state
+  const btn = document.querySelector('#form-signin .btn-primary');
+  if(btn){ btn.textContent = 'Signing in…'; btn.disabled = true; }
+  try {
+    const { data, error } = await sb.auth.signInWithPassword({ email:e, password:p });
+    if(btn){ btn.textContent = 'Sign in'; btn.disabled = false; }
+    if(error){
+      const msg = (error.message || '').toLowerCase();
+      const code = (error.code || error.error_code || '').toLowerCase();
+      if(code === 'invalid_credentials' || msg.includes('invalid login') || msg.includes('invalid_credentials')){
+        showError('Incorrect email or password. Please try again.');
+      } else if(code === 'email_not_confirmed' || msg.includes('email not confirmed')){
+        showError('Please confirm your email first. Check your inbox (and spam folder) for the confirmation link.');
+      } else if(msg.includes('rate limit') || msg.includes('too many')){
+        showError('Too many attempts. Please wait a moment and try again.');
+      } else if(msg.includes('fetch') || msg.includes('network')){
+        showError('Network error — please check your connection and try again.');
+      } else {
+        showError(error.message || 'Sign in failed. Please try again.');
+      }
       return;
     }
-    // Explicitly load app on success (don't rely solely on onAuthStateChange)
-    if(r.data&&r.data.session&&r.data.session.user&&!appLoading){
-      user=r.data.session.user; await loadApp();
+    // Success — explicitly transition to app in case the onAuthStateChange
+    // listener doesn't fire in time or has already been fired.
+    if(data?.session?.user && data.session.user.id !== user?.id){
+      user = data.session.user;
+      await loadApp();
     }
-  }catch(err){
-    if(btn){ btn.textContent='Sign in'; btn.disabled=false; }
-    showError('Connection error. Please try again.');
+  } catch(err){
+    console.error('signIn error:', err);
+    if(btn){ btn.textContent = 'Sign in'; btn.disabled = false; }
+    showError('Sign in failed. Please check your connection and try again.');
   }
 }
 async function signUp(){
-  var e=$('email-up').value.trim(), p=$('pass-up').value;
-  if(!e||!p){ showError('Please enter your email and a password.'); return; }
-  if(p.length<6){ showError('Password must be at least 6 characters.'); return; }
-  var btn=document.querySelector('#form-signup .btn-primary');
-  if(btn){ btn.textContent='Creating account...'; btn.disabled=true; }
-  try{
-    var r=await sb.auth.signUp({email:e,password:p,
-      options:{emailRedirectTo:location.origin+location.pathname}});
-    if(btn){ btn.textContent='Create free account'; btn.disabled=false; }
-    if(r.error){ showError(r.error.message); return; }
-    if(r.data&&r.data.session&&r.data.session.user&&!appLoading){
-      user=r.data.session.user; await loadApp();
-    } else {
-      showError('Account created! Check your email to confirm, then sign in.');
+  const e = $('email-up').value.trim();
+  const p = $('pass-up').value;
+  if(!e || !p){ showError('Please enter your email and a password.'); return; }
+  if(p.length < 6){ showError('Password must be at least 6 characters.'); return; }
+  const errEl = $('auth-error');
+  if(errEl){ errEl.style.display = 'none'; errEl.textContent = ''; }
+  const btn = document.querySelector('#form-signup .btn-primary');
+  if(btn){ btn.textContent = 'Creating account…'; btn.disabled = true; }
+  try {
+    const { data, error } = await sb.auth.signUp({
+      email:e,
+      password:p,
+      options: { emailRedirectTo: location.origin + location.pathname }
+    });
+    if(btn){ btn.textContent = 'Create free account'; btn.disabled = false; }
+    if(error){
+      const msg = (error.message || '').toLowerCase();
+      if(msg.includes('already registered') || msg.includes('already exists') || msg.includes('user already')){
+        showError('An account with this email already exists. Try signing in instead.');
+      } else {
+        showError(error.message);
+      }
+      return;
     }
-  }catch(err){
-    if(btn){ btn.textContent='Create free account'; btn.disabled=false; }
-    showError('Could not create account. Please try again.');
+    // If session is returned, user is auto-signed-in (email confirmation disabled)
+    if(data?.session?.user){
+      if(data.user?.id) creditReferral(data.user.id);
+      if(data.session.user.id !== user?.id){
+        user = data.session.user;
+        await loadApp();
+      }
+    } else {
+      showError('Almost there! Check your email to confirm your account, then sign in.');
+      if(data?.user?.id) creditReferral(data.user.id);
+    }
+  } catch(err){
+    console.error('signUp error:', err);
+    if(btn){ btn.textContent = 'Create free account'; btn.disabled = false; }
+    showError('Could not create account. Please check your connection and try again.');
   }
 }
 async function signInGoogle(){
-  await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.href } });
+  try {
+    const { error } = await sb.auth.signInWithOAuth({
+      provider:'google',
+      options:{ redirectTo: location.origin + location.pathname }
+    });
+    if(error) showError(error.message || 'Google sign-in failed.');
+  } catch(err){
+    console.error('signInGoogle error:', err);
+    showError('Google sign-in failed. Please try again.');
+  }
 }
 async function signOut(){
   if(!confirm('Log out of ToneWise?')) return;
-  try{ stopRecord(); }catch(_){}
-  try{ stopMetro(); }catch(_){}
-  user=null; isPro=false; isAdmin=false; appLoading=false;
-  try{ await sb.auth.signOut(); }catch(_){}
+  try { stopRecord(); } catch(_){}
+  try { stopMetro();  } catch(_){}
+  try { if(voiceCmdRecognition) voiceCmdRecognition.stop(); } catch(_){}
+  user = null; isPro = false; isAdmin = false; appLoading = false;
+  try { await sb.auth.signOut(); } catch(_){}
   showPage('auth');
 }
 function showError(msg){ const el=$('auth-error'); el.textContent=msg; el.style.display='block'; }
@@ -957,41 +1197,59 @@ function showSignin(){ $('form-signup').style.display='none'; $('form-signin').s
 ═══════════════════════════════════════════════════════════ */
 async function loadApp(){
   if(appLoading) return;
-  appLoading=true;
-  try{
-  showPage('app');
-  $('topbar-email').textContent = user.email;
-  // Check pro status via metadata or Supabase profiles table
+  appLoading = true;
+  try {
+  // ── Resolve admin and pro status BEFORE showing the page ──
+  // so the admin button and plan badge are correct on first render
   isAdmin = (user.email === ADMIN_EMAIL);
   if(isAdmin) isPro = true;
+
+  // Load profile from Supabase
   try {
     const { data } = await sb.from('profiles').select('is_pro,is_active,sessions_used,streak,last_session_day,progress_data').eq('id', user.id).single();
     if(data){
-      if(data.is_active === false){ await sb.auth.signOut(); showPage('auth'); $('auth-error').textContent='Account suspended.'; $('auth-error').style.display='block'; return; }
-      if(!isAdmin) isPro = !!data.is_pro;
+      if(data.is_active === false){
+        appLoading = false;
+        await sb.auth.signOut();
+        showPage('auth');
+        const errEl = $('auth-error');
+        errEl.textContent = 'Your account has been suspended. Please contact support.';
+        errEl.style.display = 'block';
+        return;
+      }
+      if(!isAdmin) isPro = !!data.is_pro;   // admin isPro already set above
       sessionsUsed = data.sessions_used || 0;
       progressData.streak = data.streak || 0;
       progressData.lastDay = data.last_session_day || null;
       if(data.progress_data) progressData = {...progressData, ...data.progress_data};
     }
   } catch(_){}
+
+  // Now show the app — all state is ready
+  showPage('app');
+  $('topbar-email').textContent = user.email;
+  // Admin button — showPage resets it, set again here after page shows
+  if(isAdmin){
+    const abw = $('admin-btn-wrap');
+    if(abw) abw.style.display = 'inline-flex';
+  }
   updatePlanUI();
   updateSessionBanner();
   buildViz();
   buildMetroBeatViz();
-  if(isAdmin){ var abw=$('admin-btn-wrap'); if(abw) abw.style.display='inline-flex'; }
-  updatePlanUI();
-  updateSessionBanner();
-  buildViz();
-  buildMetroBeatViz();
-  setInstrument(currentInstrument);
+  buildFingeringChart();
   buildProgressUI();
+  setInstrument(currentInstrument);
   geneGreet();
   initVoiceCommands();
-  }catch(fatalErr){
-    console.error('loadApp error:',fatalErr);
+  } catch(fatalErr) {
+    console.error('loadApp fatal error:', fatalErr);
     showPage('app');
-  }finally{ appLoading=false; }
+    $('topbar-email').textContent = user ? user.email : '';
+    buildViz(); buildMetroBeatViz(); buildFingeringChart(); buildProgressUI();
+  } finally {
+    appLoading = false;
+  }
 }
 
 function updatePlanUI(){
@@ -1050,8 +1308,9 @@ function setTab(id){
 ═══════════════════════════════════════════════════════════ */
 function updateSessionBanner(){
   if(isPro) return;
-  const rem = Math.max(0, FREE_SESSIONS - sessionsUsed);
-  $('sess-label').textContent = rem + ' sessions remaining';
+  const _fl2 = (()=>{ try{ const c=JSON.parse(localStorage.getItem('tw_admin_cfg')||'{}'); return c.freeSessions||FREE_SESSIONS; }catch(_){return FREE_SESSIONS;} })();
+  const rem = Math.max(0, _fl2 - sessionsUsed);
+  $('sess-label').textContent = rem + ' of ' + _fl2 + ' sessions remaining';
   const fill = $('sess-fill');
   const pct = (rem / FREE_SESSIONS) * 100;
   fill.style.width = pct + '%';
@@ -1068,7 +1327,8 @@ function buildViz(){
 
 async function toggleRecord(){
   if(recording) { stopRecord(); return; }
-  if(!isPro && sessionsUsed >= FREE_SESSIONS){ openUpgrade(); return; }
+  const _freeLim = (()=>{ try{ const c=JSON.parse(localStorage.getItem('tw_admin_cfg')||'{}'); return c.freeSessions||FREE_SESSIONS; }catch(_){return FREE_SESSIONS;} })();
+  if(!isPro && sessionsUsed >= _freeLim){ openUpgrade(); return; }
   try {
     micStream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false } });
     audioCtx = new (window.AudioContext||window.webkitAudioContext)();
@@ -1078,7 +1338,7 @@ async function toggleRecord(){
     recording = true;
     $('rbtn').classList.add('on'); $('rbtn').setAttribute('aria-pressed','true');
     $('rlabel').textContent = 'RECORDING…';
-    setStatus('listening','Listening to your trumpet…');
+    setStatus('listening','Listening to your ' + currentInstrument.toLowerCase() + '…');
     startSessionTimer();
     sessionPitchData = []; sessionNotes = [];
     requestAnimationFrame(detectPitch);
@@ -1107,6 +1367,7 @@ function stopRecord(){
   sessionsUsed++;
   updateSessionBanner();
   persistProfile();
+  // Trigger full AI end-of-session report
   getEndOfSessionAnalysis();
 }
 
@@ -1174,101 +1435,115 @@ function hzToCents(hz, note){
 }
 
 /* ════════════════════════════════════════════════════════
-   COACHING — LIVE CHECK-INS + END-OF-SESSION REPORT
-=══════════════════════════════════════════════════════════ */
+   SHARED TONEWISE API CALLER
+   Returns { ok:true, text } on success or { ok:false, error } on failure.
+   Surfaces the real error message so problems are visible.
+═══════════════════════════════════════════════════════════ */
+async function callWorker(prompt, maxTokens){
+  try {
+    /* Validate the worker URL is actually configured */
+    if(!WORKER_URL || WORKER_URL.includes('YOUR_') || WORKER_URL === '#'){
+      return { ok:false, error:'Worker URL not configured. Set WORKER_URL in the config section.' };
+    }
+
+    const res = await fetch(WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: maxTokens || 200,
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+
+    /* If the worker returns non-200, show the HTTP status */
+    if(!res.ok){
+      const errText = await res.text().catch(()=>'');
+      /* Worker still serving Hello World? */
+      if(errText.includes('Hello World') || errText.includes('hello world')){
+        return { ok:false, error:'Your Cloudflare Worker is still running the default "Hello World" template. Go to cloudflare.com → Workers & Pages → tonewise → Edit Code, paste your worker code, and deploy.' };
+      }
+      return { ok:false, error:'Worker returned HTTP ' + res.status + '. ' + errText.slice(0,120) };
+    }
+
+    const data = await res.json();
+
+    /* API-level errors come back in data.error */
+    if(data.error){
+      const msg = data.error.message || JSON.stringify(data.error);
+      if(msg.includes('API key') || msg.includes('authentication') || msg.includes('auth')){
+        return { ok:false, error:'ToneWise AI key error: ' + msg + ' — Go to your Cloudflare Worker → Settings → Variables and Secrets and make sure ANTHROPIC_KEY is set correctly in your Cloudflare Worker.' };
+      }
+      return { ok:false, error:'ToneWise AI error: ' + msg };
+    }
+
+    /* Check the response has actual content */
+    const text = data.content?.[0]?.text;
+    if(!text || text.trim() === ''){
+      return { ok:false, error:'ToneWise AI returned an empty response. Raw: ' + JSON.stringify(data).slice(0,200) };
+    }
+
+    return { ok:true, text: text.trim() };
+
+  } catch(e){
+    /* Network / CORS / parse error */
+    if(e instanceof SyntaxError){
+      return { ok:false, error:'Worker response was not valid JSON. The worker may still be running "Hello World". Update the worker code at cloudflare.com.' };
+    }
+    if(e.message && e.message.includes('Failed to fetch')){
+      return { ok:false, error:'Could not reach the worker at ' + WORKER_URL + '. Check the URL and that the worker is deployed.' };
+    }
+    return { ok:false, error:'Network error: ' + (e.message||String(e)) };
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   COACHING
+═══════════════════════════════════════════════════════════ */
 function scheduleCoaching(){
   if(coachTimer) clearTimeout(coachTimer);
   coachTimer = setTimeout(function(){ if(recording) getCoaching(); }, 12000);
 }
 
 async function getCoaching(){
-  if(!recording || sessionPitchData.length < 10){ scheduleCoaching(); return; }
-  setStatus('thinking','ToneWise is analysing...');
-  var recent   = sessionPitchData.slice(-80);
-  var avgCents = recent.reduce(function(s,d){ return s+Math.abs(d.cents); },0)/recent.length;
-  var noteSet  = [...new Set(recent.map(function(d){ return d.note; }))];
-  var sharpN   = recent.filter(function(d){ return d.cents > 15; }).length;
-  var flatN    = recent.filter(function(d){ return d.cents < -15; }).length;
-  var inPct    = Math.round(recent.filter(function(d){ return Math.abs(d.cents)<=15; }).length/recent.length*100);
-  var loNote   = noteSet.slice().sort()[0] || '?';
-  var hiNote   = noteSet.slice().sort().slice(-1)[0] || '?';
-
-  var prompt = "You are Gene, a master " + currentInstrument + " coach inside ToneWise AI. " +
-    "Student self-reported level: " + currentLevel + ". " +
-    "Live data from last " + recent.length + " pitch samples: " +
-    "Notes: " + noteSet.join(", ") + ". Range: " + loNote + " to " + hiNote + ". " +
+  if(!recording || sessionPitchData.length<5) { scheduleCoaching(); return; }
+  setStatus('thinking','ToneWise is analysing…');
+  const recent = sessionPitchData.slice(-60);
+  const avgCents = recent.reduce((s,d)=>s+Math.abs(d.cents),0)/recent.length;
+  const notes = [...new Set(recent.map(d=>d.note))].join(', ');
+  const sharpN = recent.filter(d=>d.cents > 15).length;
+  const flatN  = recent.filter(d=>d.cents < -15).length;
+  const inTuneN= recent.filter(d=>Math.abs(d.cents)<=15).length;
+  const inPct  = Math.round(inTuneN/recent.length*100);
+  const loNote = [...new Set(recent.map(d=>d.note))].sort()[0] || '?';
+  const hiNote = [...new Set(recent.map(d=>d.note))].sort().slice(-1)[0] || '?';
+  const prompt = "You are Gene, a master " + currentInstrument + " coach inside ToneWise. " +
+    "Student level: " + currentLevel + ". " +
+    "Live data — notes played: " + notes + ". Range: " + loNote + " to " + hiNote + ". " +
     "Pitch accuracy: " + (100-avgCents).toFixed(0) + "%. In-tune: " + inPct + "%. " +
-    "Sharp deviations: " + sharpN + ", flat: " + flatN + ". " +
+    "Sharp deviations: " + sharpN + ", flat: " + flatN + ", avg deviation: " + avgCents.toFixed(1) + " cents. " +
     "Give exactly 3 spoken sentences: " +
     "1) One precise observation about what you just heard (name specific notes or patterns). " +
-    "2) One technical correction specific to " + currentInstrument + " (embouchure, air, slide position, reed, etc). " +
-    "3) One immediate exercise they can try in the next 30 seconds. " +
-    "Be direct, warm, specific. No generic advice.";
-
-  try {
-    var res = await fetch(WORKER_URL, {method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:prompt, max_tokens:200})});
-    var data = await res.json();
-    var text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
-    if(text){ showCoaching(text); if(voiceOn) speak(text); }
-    setStatus('listening','Listening to your ' + currentInstrument.toLowerCase() + '...');
-  } catch(e){ setStatus('listening','Listening...'); }
+    "2) One technical correction specific to " + currentInstrument + " (embouchure/air/slide position etc). " +
+    "3) One immediate exercise they can try RIGHT NOW in the next 30 seconds. " +
+    "Be direct, specific, warm. No generic advice.";
+  const result = await callWorker(prompt, 160);
+  if(result.ok){
+    showCoaching(result.text);
+    if(voiceOn) speak(result.text);
+    setStatus('listening','Listening to your trumpet…');
+  } else {
+    showCoaching('⚠ ' + result.error);
+    setStatus('err','AI connection issue');
+  }
   scheduleCoaching();
-}
-
-async function getEndOfSessionAnalysis(){
-  if(sessionPitchData.length < 5) return;
-  setStatus('thinking','Generating full session analysis...');
-  var all      = sessionPitchData;
-  var avgC     = all.reduce(function(s,d){ return s+Math.abs(d.cents); },0)/all.length;
-  var pitchAcc = Math.max(0,100-avgC).toFixed(1);
-  var noteSet  = [...new Set(all.map(function(d){ return d.note; }))];
-  var sharpCt  = all.filter(function(d){ return d.cents>15; }).length;
-  var flatCt   = all.filter(function(d){ return d.cents<-15; }).length;
-  var inPct    = Math.round(all.filter(function(d){ return Math.abs(d.cents)<=15; }).length/all.length*100);
-  var loNote   = noteSet.slice().sort()[0] || '?';
-  var hiNote   = noteSet.slice().sort().slice(-1)[0] || '?';
-  var sesMins  = Math.max(1, Math.round(all.length/22));
-
-  var prompt = "You are Gene, a master " + currentInstrument + " teacher. " +
-    "Student finished a ~" + sesMins + "-min session. Self-reported level: " + currentLevel + ". " +
-    "Instrument: " + currentInstrument + ". Total samples: " + all.length + ". " +
-    "Notes played: " + noteSet.join(", ") + " (range: " + loNote + " to " + hiNote + "). " +
-    "Pitch accuracy: " + pitchAcc + "%. In-tune: " + inPct + "%. " +
-    "Sharp: " + sharpCt + ", flat: " + flatCt + ". Avg deviation: " + avgC.toFixed(1) + " cents. " +
-    "Write a structured report using EXACTLY these labels on separate lines: " +
-    "LEVEL ASSESSMENT: (classify Beginner/Intermediate/Advanced from data, one sentence why) " +
-    "STRENGTHS: (two specific strengths from this session) " +
-    "AREAS TO IMPROVE: (two specific weaknesses with " + currentInstrument + " technique detail) " +
-    "PRACTICE EXERCISES: (three specific named exercises with brief instructions) " +
-    "SESSION GOAL: (one clear measurable goal for next session) " +
-    "ENCOURAGEMENT: (one warm closing sentence) " +
-    "Be specific to " + currentInstrument + " throughout. No generic advice.";
-
-  try {
-    var res2 = await fetch(WORKER_URL, {method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:prompt, max_tokens:550})});
-    var dat2 = await res2.json();
-    var txt2 = (dat2.content && dat2.content[0] && dat2.content[0].text) ? dat2.content[0].text : '';
-    if(txt2){
-      showCoaching(txt2);
-      if(voiceOn){
-        var first = txt2.split("\n").find(function(l){ return l.trim().length>0; }) || '';
-        speak("Session complete. " + first + " Full report in coaching panel.");
-      }
-      setStatus('idle','Session analysis complete');
-    } else {
-      geneSpeak("Session complete! Great work.");
-      setStatus('idle','Ready');
-    }
-  } catch(e){ geneSpeak("Session complete! Great work."); setStatus('idle','Ready'); }
 }
 
 function showCoaching(text){
   $('coach-text').textContent = text;
   lastFeedback = text;
   addToLog(text);
-  geneSpeak(text.substring(0,120));
+  geneSpeak(text);
 }
 
 function repeatFeedback(){ if(lastFeedback && voiceOn) speak(lastFeedback); }
@@ -1285,7 +1560,8 @@ function clearSession(){ stopRecord(); $('coach-text').textContent='Start record
    SESSION TIMER
 ═══════════════════════════════════════════════════════════ */
 function startSessionTimer(){
-  timeLeft = isPro ? 600 : 180;
+  const _dur = (()=>{ try{ const c=JSON.parse(localStorage.getItem('tw_admin_cfg')||'{}'); return c.sessionDur||180; }catch(_){return 180;} })();
+  timeLeft = isPro ? 600 : _dur;
   const wrap=$('timer-bar-wrap'), lbl=$('timer-label');
   wrap.style.display='block'; lbl.style.display='block';
   updateTimerUI();
@@ -1341,27 +1617,29 @@ function renderLog(){
 
 /* ════════════════════════════════════════════════════════
    EAR TRAINING — AUDIO PLAYBACK ENGINE
-   Builds real musical tones via Web Audio API.
-   No external service needed — works in any browser.
+   Generates real musical tones via Web Audio API.
+   No plugin needed — works in any modern browser.
 =══════════════════════════════════════════════════════════ */
 
 var earToneSeq   = [];
 var earAnswerStr = '';
 
+// Convert note name like "C4","F#5","Bb3" to Hz
 function noteToHz(name){
-  var semis={'C':0,'C#':1,'Db':1,'D':2,'D#':3,'Eb':3,'E':4,
-             'F':5,'F#':6,'Gb':6,'G':7,'G#':8,'Ab':8,'A':9,
-             'A#':10,'Bb':10,'B':11};
+  var semis = {'C':0,'C#':1,'Db':1,'D':2,'D#':3,'Eb':3,'E':4,
+               'F':5,'F#':6,'Gb':6,'G':7,'G#':8,'Ab':8,'A':9,
+               'A#':10,'Bb':10,'B':11};
   var m = name.match(/^([A-Ga-g][#b]?)(\d+)$/);
   if(!m) return 440;
-  var pitch = (semis[m[1]] !== undefined) ? semis[m[1]] : 9;
+  var pitch = semis[m[1]] != null ? semis[m[1]] : 9;
   var octave = parseInt(m[2]);
-  var midi = (octave+1)*12 + pitch;
-  return 440 * Math.pow(2, (midi-69)/12);
+  var midi = (octave + 1) * 12 + pitch;
+  return 440 * Math.pow(2, (midi - 69) / 12);
 }
 
+// Play array of {hz, dur} objects. hz=0 = rest. Calls onDone when finished.
 function playToneSequence(seq, onDone){
-  var ctx = new (window.AudioContext||window.webkitAudioContext)();
+  var ctx = new (window.AudioContext || window.webkitAudioContext)();
   var t = ctx.currentTime + 0.1;
   seq.forEach(function(item){
     if(!item.hz){ t += item.dur; return; }
@@ -1370,138 +1648,156 @@ function playToneSequence(seq, onDone){
     osc.type = 'sine';
     osc.frequency.value = item.hz;
     env.gain.setValueAtTime(0, t);
-    env.gain.linearRampToValueAtTime(0.32, t+0.025);
-    env.gain.setValueAtTime(0.32, t+item.dur-0.06);
-    env.gain.linearRampToValueAtTime(0, t+item.dur);
+    env.gain.linearRampToValueAtTime(0.32, t + 0.025);
+    env.gain.setValueAtTime(0.32, t + item.dur - 0.06);
+    env.gain.linearRampToValueAtTime(0, t + item.dur);
     osc.connect(env); env.connect(ctx.destination);
-    osc.start(t); osc.stop(t+item.dur);
+    osc.start(t); osc.stop(t + item.dur);
     t += item.dur + 0.07;
   });
-  var ms = Math.max(500, (t - ctx.currentTime)*1000 + 200);
+  var ms = Math.max(500, (t - ctx.currentTime) * 1000 + 200);
   setTimeout(function(){ ctx.close(); if(onDone) onDone(); }, ms);
 }
 
-function semiHz(rootHz, semi){ return rootHz * Math.pow(2, semi/12); }
+function semiHz(rootHz, semi){ return rootHz * Math.pow(2, semi / 12); }
 
-var EAR_INTERVALS=[
-  {name:'minor 2nd',steps:[0,1]},{name:'major 2nd',steps:[0,2]},
-  {name:'minor 3rd',steps:[0,3]},{name:'major 3rd',steps:[0,4]},
-  {name:'perfect 4th',steps:[0,5]},{name:'tritone',steps:[0,6]},
-  {name:'perfect 5th',steps:[0,7]},{name:'minor 6th',steps:[0,8]},
-  {name:'major 6th',steps:[0,9]},{name:'minor 7th',steps:[0,10]},
-  {name:'major 7th',steps:[0,11]},{name:'octave',steps:[0,12]}
+// Build tone sequences for each exercise type
+var EAR_INTERVALS = [
+  {name:'minor 2nd',  steps:[0,1]},  {name:'major 2nd',  steps:[0,2]},
+  {name:'minor 3rd',  steps:[0,3]},  {name:'major 3rd',  steps:[0,4]},
+  {name:'perfect 4th',steps:[0,5]},  {name:'tritone',    steps:[0,6]},
+  {name:'perfect 5th',steps:[0,7]},  {name:'minor 6th',  steps:[0,8]},
+  {name:'major 6th',  steps:[0,9]},  {name:'minor 7th',  steps:[0,10]},
+  {name:'major 7th',  steps:[0,11]}, {name:'octave',     steps:[0,12]}
 ];
-var EAR_SCALES=[
-  {name:'major',steps:[0,2,4,5,7,9,11,12]},
-  {name:'minor',steps:[0,2,3,5,7,8,10,12]},
-  {name:'pentatonic',steps:[0,2,4,7,9,12]},
-  {name:'blues',steps:[0,3,5,6,7,10,12]},
-  {name:'dorian',steps:[0,2,3,5,7,9,10,12]}
+var EAR_SCALES = [
+  {name:'major',       steps:[0,2,4,5,7,9,11,12]},
+  {name:'minor',       steps:[0,2,3,5,7,8,10,12]},
+  {name:'pentatonic',  steps:[0,2,4,7,9,12]},
+  {name:'blues',       steps:[0,3,5,6,7,10,12]},
+  {name:'dorian',      steps:[0,2,3,5,7,9,10,12]}
 ];
-var EAR_CHORDS=[
-  {name:'major triad',steps:[0,4,7]},
-  {name:'minor triad',steps:[0,3,7]},
-  {name:'dominant 7th',steps:[0,4,7,10]},
-  {name:'major 7th chord',steps:[0,4,7,11]},
-  {name:'minor 7th chord',steps:[0,3,7,10]},
-  {name:'diminished triad',steps:[0,3,6]}
+var EAR_CHORDS = [
+  {name:'major triad',   steps:[0,4,7]},
+  {name:'minor triad',   steps:[0,3,7]},
+  {name:'dominant 7th',  steps:[0,4,7,10]},
+  {name:'major 7th',     steps:[0,4,7,11]},
+  {name:'minor 7th',     steps:[0,3,7,10]},
+  {name:'diminished',    steps:[0,3,6]}
 ];
-var EAR_ROOTS=['C4','D4','E4','F4','G4','A4','Bb4'];
+var EAR_ROOTS = ['C4','D4','E4','F4','G4','A4','Bb4'];
+
 function randItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
 
 function buildEarExercise(type, rootName){
   var rHz = noteToHz(rootName);
   var rName = rootName.replace(/\d/,'');
-  var seq=[], answer='', desc='';
+  var seq = [], answer = '', desc = '';
   var t = type.toLowerCase();
+
   if(t.includes('interval')){
     var iv = randItem(EAR_INTERVALS);
-    seq = iv.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:1.0}; });
+    seq = iv.steps.map(function(s){ return {hz: semiHz(rHz,s), dur:1.0}; });
     answer = iv.name + ' (from ' + rName + ')';
-    desc = 'Two notes will play. Name the interval between them.';
+    desc = 'Two notes. What interval is this?';
   } else if(t.includes('scale')){
     var sc = randItem(EAR_SCALES);
-    var asc = sc.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:0.5}; });
-    var dsc = sc.steps.slice(0,-1).reverse().map(function(s){ return {hz:semiHz(rHz,s),dur:0.5}; });
-    seq = asc.concat(dsc);
+    var asc = sc.steps.map(function(s){ return {hz: semiHz(rHz,s), dur:0.5}; });
+    var desc2 = sc.steps.slice(0,-1).reverse().map(function(s){ return {hz: semiHz(rHz,s), dur:0.5}; });
+    seq = asc.concat(desc2);
     answer = rName + ' ' + sc.name + ' scale';
-    desc = 'A scale ascending then descending. Name it.';
+    desc = 'A scale ascending and descending. Which scale is this?';
   } else if(t.includes('chord')){
     var ch = randItem(EAR_CHORDS);
-    seq = ch.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:0.55}; });
-    seq.push({hz:0,dur:0.12});
-    seq = seq.concat(ch.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:1.1}; }));
+    // Arpeggiate then block
+    seq = ch.steps.map(function(s){ return {hz: semiHz(rHz,s), dur:0.55}; });
+    seq.push({hz:0, dur:0.12});
+    seq = seq.concat(ch.steps.map(function(s){ return {hz: semiHz(rHz,s), dur:1.1}; }));
     answer = rName + ' ' + ch.name;
-    desc = 'Notes arpeggiated then played together. Name the chord.';
+    desc = 'Notes played separately then together. What chord is this?';
   } else if(t.includes('melody')){
-    var msc=[0,2,4,5,7,9,11,12];
-    var mel=[]; for(var i=0;i<7;i++) mel.push(randItem(msc));
-    seq = mel.map(function(s){ return {hz:semiHz(rHz,s),dur:0.6}; });
-    var sn=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
-    answer = 'Melody in '+rName+' major: '+mel.map(function(s){ return sn[s%12]; }).join('-');
-    desc = 'A short melody. Try to sing or hum it back.';
+    var scMaj = [0,2,4,5,7,9,11,12];
+    var mel = [];
+    for(var i=0; i<7; i++) mel.push(randItem(scMaj));
+    seq = mel.map(function(s){ return {hz: semiHz(rHz,s), dur:0.6}; });
+    var semNames = ['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+    answer = 'Melody in ' + rName + ' major: ' + mel.map(function(s){
+      var base = semiHz(rHz,s);
+      // find closest note name
+      return semNames[s % 12];
+    }).join('-');
+    desc = 'A 7-note melody. Sing it back or remember it.';
   } else {
-    var pats=[[1,0.5,0.5,1],[0.5,0.5,0.5,0.5,1],[0.75,0.25,1,0.5,0.5],[1,1,0.5,0.5]];
-    var pat=randItem(pats);
-    seq=pat.map(function(d){ return {hz:rHz,dur:d*0.55}; });
-    answer='Rhythm: '+pat.map(function(d){ return d===1?'1 beat':d===0.75?'dotted 3/4':'half beat'; }).join(' | ');
-    desc='A rhythm pattern on one pitch. Can you clap it back?';
+    // Rhythm — play on a single pitch
+    var patterns = [[1,0.5,0.5,1],[0.5,0.5,0.5,0.5,1],[0.75,0.25,1,0.5,0.5],[1,1,0.5,0.5]];
+    var pat = randItem(patterns);
+    seq = pat.map(function(d){ return {hz: rHz, dur: d*0.55}; });
+    answer = 'Rhythm: ' + pat.map(function(d){
+      return d===1?'1 beat':d===0.75?'dotted':d===0.5?'half':'quarter';
+    }).join(' | ');
+    desc = 'A rhythm pattern. Can you clap or tap it back?';
   }
   return {seq:seq, answer:answer, desc:desc};
 }
 
 async function genEar(){
-  var el=$('ear-text');
-  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
-  el.style.color='';
-  $('ear-answer').style.display='none';
-  $('ear-play-btn').style.display='none';
-  $('ear-reveal-btn').style.display='none';
-  $('ear-status').textContent='';
+  var el = $('ear-text');
+  el.innerHTML = '<div class="dots"><span></span><span></span><span></span></div>';
+  el.style.color = '';
+  $('ear-answer').style.display = 'none';
+  $('ear-play-btn').style.display = 'none';
+  $('ear-reveal-btn').style.display = 'none';
+  $('ear-tones-status').textContent = '';
 
   var root = randItem(EAR_ROOTS);
   var ex   = buildEarExercise(currentEarType, root);
   earToneSeq   = ex.seq;
   earAnswerStr = ex.answer;
 
+  // Get AI to give instructions (non-blocking — tones play regardless)
   var prompt = "You are Gene, the ToneWise " + currentInstrument + " ear training coach. " +
-    "The student is about to hear a " + currentEarType + " exercise. Root note: " + root + ". " +
-    "Hint: " + ex.desc + " " +
-    "In 2 sentences: (1) Tell them what to listen for. (2) Tell them the tones are about to play. " +
+    "The student is about to hear a " + currentEarType + " exercise, root note " + root + ". " +
+    "Exercise hint: " + ex.desc + " " +
+    "In 2 sentences maximum: (1) Tell them what to listen for. (2) Tell them the tones are about to play. " +
     "Do NOT reveal the answer. Be warm and specific to " + currentInstrument + ".";
 
-  $('ear-play-btn').style.display='inline-block';
-  $('ear-reveal-btn').style.display='inline-block';
-  $('ear-status').textContent='Preparing tones...';
+  // Fetch AI instructions and play tones in parallel
+  var aiPromise = callWorker(prompt, 140);
 
-  setTimeout(playEarTones, 700);
+  // Show buttons immediately
+  $('ear-play-btn').style.display  = 'inline-block';
+  $('ear-reveal-btn').style.display = 'inline-block';
+  $('ear-tones-status').textContent = 'Preparing tones...';
 
-  try {
-    var res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({prompt:prompt,max_tokens:140})});
-    var dat=await res.json();
-    var txt=(dat.content&&dat.content[0]&&dat.content[0].text)?dat.content[0].text:'';
-    el.textContent = txt || (ex.desc + ' Listen carefully — the tones are playing now.');
-    if(voiceOn && txt) speak(txt);
-  } catch(e){
-    el.textContent = ex.desc + ' Press Play again to hear the tones.';
-  }
+  // Wait a moment then play
+  setTimeout(playEarTones, 600);
+
+  // Update text when AI responds
+  aiPromise.then(function(result){
+    if(result.ok){
+      el.textContent = result.text;
+      if(voiceOn) speak(result.text);
+    } else {
+      el.textContent = ex.desc + " Listen carefully — the tones are playing now.";
+    }
+  });
 }
 
 function playEarTones(){
   if(!earToneSeq.length) return;
-  $('ear-status').textContent='Playing...';
-  $('ear-play-btn').disabled=true;
+  $('ear-tones-status').textContent = 'Playing tones...';
+  $('ear-play-btn').disabled = true;
   playToneSequence(earToneSeq, function(){
-    $('ear-status').textContent='What did you hear? Press Reveal answer when ready.';
-    $('ear-play-btn').disabled=false;
+    $('ear-tones-status').textContent = 'What did you hear? Press Reveal answer when ready.';
+    $('ear-play-btn').disabled = false;
   });
 }
 
 function revealEarAnswer(){
-  $('ear-answer').textContent='Answer: ' + earAnswerStr;
-  $('ear-answer').style.display='block';
-  $('ear-status').textContent='Generate a new exercise to continue.';
+  var ans = $('ear-answer');
+  ans.textContent = 'Answer: ' + earAnswerStr;
+  ans.style.display = 'block';
+  $('ear-tones-status').textContent = 'Generate a new exercise to continue.';
   if(voiceOn) speak('The answer is: ' + earAnswerStr);
 }
 
@@ -1511,18 +1807,22 @@ function revealEarAnswer(){
 function setQ(q){ $('ask-input').value=q; }
 async function askTeacher(){
   const q=$('ask-input').value.trim(); if(!q) return;
-  $('ask-text').innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
-  setStatus('thinking','Claude is thinking…', 'panel-ask');
-  const prompt=`You are Gene, a warm expert " + currentInstrument + " coach. Answer this question from a " + currentInstrument + " student in 3-5 sentences, naturally spoken: "${q}"`;
-  try {
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,max_tokens:200})});
-    const data=await res.json();
-    const text=data.content?.[0]?.text||'Great question! Keep practising.';
-    $('ask-text').textContent=text;
-    if(voiceOn) speak(text);
-    geneSpeak(text.substring(0,80)+(text.length>80?'…':''));
+  const el = $('ask-text');
+  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  el.style.color = '';
+  setStatus('thinking','ToneWise is thinking…');
+  const prompt=`You are Gene, the expert ${currentInstrument} coach for ToneWise. Answer this question from a ${currentInstrument} student in 3-5 sentences, naturally spoken: "${q}"`;
+  const result = await callWorker(prompt, 250);
+  if(result.ok){
+    el.textContent = result.text;
+    if(voiceOn) speak(result.text);
+    geneSpeak(result.text.substring(0,80)+(result.text.length>80?'…':''));
     setStatus('idle','Ready');
-  } catch(e){ $('ask-text').textContent='Could not reach Claude. Check your connection.'; setStatus('err','Connection error'); }
+  } else {
+    el.textContent = result.error;
+    el.style.color = 'var(--coral)';
+    setStatus('err','AI error — see message above');
+  }
 }
 
 /* ════════════════════════════════════════════════════════
@@ -1593,324 +1893,484 @@ function stopMetro(){
 }
 
 /* ════════════════════════════════════════════════════════
-   MULTI-INSTRUMENT SYSTEM
-   All data uses double quotes. No apostrophes in values.
-   Brass valves = integers [1,2,3]
-   Sax/Clarinet = string key IDs ["sax-b","cl-reg"]
-   Trombone = position number [3]
-=══════════════════════════════════════════════════════════ */
-var INST_DATA = {
-  "Trumpet":{
-    title:"Trumpet fingering chart", desc:"Select a note — Gene reads the valve combination.",
-    legend:"Valve pressed = purple   Open = dark",
-    greet:"Trumpet mode. Press Record and start playing!",
-    quickAsks:["High notes","Embouchure","Long tones","Jazz improv","Tone quality"],
-    notes:{
-      "C4":{v:[],d:"Open"},"C#4":{v:[1,2,3],d:"1-2-3"},"D4":{v:[1,3],d:"1-3"},
-      "Eb4":{v:[2,3],d:"2-3"},"E4":{v:[1,2],d:"1-2"},"F4":{v:[1],d:"1"},
-      "F#4":{v:[2],d:"2"},"G4":{v:[],d:"Open"},"Ab4":{v:[2,3],d:"2-3"},
-      "A4":{v:[1,2],d:"1-2"},"Bb4":{v:[1],d:"1"},"B4":{v:[2],d:"2"},
-      "C5":{v:[],d:"Open"},"C#5":{v:[1,2],d:"1-2"},"D5":{v:[1,3],d:"1-3"},
-      "Eb5":{v:[2,3],d:"2-3"},"E5":{v:[1,2],d:"1-2"},"F5":{v:[1],d:"1"},
-      "F#5":{v:[2],d:"2"},"G5":{v:[],d:"Open"}
+   MULTI-INSTRUMENT FINGERING SYSTEM
+   All strings use double quotes. No apostrophes in values.
+   valves for brass = integer array e.g. [1,2,3]
+   valves for sax/clarinet = string key-id array e.g. ["sax-b","sax-a"]
+   valves for trombone = position number e.g. [3]
+═══════════════════════════════════════════════════════════ */
+const INST_DATA = {
+
+  "Trumpet": {
+    chartTitle: "Trumpet fingering chart",
+    chartDesc: "Select a note — Gene reads the valve combination aloud.",
+    legend: "Valve pressed = purple   Open valve = dark",
+    greet: "Trumpet mode. Press Record and start playing!",
+    tips: ["Focus on air support — the trumpet runs on breath.",
+           "Warm up with long tones before technical exercises.",
+           "Consistent daily practice beats long occasional sessions."],
+    notes: {
+      "C4":{"v":[],       "d":"Open"},
+      "C#4":{"v":[1,2,3], "d":"1-2-3"},
+      "D4":{"v":[1,3],    "d":"1-3"},
+      "Eb4":{"v":[2,3],   "d":"2-3"},
+      "E4":{"v":[1,2],    "d":"1-2"},
+      "F4":{"v":[1],      "d":"1"},
+      "F#4":{"v":[2],     "d":"2"},
+      "G4":{"v":[],       "d":"Open"},
+      "Ab4":{"v":[2,3],   "d":"2-3"},
+      "A4":{"v":[1,2],    "d":"1-2"},
+      "Bb4":{"v":[1],     "d":"1"},
+      "B4":{"v":[2],      "d":"2"},
+      "C5":{"v":[],       "d":"Open"},
+      "C#5":{"v":[1,2],   "d":"1-2"},
+      "D5":{"v":[1,3],    "d":"1-3"},
+      "Eb5":{"v":[2,3],   "d":"2-3"},
+      "E5":{"v":[1,2],    "d":"1-2"},
+      "F5":{"v":[1],      "d":"1"},
+      "F#5":{"v":[2],     "d":"2"},
+      "G5":{"v":[],       "d":"Open"}
     }
   },
-  "Flugelhorn":{
-    title:"Flugelhorn fingering chart", desc:"Same valves as trumpet — warmer conical bore.",
-    legend:"Valve pressed = purple   Open = dark",
-    greet:"Flugelhorn mode. Aim for a warm, open sound!",
-    quickAsks:["Warm tone","Air support","High notes","Jazz ballads","Intonation"],
-    notes:{
-      "C4":{v:[],d:"Open"},"C#4":{v:[1,2,3],d:"1-2-3"},"D4":{v:[1,3],d:"1-3"},
-      "Eb4":{v:[2,3],d:"2-3"},"E4":{v:[1,2],d:"1-2"},"F4":{v:[1],d:"1"},
-      "F#4":{v:[2],d:"2"},"G4":{v:[],d:"Open"},"Ab4":{v:[2,3],d:"2-3"},
-      "A4":{v:[1,2],d:"1-2"},"Bb4":{v:[1],d:"1"},"B4":{v:[2],d:"2"},
-      "C5":{v:[],d:"Open"},"D5":{v:[1,3],d:"1-3"},"E5":{v:[1,2],d:"1-2"},"G5":{v:[],d:"Open"}
+
+  "Flugelhorn": {
+    chartTitle: "Flugelhorn fingering chart",
+    chartDesc: "Same valve system as trumpet — warmer, more open tone.",
+    legend: "Valve pressed = purple   Open valve = dark",
+    greet: "Flugelhorn mode. Aim for a warm, open sound!",
+    tips: ["Relax the embouchure more than on trumpet — open air stream.",
+           "The flugelhorn rewards patience. Let the tone bloom."],
+    notes: {
+      "C4":{"v":[],       "d":"Open"},
+      "C#4":{"v":[1,2,3], "d":"1-2-3"},
+      "D4":{"v":[1,3],    "d":"1-3"},
+      "Eb4":{"v":[2,3],   "d":"2-3"},
+      "E4":{"v":[1,2],    "d":"1-2"},
+      "F4":{"v":[1],      "d":"1"},
+      "F#4":{"v":[2],     "d":"2"},
+      "G4":{"v":[],       "d":"Open"},
+      "Ab4":{"v":[2,3],   "d":"2-3"},
+      "A4":{"v":[1,2],    "d":"1-2"},
+      "Bb4":{"v":[1],     "d":"1"},
+      "B4":{"v":[2],      "d":"2"},
+      "C5":{"v":[],       "d":"Open"},
+      "D5":{"v":[1,3],    "d":"1-3"},
+      "E5":{"v":[1,2],    "d":"1-2"},
+      "F5":{"v":[1],      "d":"1"},
+      "G5":{"v":[],       "d":"Open"}
     }
   },
-  "Cornet":{
-    title:"Cornet fingering chart", desc:"Same valves as trumpet — mellower tone.",
-    legend:"Valve pressed = purple   Open = dark",
-    greet:"Cornet mode. Classic brass band sound — let it ring!",
-    quickAsks:["Tone colour","High notes","Brass band","Embouchure","Intonation"],
-    notes:{
-      "C4":{v:[],d:"Open"},"C#4":{v:[1,2,3],d:"1-2-3"},"D4":{v:[1,3],d:"1-3"},
-      "Eb4":{v:[2,3],d:"2-3"},"E4":{v:[1,2],d:"1-2"},"F4":{v:[1],d:"1"},
-      "F#4":{v:[2],d:"2"},"G4":{v:[],d:"Open"},"Ab4":{v:[2,3],d:"2-3"},
-      "A4":{v:[1,2],d:"1-2"},"Bb4":{v:[1],d:"1"},"B4":{v:[2],d:"2"},
-      "C5":{v:[],d:"Open"},"D5":{v:[1,3],d:"1-3"},"E5":{v:[1,2],d:"1-2"},"G5":{v:[],d:"Open"}
+
+  "Cornet": {
+    chartTitle: "Cornet fingering chart",
+    chartDesc: "Same valves as trumpet — mellower conical bore tone.",
+    legend: "Valve pressed = purple   Open valve = dark",
+    greet: "Cornet mode. Classic brass band sound — let it ring!",
+    tips: ["The cornet bore is conical — allow the air to flow freely.",
+           "Focus on blend when playing in a brass band context."],
+    notes: {
+      "C4":{"v":[],       "d":"Open"},
+      "C#4":{"v":[1,2,3], "d":"1-2-3"},
+      "D4":{"v":[1,3],    "d":"1-3"},
+      "Eb4":{"v":[2,3],   "d":"2-3"},
+      "E4":{"v":[1,2],    "d":"1-2"},
+      "F4":{"v":[1],      "d":"1"},
+      "F#4":{"v":[2],     "d":"2"},
+      "G4":{"v":[],       "d":"Open"},
+      "Ab4":{"v":[2,3],   "d":"2-3"},
+      "A4":{"v":[1,2],    "d":"1-2"},
+      "Bb4":{"v":[1],     "d":"1"},
+      "B4":{"v":[2],      "d":"2"},
+      "C5":{"v":[],       "d":"Open"},
+      "D5":{"v":[1,3],    "d":"1-3"},
+      "E5":{"v":[1,2],    "d":"1-2"},
+      "G5":{"v":[],       "d":"Open"}
     }
   },
-  "Euphonium":{
-    title:"Euphonium fingering chart", desc:"Select a note — Gene reads the valve combination.",
-    legend:"Valve pressed = purple   Open = dark",
-    greet:"Euphonium mode. Deep velvet tone — breathe fully!",
-    quickAsks:["Low register","Tone depth","Valves","Breath support","Intonation"],
-    notes:{
-      "Bb1":{v:[1,2,3],d:"1-2-3 Low Bb"},"B1":{v:[1,2],d:"1-2"},"C2":{v:[1],d:"1"},
-      "D2":{v:[1,3],d:"1-3"},"Eb2":{v:[2,3],d:"2-3"},"F2":{v:[1],d:"1"},
-      "G2":{v:[],d:"Open"},"A2":{v:[1,2],d:"1-2"},"Bb2":{v:[1],d:"1"},
-      "C3":{v:[],d:"Open"},"D3":{v:[1,3],d:"1-3"},"Eb3":{v:[2,3],d:"2-3"},
-      "F3":{v:[1],d:"1"},"G3":{v:[],d:"Open"},"Bb3":{v:[1],d:"1"},"C4":{v:[],d:"Open"}
+
+  "Euphonium": {
+    chartTitle: "Euphonium fingering chart",
+    chartDesc: "Select a note — Gene reads the valve combination aloud.",
+    legend: "Valve pressed = purple   Open valve = dark",
+    greet: "Euphonium mode. Deep, velvet tone — breathe fully!",
+    tips: ["Full air column support is essential on euphonium.",
+           "Practice long tones to develop that characteristic warm depth."],
+    notes: {
+      "Bb1":{"v":[1,2,3], "d":"1-2-3  Low Bb"},
+      "B1":{"v":[1,2],    "d":"1-2"},
+      "C2":{"v":[1],      "d":"1"},
+      "D2":{"v":[1,3],    "d":"1-3"},
+      "Eb2":{"v":[2,3],   "d":"2-3"},
+      "E2":{"v":[1,2],    "d":"1-2"},
+      "F2":{"v":[1],      "d":"1"},
+      "G2":{"v":[],       "d":"Open"},
+      "A2":{"v":[1,2],    "d":"1-2"},
+      "Bb2":{"v":[1],     "d":"1"},
+      "C3":{"v":[],       "d":"Open"},
+      "D3":{"v":[1,3],    "d":"1-3"},
+      "Eb3":{"v":[2,3],   "d":"2-3"},
+      "F3":{"v":[1],      "d":"1"},
+      "G3":{"v":[],       "d":"Open"},
+      "Bb3":{"v":[1],     "d":"1"},
+      "C4":{"v":[],       "d":"Open"}
     }
   },
-  "French Horn":{
-    title:"French Horn fingering chart", desc:"Rotary valves. Right hand in bell affects pitch.",
-    legend:"Rotor pressed = purple   Open = dark",
-    greet:"French Horn mode. Most demanding brass — stay relaxed!",
-    quickAsks:["Hand stopping","High range","Transposition","Tone colour","Orchestral"],
-    notes:{
-      "F#2":{v:[1,2,3],d:"All rotors"},"G2":{v:[2,3],d:"2nd and 3rd"},"A2":{v:[1,2],d:"1st and 2nd"},
-      "Bb2":{v:[1],d:"1st rotor"},"B2":{v:[2],d:"2nd rotor"},"C3":{v:[],d:"Open"},
-      "D3":{v:[1,3],d:"1st and 3rd"},"E3":{v:[1,2],d:"1st and 2nd"},"F3":{v:[1],d:"1st rotor"},
-      "G3":{v:[],d:"Open"},"A3":{v:[1,2],d:"1st and 2nd"},"Bb3":{v:[1],d:"1st rotor"},
-      "C4":{v:[],d:"Open"},"D4":{v:[1,3],d:"1st and 3rd"},"E4":{v:[1,2],d:"1st and 2nd"},
-      "F4":{v:[1],d:"1st rotor"},"G4":{v:[],d:"Open"},"A4":{v:[1,2],d:"1st and 2nd"}
+
+  "French Horn": {
+    chartTitle: "French Horn fingering chart",
+    chartDesc: "Select a note — rotary valves. Right hand in bell affects pitch.",
+    legend: "Rotor pressed = purple   Open rotor = dark",
+    greet: "French Horn mode. Most demanding brass — stay relaxed!",
+    tips: ["Right hand position in the bell controls intonation.",
+           "Practice octave slurs to develop range and flexibility."],
+    notes: {
+      "F#2":{"v":[1,2,3], "d":"All rotors"},
+      "G2":{"v":[2,3],    "d":"2nd + 3rd"},
+      "A2":{"v":[1,2],    "d":"1st + 2nd"},
+      "Bb2":{"v":[1],     "d":"1st rotor"},
+      "B2":{"v":[2],      "d":"2nd rotor"},
+      "C3":{"v":[],       "d":"Open"},
+      "D3":{"v":[1,3],    "d":"1st + 3rd"},
+      "E3":{"v":[1,2],    "d":"1st + 2nd"},
+      "F3":{"v":[1],      "d":"1st rotor"},
+      "G3":{"v":[],       "d":"Open"},
+      "A3":{"v":[1,2],    "d":"1st + 2nd"},
+      "Bb3":{"v":[1],     "d":"1st rotor"},
+      "C4":{"v":[],       "d":"Open"},
+      "D4":{"v":[1,3],    "d":"1st + 3rd"},
+      "E4":{"v":[1,2],    "d":"1st + 2nd"},
+      "F4":{"v":[1],      "d":"1st rotor"},
+      "G4":{"v":[],       "d":"Open"},
+      "A4":{"v":[1,2],    "d":"1st + 2nd"}
     }
   },
-  "Trombone":{
-    title:"Trombone slide positions", desc:"Select a note — Gene names the slide position. 1 = closed.",
-    legend:"Active position = purple   Others = dark",
-    greet:"Trombone mode. No valves — your ear guides the slide!",
-    quickAsks:["Slide positions","Glissandi","Legato tone","High range","Jazz phrasing"],
-    notes:{
-      "Bb1":{v:[1],d:"Position 1 closed"},"A1":{v:[2],d:"Position 2"},
-      "Ab1":{v:[3],d:"Position 3"},"G1":{v:[4],d:"Position 4"},
-      "F#1":{v:[5],d:"Position 5"},"F1":{v:[6],d:"Position 6"},
-      "E1":{v:[7],d:"Position 7 extended"},
-      "Bb2":{v:[1],d:"Position 1"},"A2":{v:[2],d:"Position 2"},
-      "Ab2":{v:[3],d:"Position 3"},"G2":{v:[4],d:"Position 4"},
-      "F2":{v:[6],d:"Position 6"},"E2":{v:[7],d:"Position 7"},
-      "Bb3":{v:[1],d:"Position 1"},"A3":{v:[2],d:"Position 2"},
-      "G3":{v:[4],d:"Position 4"},"F3":{v:[1],d:"Position 1 upper partial"},
-      "Eb3":{v:[3],d:"Position 3"},"D3":{v:[4],d:"Position 4"},
-      "Bb4":{v:[1],d:"Position 1"},"A4":{v:[2],d:"Position 2"},
-      "G4":{v:[4],d:"Position 4"},"F4":{v:[1],d:"Position 1 high partial"}
+
+  "Trombone": {
+    chartTitle: "Trombone slide positions",
+    chartDesc: "Select a note — Gene names the slide position. Position 1 = closed.",
+    legend: "Active position = purple   Other positions = dark",
+    greet: "Trombone mode. No valves — your ear guides the slide!",
+    tips: ["Sing each note before playing it to lock in the pitch.",
+           "Slow position changes build accuracy better than fast ones."],
+    notes: {
+      "Bb1":{"v":[1], "d":"Position 1 — closed"},
+      "A1":{"v":[2],  "d":"Position 2"},
+      "Ab1":{"v":[3], "d":"Position 3"},
+      "G1":{"v":[4],  "d":"Position 4"},
+      "F#1":{"v":[5], "d":"Position 5"},
+      "F1":{"v":[6],  "d":"Position 6"},
+      "E1":{"v":[7],  "d":"Position 7 — extended"},
+      "Bb2":{"v":[1], "d":"Position 1"},
+      "A2":{"v":[2],  "d":"Position 2"},
+      "Ab2":{"v":[3], "d":"Position 3"},
+      "G2":{"v":[4],  "d":"Position 4"},
+      "F#2":{"v":[5], "d":"Position 5"},
+      "F2":{"v":[6],  "d":"Position 6"},
+      "E2":{"v":[7],  "d":"Position 7"},
+      "Bb3":{"v":[1], "d":"Position 1"},
+      "A3":{"v":[2],  "d":"Position 2"},
+      "Ab3":{"v":[3], "d":"Position 3"},
+      "G3":{"v":[4],  "d":"Position 4"},
+      "F3":{"v":[1],  "d":"Position 1 (upper partial)"},
+      "E3":{"v":[2],  "d":"Position 2"},
+      "Eb3":{"v":[3], "d":"Position 3"},
+      "D3":{"v":[4],  "d":"Position 4"},
+      "C3":{"v":[5],  "d":"Position 5"},
+      "B2":{"v":[6],  "d":"Position 6"},
+      "Bb4":{"v":[1], "d":"Position 1"},
+      "A4":{"v":[2],  "d":"Position 2"},
+      "G4":{"v":[4],  "d":"Position 4"},
+      "F4":{"v":[1],  "d":"Position 1 (high partial)"}
     }
   },
-  "Saxophone":{
-    title:"Saxophone fingering chart", desc:"Highlighted keys (purple) must be pressed.",
-    legend:"Key pressed = purple   Key open = dark",
-    greet:"Saxophone mode. Relax the embouchure — let the reed vibrate!",
-    quickAsks:["Altissimo","Reed strength","Vibrato","Crossing the break","Tone quality"],
-    notes:{
-      "Bb3":{v:["sax-b","sax-a","sax-g","sax-c","sax-e","sax-d","sax-c2","sax-bb"],d:"Low Bb all keys"},
-      "B3":{v:["sax-b","sax-a","sax-g","sax-c","sax-e","sax-d","sax-c2"],d:"Low B"},
-      "C4":{v:["sax-b","sax-a","sax-g","sax-e","sax-d","sax-c2"],d:"Low C"},
-      "C#4":{v:["sax-b","sax-a","sax-g","sax-e","sax-d"],d:"Low C# side key"},
-      "D4":{v:["sax-b","sax-a","sax-g","sax-e"],d:"Low D"},
-      "Eb4":{v:["sax-b","sax-a","sax-g"],d:"Eb left hand"},
-      "E4":{v:["sax-b","sax-a"],d:"E index and middle"},
-      "F4":{v:["sax-b"],d:"F left index only"},
-      "F#4":{v:["sax-b","sax-a","sax-g","sax-e","sax-d","sax-c2","sax-c"],d:"F# front key"},
-      "G4":{v:[],d:"G open no keys"},
-      "G#4":{v:["sax-c"],d:"G# left pinky key"},
-      "A4":{v:["sax-e"],d:"A right index only"},
-      "Bb4":{v:["sax-b","sax-e"],d:"Bb bis key"},
-      "B4":{v:["sax-a"],d:"B left middle only"},
-      "C5":{v:["sax-oct","sax-b","sax-a","sax-g","sax-e"],d:"C octave key on"},
-      "C#5":{v:["sax-oct","sax-b","sax-a","sax-g","sax-e","sax-d"],d:"C# octave key on"},
-      "D5":{v:["sax-oct","sax-b","sax-a","sax-g","sax-e"],d:"D octave key on"},
-      "E5":{v:["sax-oct","sax-b","sax-a"],d:"E octave key on"},
-      "F5":{v:["sax-oct","sax-b"],d:"F octave key on"},
-      "G5":{v:["sax-oct"],d:"G octave key only"}
+
+  "Saxophone": {
+    chartTitle: "Saxophone fingering chart",
+    chartDesc: "Select a note — highlighted keys (purple) must be pressed.",
+    legend: "Key pressed = purple   Key open = dark",
+    greet: "Saxophone mode. Relax that embouchure — let the reed vibrate!",
+    tips: ["Keep the embouchure relaxed — tension causes sharp pitch.",
+           "Focus on matching pitch between low and upper registers."],
+    notes: {
+      "Bb3":{"v":["sax-b","sax-a","sax-g","sax-c","sax-e","sax-d","sax-c2","sax-bb"], "d":"Low Bb — all keys down"},
+      "B3": {"v":["sax-b","sax-a","sax-g","sax-c","sax-e","sax-d","sax-c2"],          "d":"Low B"},
+      "C4": {"v":["sax-b","sax-a","sax-g","sax-e","sax-d","sax-c2"],                   "d":"Low C"},
+      "C#4":{"v":["sax-b","sax-a","sax-g","sax-e","sax-d"],                            "d":"Low C# — side key"},
+      "D4": {"v":["sax-b","sax-a","sax-g","sax-e"],                                    "d":"Low D"},
+      "Eb4":{"v":["sax-b","sax-a","sax-g"],                                            "d":"Eb — left hand"},
+      "E4": {"v":["sax-b","sax-a"],                                                    "d":"E — index and middle"},
+      "F4": {"v":["sax-b"],                                                             "d":"F — left index only"},
+      "F#4":{"v":["sax-b","sax-a","sax-g","sax-e","sax-d","sax-c2","sax-c"],           "d":"F# — front F key"},
+      "G4": {"v":[],                                                                    "d":"G — open, no keys"},
+      "G#4":{"v":["sax-c"],                                                             "d":"G# — left pinky key"},
+      "A4": {"v":["sax-e"],                                                             "d":"A — right index only"},
+      "Bb4":{"v":["sax-b","sax-e"],                                                    "d":"Bb — bis key"},
+      "B4": {"v":["sax-a"],                                                             "d":"B — left middle only"},
+      "C5": {"v":["sax-oct","sax-b","sax-a","sax-g","sax-e"],                          "d":"C — octave key on"},
+      "C#5":{"v":["sax-oct","sax-b","sax-a","sax-g","sax-e","sax-d"],                  "d":"C# — octave key on"},
+      "D5": {"v":["sax-oct","sax-b","sax-a","sax-g","sax-e"],                          "d":"D — octave key on"},
+      "E5": {"v":["sax-oct","sax-b","sax-a"],                                          "d":"E — octave key on"},
+      "F5": {"v":["sax-oct","sax-b"],                                                  "d":"F — octave key on"},
+      "G5": {"v":["sax-oct"],                                                           "d":"G — octave key only"}
     }
   },
-  "Clarinet":{
-    title:"Clarinet fingering chart", desc:"Covered holes and pressed keys shown in purple.",
-    legend:"Hole covered or key pressed = purple   Open = dark",
-    greet:"Clarinet mode. Smooth air through the register break is everything!",
-    quickAsks:["Register break","Throat tones","Reed position","Articulation","Tone quality"],
-    notes:{
-      "E3":{v:["cl-b","cl-a","cl-g","cl-f","cl-e","cl-d","cl-cs","cl-c"],d:"Low E all holes"},
-      "F3":{v:["cl-b","cl-a","cl-g","cl-f","cl-e","cl-d","cl-cs"],d:"Low F"},
-      "F#3":{v:["cl-b","cl-a","cl-g","cl-e","cl-d","cl-cs"],d:"F#"},
-      "G3":{v:["cl-b","cl-a","cl-g","cl-e","cl-d"],d:"G"},
-      "G#3":{v:["cl-b","cl-a","cl-g","cl-e","cl-d","cl-f"],d:"G# with left pinky"},
-      "A3":{v:["cl-b","cl-a","cl-g","cl-e"],d:"A"},
-      "Bb3":{v:["cl-b"],d:"Throat Bb index only"},
-      "B3":{v:["cl-a"],d:"Throat B middle only"},
-      "C4":{v:[],d:"Throat C open"},
-      "C#4":{v:["cl-g"],d:"C# ring finger only"},
-      "D4":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d"],d:"D clarion register key on"},
-      "E4":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e"],d:"E register key on"},
-      "F4":{v:["cl-reg","cl-b","cl-a","cl-g"],d:"F register plus left"},
-      "G4":{v:["cl-reg","cl-b","cl-a"],d:"G register plus 2"},
-      "A4":{v:["cl-reg","cl-b"],d:"A register plus index"},
-      "Bb4":{v:["cl-reg"],d:"Bb register key only"},
-      "B4":{v:["cl-reg","cl-a"],d:"B register plus middle"},
-      "C5":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d","cl-cs"],d:"High C"},
-      "D5":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d"],d:"High D"},
-      "E5":{v:["cl-reg","cl-b","cl-a","cl-e"],d:"High E"},
-      "F5":{v:["cl-reg","cl-b","cl-a"],d:"High F"}
+
+  "Clarinet": {
+    chartTitle: "Clarinet fingering chart",
+    chartDesc: "Select a note — covered holes and pressed keys shown in purple.",
+    legend: "Hole covered / key pressed = purple   Open = dark",
+    greet: "Clarinet mode. Smooth air is the key to a clean register break!",
+    tips: ["Smooth and steady air through the register break is everything.",
+           "Throat tones need gentle embouchure — avoid squeezing."],
+    notes: {
+      "E3": {"v":["cl-b","cl-a","cl-g","cl-f","cl-e","cl-d","cl-cs","cl-c"], "d":"Low E — all holes"},
+      "F3": {"v":["cl-b","cl-a","cl-g","cl-f","cl-e","cl-d","cl-cs"],        "d":"Low F"},
+      "F#3":{"v":["cl-b","cl-a","cl-g","cl-e","cl-d","cl-cs"],               "d":"F#"},
+      "G3": {"v":["cl-b","cl-a","cl-g","cl-e","cl-d"],                       "d":"G"},
+      "G#3":{"v":["cl-b","cl-a","cl-g","cl-e","cl-d","cl-f"],                "d":"G# — with left pinky"},
+      "A3": {"v":["cl-b","cl-a","cl-g","cl-e"],                              "d":"A"},
+      "Bb3":{"v":["cl-b"],                                                   "d":"Throat Bb — index only"},
+      "B3": {"v":["cl-a"],                                                   "d":"Throat B — middle only"},
+      "C4": {"v":[],                                                          "d":"Throat C — open"},
+      "C#4":{"v":["cl-g"],                                                   "d":"C# — ring finger only"},
+      "D4": {"v":["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d"],              "d":"D clarion — register key on"},
+      "E4": {"v":["cl-reg","cl-b","cl-a","cl-g","cl-e"],                     "d":"E — register key on"},
+      "F4": {"v":["cl-reg","cl-b","cl-a","cl-g"],                            "d":"F — register plus left"},
+      "G4": {"v":["cl-reg","cl-b","cl-a"],                                   "d":"G — register plus 2"},
+      "A4": {"v":["cl-reg","cl-b"],                                           "d":"A — register plus index"},
+      "Bb4":{"v":["cl-reg"],                                                  "d":"Bb — register key only"},
+      "B4": {"v":["cl-reg","cl-a"],                                           "d":"B — register plus middle"},
+      "C5": {"v":["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d","cl-cs"],      "d":"High C"},
+      "D5": {"v":["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d"],              "d":"High D"},
+      "E5": {"v":["cl-reg","cl-b","cl-a","cl-e"],                            "d":"High E"},
+      "F5": {"v":["cl-reg","cl-b","cl-a"],                                   "d":"High F"}
     }
   }
+
 };
 
-var SAX_LAYOUT=[
-  {id:"sax-oct",lbl:"Oct",hint:"Octave thumb",col:0},
-  {id:"sax-b",  lbl:"B",  hint:"Left index", col:0},
-  {id:"sax-a",  lbl:"A",  hint:"Left middle",col:0},
-  {id:"sax-g",  lbl:"G",  hint:"Left ring",  col:0},
-  {id:"sax-c",  lbl:"Pk", hint:"Left pinky", col:0},
-  {id:"sax-e",  lbl:"E",  hint:"Right index",col:1},
-  {id:"sax-d",  lbl:"D",  hint:"Right middle",col:1},
-  {id:"sax-c2", lbl:"C",  hint:"Right ring", col:1},
-  {id:"sax-bb", lbl:"Bb", hint:"Right pinky",col:1}
+/* ── Key layout descriptors for sax/clarinet visual grid ── */
+const SAX_LAYOUT = [
+  {id:"sax-oct", lbl:"Oct",  hint:"Octave (thumb)",    col:0},
+  {id:"sax-b",   lbl:"B",    hint:"Left index",        col:0},
+  {id:"sax-a",   lbl:"A",    hint:"Left middle",       col:0},
+  {id:"sax-g",   lbl:"G",    hint:"Left ring",         col:0},
+  {id:"sax-c",   lbl:"Pinky",hint:"Left pinky",        col:0},
+  {id:"sax-e",   lbl:"E",    hint:"Right index",       col:1},
+  {id:"sax-d",   lbl:"D",    hint:"Right middle",      col:1},
+  {id:"sax-c2",  lbl:"C",    hint:"Right ring",        col:1},
+  {id:"sax-bb",  lbl:"Bb",   hint:"Right pinky",       col:1}
 ];
-var CL_LAYOUT=[
-  {id:"cl-reg",lbl:"Reg",hint:"Register thumb",col:0},
-  {id:"cl-b",  lbl:"B",  hint:"L index hole", col:0},
-  {id:"cl-a",  lbl:"A",  hint:"L middle hole",col:0},
-  {id:"cl-g",  lbl:"G",  hint:"L ring hole",  col:0},
-  {id:"cl-f",  lbl:"F",  hint:"L pinky key",  col:0},
-  {id:"cl-e",  lbl:"E",  hint:"R index hole", col:1},
-  {id:"cl-d",  lbl:"D",  hint:"R middle hole",col:1},
-  {id:"cl-cs", lbl:"C#", hint:"R ring hole",  col:1},
-  {id:"cl-c",  lbl:"C",  hint:"R pinky key",  col:1}
+const CL_LAYOUT = [
+  {id:"cl-reg",  lbl:"Reg",  hint:"Register (thumb)",  col:0},
+  {id:"cl-b",    lbl:"B",    hint:"Left index hole",   col:0},
+  {id:"cl-a",    lbl:"A",    hint:"Left middle hole",  col:0},
+  {id:"cl-g",    lbl:"G",    hint:"Left ring hole",    col:0},
+  {id:"cl-f",    lbl:"F",    hint:"Left pinky key",    col:0},
+  {id:"cl-e",    lbl:"E",    hint:"Right index hole",  col:1},
+  {id:"cl-d",    lbl:"D",    hint:"Right middle hole", col:1},
+  {id:"cl-cs",   lbl:"C#",   hint:"Right ring hole",   col:1},
+  {id:"cl-c",    lbl:"C",    hint:"Right pinky key",   col:1}
 ];
 
-function buildInstrumentDiagram(inst, activeKeys){
-  var wrap=document.getElementById("fing-visual");
+/* ── buildInstrumentDiagram — redraws diagram each time ── */
+function buildInstrumentDiagram(instName, activeKeys) {
+  var wrap = document.getElementById("fing-visual");
   if(!wrap) return;
-  wrap.innerHTML="";
-  if(inst==="Trombone"){
-    var row=document.createElement("div");
-    row.style.cssText="display:flex;gap:6px;align-items:flex-end;justify-content:center;flex-wrap:wrap";
-    for(var p=1;p<=7;p++){
-      var col=document.createElement("div");
-      col.style.cssText="display:flex;flex-direction:column;align-items:center;gap:4px";
-      var box=document.createElement("div");
-      var act=activeKeys&&activeKeys[0]===p;
-      var ht=28+p*7;
-      box.style.cssText="width:32px;height:"+ht+"px;border-radius:4px;border:1.5px solid "+(act?"var(--pl)":"var(--border2)")+";background:"+(act?"var(--purple)":"var(--bg3)")+";transition:all .25s;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;"+(act?"box-shadow:0 4px 14px rgba(127,119,221,.35);":"");
-      box.innerHTML="<span style='font-size:9px;color:"+(act?"#fff":"var(--text3)")+";font-family:DM Mono,monospace'>"+p+"</span>";
-      var lbl=document.createElement("div");
-      lbl.style.cssText="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace";
-      lbl.textContent="Pos "+p;
-      col.appendChild(box); col.appendChild(lbl); row.appendChild(col);
+  wrap.innerHTML = "";
+
+  if(instName === "Trombone") {
+    // 7 slide position boxes, heights increase with position number
+    var row = document.createElement("div");
+    row.style.cssText = "display:flex;gap:6px;align-items:flex-end;justify-content:center;flex-wrap:wrap";
+    for(var p = 1; p <= 7; p++) {
+      var col = document.createElement("div");
+      col.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:4px";
+      var box = document.createElement("div");
+      var active = activeKeys && activeKeys[0] === p;
+      var ht = 28 + p * 7;
+      box.style.cssText = "width:32px;height:" + ht + "px;border-radius:4px;" +
+        "border:1.5px solid " + (active ? "var(--pl)" : "var(--border2)") + ";" +
+        "background:" + (active ? "var(--purple)" : "var(--bg3)") + ";" +
+        "transition:all .25s;display:flex;align-items:flex-end;justify-content:center;" +
+        "padding-bottom:5px;" +
+        (active ? "box-shadow:0 4px 14px rgba(127,119,221,.35);" : "");
+      box.innerHTML = "<span style='font-size:9px;color:" + (active ? "#fff" : "var(--text3)") + ";font-family:DM Mono,monospace'>" + p + "</span>";
+      var lbl = document.createElement("div");
+      lbl.style.cssText = "font-size:9px;color:var(--text3);font-family:'DM Mono',monospace";
+      lbl.textContent = "Pos " + p;
+      col.appendChild(box);
+      col.appendChild(lbl);
+      row.appendChild(col);
     }
     wrap.appendChild(row);
-    var hint=document.createElement("div");
-    hint.style.cssText="font-size:10px;color:var(--text3);text-align:center;margin-top:4px";
-    hint.textContent="1 = closed   7 = fully extended";
+    var hint = document.createElement("div");
+    hint.style.cssText = "font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px;text-align:center";
+    hint.textContent = "1 = closed     7 = fully extended";
     wrap.appendChild(hint);
-  } else if(inst==="Saxophone"||inst==="Clarinet"){
-    var layout=inst==="Saxophone"?SAX_LAYOUT:CL_LAYOUT;
-    var isHole=inst==="Clarinet";
-    var grid=document.createElement("div");
-    grid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;align-items:start";
-    var cols=[[],[]];
+
+  } else if(instName === "Saxophone" || instName === "Clarinet") {
+    var layout = instName === "Saxophone" ? SAX_LAYOUT : CL_LAYOUT;
+    var isHole = instName === "Clarinet";
+    var grid = document.createElement("div");
+    grid.style.cssText = "display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;align-items:start";
+    var cols = [[],[]];
     layout.forEach(function(k){ cols[k.col].push(k); });
-    var maxR=Math.max(cols[0].length,cols[1].length);
-    for(var r=0;r<maxR;r++){
-      for(var cc=0;cc<2;cc++){
-        var cell=document.createElement("div");
-        cell.style.cssText="display:flex;align-items:center;gap:7px;min-height:32px";
-        var k=cols[cc][r];
-        if(k){
-          var pressed=activeKeys&&Array.isArray(activeKeys)&&activeKeys.indexOf(k.id)!==-1;
-          var shape=document.createElement("div");
-          if(isHole){
-            shape.style.cssText="width:26px;height:26px;border-radius:50%;flex-shrink:0;border:1.5px solid "+(pressed?"var(--pl)":"var(--border2)")+";background:"+(pressed?"var(--purple)":"var(--bg3)")+";transition:all .25s;"+(pressed?"box-shadow:0 0 10px rgba(127,119,221,.4);":"");
+    var maxRows = Math.max(cols[0].length, cols[1].length);
+    for(var r = 0; r < maxRows; r++) {
+      for(var cc = 0; cc < 2; cc++) {
+        var cell = document.createElement("div");
+        cell.style.cssText = "display:flex;align-items:center;gap:7px;min-height:32px";
+        var k = cols[cc][r];
+        if(k) {
+          var active2 = activeKeys && Array.isArray(activeKeys) && activeKeys.indexOf(k.id) !== -1;
+          var shape = document.createElement("div");
+          if(isHole) {
+            shape.style.cssText = "width:26px;height:26px;border-radius:50%;flex-shrink:0;" +
+              "border:1.5px solid " + (active2 ? "var(--pl)" : "var(--border2)") + ";" +
+              "background:" + (active2 ? "var(--purple)" : "var(--bg3)") + ";" +
+              "transition:all .25s;" +
+              (active2 ? "box-shadow:0 0 10px rgba(127,119,221,.4);" : "");
           } else {
-            shape.style.cssText="width:30px;height:20px;border-radius:4px;flex-shrink:0;border:1.5px solid "+(pressed?"var(--pl)":"var(--border2)")+";background:"+(pressed?"var(--purple)":"var(--bg3)")+";transition:all .25s;"+(pressed?"box-shadow:0 0 10px rgba(127,119,221,.4);":"");
+            shape.style.cssText = "width:30px;height:20px;border-radius:4px;flex-shrink:0;" +
+              "border:1.5px solid " + (active2 ? "var(--pl)" : "var(--border2)") + ";" +
+              "background:" + (active2 ? "var(--purple)" : "var(--bg3)") + ";" +
+              "transition:all .25s;" +
+              (active2 ? "box-shadow:0 0 10px rgba(127,119,221,.4);" : "");
           }
-          var info=document.createElement("div");
-          var l2=document.createElement("div");
-          l2.style.cssText="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace";
-          l2.textContent=k.lbl;
-          var h2=document.createElement("div");
-          h2.style.cssText="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace";
-          h2.textContent=k.hint;
-          info.appendChild(l2); info.appendChild(h2);
-          cell.appendChild(shape); cell.appendChild(info);
+          var info = document.createElement("div");
+          var lbl2 = document.createElement("div");
+          lbl2.style.cssText = "font-size:10px;color:var(--text2);font-family:'DM Mono',monospace";
+          lbl2.textContent = k.lbl;
+          var hint2 = document.createElement("div");
+          hint2.style.cssText = "font-size:9px;color:var(--text3);font-family:'DM Mono',monospace";
+          hint2.textContent = k.hint;
+          info.appendChild(lbl2);
+          info.appendChild(hint2);
+          cell.appendChild(shape);
+          cell.appendChild(info);
         }
         grid.appendChild(cell);
       }
     }
     wrap.appendChild(grid);
+
   } else {
-    var isFr=inst==="French Horn";
-    var row2=document.createElement("div");
-    row2.style.cssText="display:flex;gap:16px;justify-content:center";
-    for(var v=1;v<=3;v++){
-      var vc=document.createElement("div");
-      vc.style.cssText="display:flex;flex-direction:column;align-items:center;gap:6px";
-      var vn=document.createElement("div");
-      vn.style.cssText="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace";
-      vn.textContent=isFr?(v===1?"1st":v===2?"2nd":"3rd"):String(v);
-      var vb=document.createElement("div");
-      var va=activeKeys&&activeKeys.indexOf(v)!==-1;
-      vb.style.cssText="width:44px;height:60px;border-radius:8px;border:1.5px solid "+(va?"var(--pl)":"var(--border2)")+";background:"+(va?"var(--purple)":"var(--bg3)")+";transition:all .25s;"+(va?"box-shadow:0 4px 14px rgba(127,119,221,.35);":"");
-      vc.appendChild(vn); vc.appendChild(vb); row2.appendChild(vc);
+    // Brass valve instruments: Trumpet, Flugelhorn, Cornet, Euphonium, French Horn
+    var isFrench = instName === "French Horn";
+    var row2 = document.createElement("div");
+    row2.style.cssText = "display:flex;gap:16px;justify-content:center";
+    for(var v = 1; v <= 3; v++) {
+      var vcol = document.createElement("div");
+      vcol.style.cssText = "display:flex;flex-direction:column;align-items:center;gap:6px";
+      var vnum = document.createElement("div");
+      vnum.style.cssText = "font-size:10px;color:var(--text3);font-family:'DM Mono',monospace";
+      vnum.textContent = isFrench ? (v === 1 ? "1st" : v === 2 ? "2nd" : "3rd") : String(v);
+      var vbtn = document.createElement("div");
+      var vactive = activeKeys && activeKeys.indexOf(v) !== -1;
+      vbtn.style.cssText = "width:44px;height:60px;border-radius:8px;" +
+        "border:1.5px solid " + (vactive ? "var(--pl)" : "var(--border2)") + ";" +
+        "background:" + (vactive ? "var(--purple)" : "var(--bg3)") + ";" +
+        "transition:all .25s;" +
+        (vactive ? "box-shadow:0 4px 14px rgba(127,119,221,.35);" : "");
+      vcol.appendChild(vnum);
+      vcol.appendChild(vbtn);
+      row2.appendChild(vcol);
     }
     wrap.appendChild(row2);
-    if(isFr){
-      var rh=document.createElement("div");
-      rh.style.cssText="font-size:10px;color:var(--text3);text-align:center;margin-top:4px";
-      rh.textContent="Rotary valves — right hand";
+    if(isFrench) {
+      var rh = document.createElement("div");
+      rh.style.cssText = "font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px;text-align:center";
+      rh.textContent = "Rotary valves — right hand";
       wrap.appendChild(rh);
     }
   }
 }
 
-function buildFingeringChart(){
-  var data=INST_DATA[currentInstrument]||INST_DATA["Trumpet"];
-  var titleEl=document.getElementById("fing-chart-title");
-  var descEl=document.getElementById("fing-chart-desc");
-  var legEl=document.getElementById("fing-legend");
-  if(titleEl) titleEl.textContent=data.title;
-  if(descEl)  descEl.textContent=data.desc;
-  if(legEl)   legEl.textContent=data.legend;
-  var wrap=document.querySelector(".fing-note-select");
-  if(wrap){
-    wrap.innerHTML="";
-    Object.keys(data.notes).forEach(function(note){
-      var btn=document.createElement("button");
-      btn.className="fing-note-btn"; btn.textContent=note;
-      btn.onclick=(function(n,b){ return function(){ showFingering(n,b); }; })(note,btn);
+/* ── buildFingeringChart — populates note buttons and idle diagram ── */
+function buildFingeringChart() {
+  var instName = currentInstrument;
+  var data = INST_DATA[instName] || INST_DATA["Trumpet"];
+  var titleEl = document.getElementById("fing-chart-title");
+  var descEl  = document.getElementById("fing-chart-desc");
+  var legEl   = document.getElementById("fing-legend");
+  if(titleEl) titleEl.textContent = data.chartTitle;
+  if(descEl)  descEl.textContent  = data.chartDesc;
+  if(legEl)   legEl.textContent   = data.legend;
+  var wrap = document.querySelector(".fing-note-select");
+  if(wrap) {
+    wrap.innerHTML = "";
+    Object.keys(data.notes).forEach(function(note) {
+      var btn = document.createElement("button");
+      btn.className = "fing-note-btn";
+      btn.textContent = note;
+      btn.onclick = (function(n, b){ return function(){ showFingering(n, b); }; })(note, btn);
       wrap.appendChild(btn);
     });
   }
-  document.getElementById("fing-note-name").textContent="Select a note";
-  document.getElementById("fing-alt").textContent="";
-  buildInstrumentDiagram(currentInstrument, null);
+  document.getElementById("fing-note-name").textContent = "Select a note";
+  document.getElementById("fing-alt").textContent = "";
+  buildInstrumentDiagram(instName, null);
 }
 
-function showFingering(note, btn){
-  var data=INST_DATA[currentInstrument]||INST_DATA["Trumpet"];
+/* ── showFingering — highlight selected note ── */
+function showFingering(note, btn) {
+  var instName = currentInstrument;
+  var data = INST_DATA[instName] || INST_DATA["Trumpet"];
   document.querySelectorAll(".fing-note-btn").forEach(function(b){ b.classList.remove("on"); });
   btn.classList.add("on");
-  var f=data.notes[note]; if(!f) return;
-  document.getElementById("fing-note-name").textContent=note;
-  document.getElementById("fing-alt").textContent=f.d;
-  buildInstrumentDiagram(currentInstrument, f.v);
-  var spoken="";
-  if(currentInstrument==="Trombone"){
-    spoken="For "+note+" on trombone, use slide "+f.d+".";
-  } else if(currentInstrument==="Saxophone"){
-    spoken=f.v.length===0?note+" on saxophone — open.":note+" on saxophone: "+f.d+".";
-  } else if(currentInstrument==="Clarinet"){
-    spoken=f.v.length===0?note+" on clarinet — open.":note+" on clarinet: "+f.d+".";
+  var f = data.notes[note];
+  if(!f) return;
+  document.getElementById("fing-note-name").textContent = note;
+  document.getElementById("fing-alt").textContent = f.d;
+  buildInstrumentDiagram(instName, f.v);
+  var spoken = "";
+  if(instName === "Trombone") {
+    spoken = "For " + note + " on trombone, use slide " + f.d + ".";
+  } else if(instName === "Saxophone") {
+    spoken = f.v.length === 0 ? note + " on saxophone — open, no keys." : note + " on saxophone: " + f.d + ".";
+  } else if(instName === "Clarinet") {
+    spoken = f.v.length === 0 ? note + " on clarinet — open." : note + " on clarinet: " + f.d + ".";
   } else {
-    spoken=f.v.length===0?note+" is open — no valves pressed.":
-      "For "+note+", press "+(f.v.length>1?"valves":"valve")+" "+f.v.join(" and ")+".";
+    spoken = f.v.length === 0 ? note + " is open — no valves pressed." :
+      "For " + note + ", press " + (f.v.length > 1 ? "valves" : "valve") + " " + f.v.join(" and ") + ".";
   }
   geneSpeak(spoken);
   if(voiceOn) speak(spoken);
 }
 
-function setInstrument(name){
-  currentInstrument=name;
-  var data=INST_DATA[name]||INST_DATA["Trumpet"];
-  var qa=document.querySelector(".quick-asks");
-  if(qa&&data.quickAsks){
-    qa.innerHTML=data.quickAsks.map(function(q){
-      return "<button class='qa' onclick='setQ(this.textContent)'>"+q+"</button>";
+/* ── setInstrument — called by dropdown change ── */
+function setInstrument(name) {
+  currentInstrument = name;
+  var data = INST_DATA[name] || INST_DATA["Trumpet"];
+
+  // Update ask panel heading
+  var askLbl = document.getElementById("inst-ask-label");
+  if(askLbl) askLbl.textContent = name.toLowerCase();
+
+  // Update quick-asks with instrument-relevant suggestions
+  var qaMap = {
+    "Trumpet":    ["High notes","Embouchure","Long tones","Jazz improv","Tone quality"],
+    "Saxophone":  ["Altissimo","Reed strength","Vibrato","Crossing the break","Tone quality"],
+    "Clarinet":   ["Register break","Throat tones","Reed position","Articulation","Tone quality"],
+    "Flugelhorn": ["Warm tone","Air support","High notes","Jazz ballads","Intonation"],
+    "French Horn":["Hand stopping","High range","Transposition","Tone colour","Orchestral"],
+    "Trombone":   ["Slide positions","Glissandi","Legato tone","High range","Jazz phrasing"],
+    "Cornet":     ["Tone colour","High notes","Brass band","Embouchure","Intonation"],
+    "Euphonium":  ["Low register","Tone depth","Valves","Breath support","Intonation"]
+  };
+  var qs = qaMap[name] || qaMap["Trumpet"];
+  var qa = document.querySelector(".quick-asks");
+  if(qa) {
+    qa.innerHTML = qs.map(function(q){
+      return "<button class='qa' onclick='setQ(this.textContent)'>" + q + "</button>";
     }).join("");
   }
+
+  // Rebuild fingering chart for new instrument
   buildFingeringChart();
+
+  // Gene greeting
   geneSpeak(data.greet);
 }
 
@@ -1937,15 +2397,15 @@ async function handleUpload(file){
   // Extract pitch data from decoded buffer
   showUploadProgress('Extracting notes…', 50);
   const pitchData = extractPitchFromBuffer(decoded);
-  showUploadProgress('Sending to Claude for analysis…', 70);
-  await scoreWithClaude(pitchData, file.name);
+  showUploadProgress('Analysing with ToneWise AI…', 70);
+  await scoreWithToneWise(pitchData, file.name);
 }
 
 async function scoreLiveSession(){
   if(!isPro){ openUpgrade(); return; }
   if(sessionPitchData.length < 5){ alert('No live session data yet. Record a session first.'); return; }
   showUploadProgress('Scoring your live session…', 40);
-  await scoreWithClaude(sessionPitchData, 'Live session');
+  await scoreWithToneWise(sessionPitchData, 'Live session');
 }
 
 function extractPitchFromBuffer(buffer){
@@ -1965,7 +2425,7 @@ function extractPitchFromBuffer(buffer){
   return results;
 }
 
-async function scoreWithClaude(pitchData, sourceName){
+async function scoreWithToneWise(pitchData, sourceName){
   if(!pitchData.length){ hideUploadProgress(); alert('No pitched notes detected in this audio.'); return; }
   const notes=[...new Set(pitchData.map(d=>d.note))];
   const avgCents=pitchData.reduce((s,d)=>s+Math.abs(d.cents),0)/pitchData.length;
@@ -1980,29 +2440,28 @@ async function scoreWithClaude(pitchData, sourceName){
   const variance=centVals.reduce((s,v)=>s+(v-mean)**2,0)/centVals.length;
   const timing=Math.max(0,100-Math.sqrt(variance)*2);
 
-  const prompt=`You are Gene, an expert trumpet coach scoring a student's ${sourceName}. 
-Data: ${pitchData.length} note samples, pitch accuracy ${pitchAcc.toFixed(1)}%, timing consistency ${timing.toFixed(1)}%, notes played: ${topNotes.join(', ')}.
+  const prompt=`You are Gene, the ToneWise expert ${currentInstrument} coach. Score a student performance: ${sourceName}.
+Data: ${pitchData.length} note samples, pitch accuracy ${pitchAcc.toFixed(1)}%, timing consistency ${timing.toFixed(1)}%, notes: ${topNotes.join(', ')}.
 Average pitch deviation: ${avgCents.toFixed(1)} cents.
-
-Write a structured coaching report with:
-1. Overall score (0-100) as a single number on the first line like "SCORE:82"
+Write a structured ${currentInstrument} coaching report:
+1. Overall score 0-100 on first line as "SCORE:82"
 2. Three specific strengths
-3. Two specific areas to improve
+3. Two areas to improve (mention ${currentInstrument} technique)
 4. A motivating closing sentence.
-Be warm, specific, and constructive.`;
+Be warm, specific, constructive.`;
 
   try {
-    showUploadProgress('Claude is scoring…', 85);
-    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt,max_tokens:300})});
-    const data=await res.json();
-    const text=data.content?.[0]?.text||'';
+    showUploadProgress('ToneWise AI is scoring…', 85);
+    const result = await callWorker(prompt, 350);
+    const text = result.ok ? result.text : '';
+    if(!result.ok){ hideUploadProgress(); $('score-coaching').textContent='⚠ '+result.error; $('score-coaching').style.color='var(--coral)'; $('score-result').style.display='block'; return; }
     hideUploadProgress();
     // Parse score
     const scoreMatch=text.match(/SCORE:(\d+)/);
     const overallScore=scoreMatch?+scoreMatch[1]:Math.round(pitchAcc);
     const coaching=text.replace(/SCORE:\d+\n?/,'').trim();
     showScoreResult({ overall:overallScore, pitchAcc:pitchAcc.toFixed(0), timing:timing.toFixed(0), notes:topNotes, badNotes:[], coaching, sourceName, pitchData });
-  } catch(e){ hideUploadProgress(); alert('Could not connect to Claude. Check your connection.'); }
+  } catch(e){ hideUploadProgress(); alert('Could not connect to ToneWise AI. Check your connection.'); }
 }
 
 function showUploadProgress(label, pct){
@@ -2034,113 +2493,95 @@ function showScoreResult(r){
   persistProfile();
 }
 
-/* ════════════════════════════════════════════════════════
-   MUSIC NOTATION RENDERER (on-screen SVG)
-   Draws detected notes on a treble-clef staff.
-   Colour-coded by intonation accuracy.
-=══════════════════════════════════════════════════════════ */
-var NOTE_STAFF_POS = {
-  'C4':6,'C#4':6,'Db4':6,'D4':5.5,'D#4':5.5,'Eb4':5.5,'E4':5,
-  'F4':4.5,'F#4':4.5,'Gb4':4.5,'G4':4,'G#4':4,'Ab4':4,
-  'A4':3.5,'A#4':3.5,'Bb4':3.5,'B4':3,
-  'C5':2.5,'C#5':2.5,'Db5':2.5,'D5':2,'D#5':2,'Eb5':2,'E5':1.5,
-  'F5':1,'F#5':1,'Gb5':1,'G5':0.5,'G#5':0.5,'Ab5':0.5,
-  'A5':0,'A#5':0,'Bb5':0,'B5':-0.5,'C6':-1
-};
-var STAFF_TOP_PX=28, STAFF_STEP_PX=8, STAFF_N=5, MAX_NOTES=22, NOTE_SPC=28, STAFF_L=52;
 
-function renderNotationStaff(pitchData){
-  var svg=document.getElementById('notation-svg');
-  var wrap=document.getElementById('notation-wrap');
-  if(!svg||!pitchData||!pitchData.length) return;
-  var unique=[],seen={};
-  for(var i=0;i<pitchData.length;i++){
-    var n=pitchData[i].note;
-    if(!seen[n]){ seen[n]=true; unique.push(pitchData[i]); }
-    if(unique.length>=MAX_NOTES) break;
-  }
-  var vw=Math.max(680, STAFF_L+unique.length*NOTE_SPC+40);
-  var vh=160;
-  var btmY=STAFF_TOP_PX+(STAFF_N-1)*STAFF_STEP_PX*2;
-  var html='';
-  // Staff lines
-  for(var sl=0;sl<STAFF_N;sl++){
-    var ly=STAFF_TOP_PX+sl*STAFF_STEP_PX*2;
-    html+='<line stroke="#9897b2" stroke-width="0.8" opacity=".6" x1="10" y1="'+ly+'" x2="'+(vw-10)+'" y2="'+ly+'"/>';
-  }
-  // Treble clef
-  html+='<text x="12" y="'+(btmY+6)+'" style="font-size:52px;fill:#9897b2;font-family:serif">&#119070;</text>';
-  // Notes
-  unique.forEach(function(d,idx){
-    var base=d.note.replace(/[0-9]/g,'');
-    var oct=parseInt((d.note.match(/[0-9]+/)||['4'])[0]);
-    var pos=NOTE_STAFF_POS[base+oct];
-    if(pos===undefined) return;
-    var x=STAFF_L+idx*NOTE_SPC+20;
-    var y=btmY-pos*STAFF_STEP_PX*2;
-    var absC=Math.abs(d.cents||0);
-    var col=absC>20?'#d85a30':d.cents>5?'#1d9e75':d.cents<-5?'#378add':'#eeeef5';
-    // Ledger lines below
-    if(y>btmY){
-      for(var ll=btmY+STAFF_STEP_PX*2;ll<=y+2;ll+=STAFF_STEP_PX*2)
-        html+='<line stroke="#9897b2" stroke-width="0.8" x1="'+(x-8)+'" y1="'+ll+'" x2="'+(x+8)+'" y2="'+ll+'"/>';
+/* ════════════════════════════════════════════════════════
+   END-OF-SESSION FULL ANALYSIS
+   Called when recording stops. Sends full session data
+   to AI for a structured level assessment + action plan.
+=══════════════════════════════════════════════════════════ */
+async function getEndOfSessionAnalysis(){
+  if(sessionPitchData.length < 5) return;
+  setStatus('thinking','Generating full session analysis...');
+  var allData   = sessionPitchData;
+  var avgC      = allData.reduce(function(s,d){ return s+Math.abs(d.cents); },0)/allData.length;
+  var pitchAcc  = Math.max(0,100-avgC).toFixed(1);
+  var noteSet   = [...new Set(allData.map(function(d){return d.note;}))];
+  var sharpCt   = allData.filter(function(d){return d.cents>15;}).length;
+  var flatCt    = allData.filter(function(d){return d.cents<-15;}).length;
+  var inTuneCt  = allData.filter(function(d){return Math.abs(d.cents)<=15;}).length;
+  var inTunePct = Math.round(inTuneCt/allData.length*100);
+  var sessMins  = Math.max(1, Math.round((allData.length / 22)));
+  var loNote    = noteSet.sort()[0] || '?';
+  var hiNote    = noteSet.sort().slice(-1)[0] || '?';
+
+  var prompt = "You are Gene, a master " + currentInstrument + " teacher. " +
+    "A student finished a practice session. Write a structured report. " +
+    "Data: " + allData.length + " pitch samples, ~" + sessMins + " min session. " +
+    "Instrument: " + currentInstrument + ". Self-reported level: " + currentLevel + ". " +
+    "Notes played: " + noteSet.join(", ") + " (range: " + loNote + " to " + hiNote + "). " +
+    "Pitch accuracy: " + pitchAcc + "%. In-tune notes: " + inTunePct + "%. " +
+    "Sharp: " + sharpCt + ", flat: " + flatCt + ", avg deviation: " + avgC.toFixed(1) + " cents. " +
+    "IMPORTANT: Structure your response with these exact labels on separate lines: " +
+    "LEVEL ASSESSMENT: (classify as Beginner/Intermediate/Advanced based on data, explain in one sentence why) " +
+    "STRENGTHS: (two specific strengths observed in this session) " +
+    "AREAS TO IMPROVE: (two specific weaknesses with " + currentInstrument + " technique detail) " +
+    "PRACTICE EXERCISES: (three specific named exercises with brief instructions to do before next session) " +
+    "SESSION GOAL: (one clear measurable goal for the next session) " +
+    "ENCOURAGEMENT: (one warm closing sentence). " +
+    "Be specific to " + currentInstrument + " technique throughout. No generic advice.";
+
+  var result = await callWorker(prompt, 550);
+  if(result.ok){
+    var text = result.text;
+    showCoaching(text);
+    // Read a short spoken version
+    if(voiceOn){
+      var firstLine = text.split('
+').find(function(l){ return l.trim().length > 0; }) || '';
+      speak("Session complete. " + firstLine + " Check the coaching panel for your full report and exercises.");
     }
-    // Ledger lines above
-    if(y<STAFF_TOP_PX){
-      for(var ll2=STAFF_TOP_PX-STAFF_STEP_PX*2;ll2>=y-2;ll2-=STAFF_STEP_PX*2)
-        html+='<line stroke="#9897b2" stroke-width="0.8" x1="'+(x-8)+'" y1="'+ll2+'" x2="'+(x+8)+'" y2="'+ll2+'"/>';
-    }
-    html+='<ellipse cx="'+x+'" cy="'+y+'" rx="5.5" ry="4.2" fill="'+col+'" stroke="'+col+'" stroke-width="0.5"/>';
-    var midY=STAFF_TOP_PX+4*STAFF_STEP_PX;
-    if(y>=midY)
-      html+='<line stroke="'+col+'" stroke-width="1.2" x1="'+(x+5)+'" y1="'+y+'" x2="'+(x+5)+'" y2="'+(y-26)+'"/>';
-    else
-      html+='<line stroke="'+col+'" stroke-width="1.2" x1="'+(x-5)+'" y1="'+y+'" x2="'+(x-5)+'" y2="'+(y+26)+'"/>';
-    html+='<text x="'+x+'" y="'+(vh-12)+'" style="font-size:9px;fill:'+col+';font-family:DM Mono,monospace;text-anchor:middle">'+d.note+'</text>';
-  });
-  // Bar lines every 4 notes
-  for(var bl=4;bl<unique.length;bl+=4){
-    var bx=STAFF_L+bl*NOTE_SPC+6;
-    html+='<line stroke="#5a5972" stroke-width="1" opacity=".5" x1="'+bx+'" y1="'+STAFF_TOP_PX+'" x2="'+bx+'" y2="'+btmY+'"/>';
+    setStatus('idle','Session analysis complete — see coaching panel');
+  } else {
+    geneSpeak("Session complete! Great work. Your data has been saved.");
+    setStatus('idle','Ready');
   }
-  svg.setAttribute('viewBox','0 0 '+vw+' '+vh);
-  svg.innerHTML=html;
-  if(wrap) wrap.style.display='block';
 }
 
 /* ════════════════════════════════════════════════════════
-   PDF EXPORT — includes music notation staff
-=══════════════════════════════════════════════════════════ */
+   PDF EXPORT
+═══════════════════════════════════════════════════════════ */
 async function exportPDF(){
   if(!scoreResult){ alert('No score data yet. Analyse a recording first.'); return; }
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
   const W=210, margin=20;
 
-  // ── Header band ──
+  // Header band
   doc.setFillColor(127,119,221); doc.rect(0,0,W,28,'F');
   doc.setTextColor(255,255,255);
-  doc.setFontSize(18); doc.setFont('helvetica','bold');
-  doc.text('ToneWise AI — ' + currentInstrument + ' Practice Report', margin, 15);
-  doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text(new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}), margin, 23);
+  doc.setFontSize(20); doc.setFont('helvetica','bold');
+  doc.text('ToneWise AI — ' + currentInstrument + ' Practice Report',margin,16);
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text(new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}),margin,23);
 
-  // ── Source + score circle ──
+  // Source label
   doc.setTextColor(80,80,120);
-  doc.setFontSize(10); doc.setFont('helvetica','normal');
-  doc.text('Source: '+scoreResult.sourceName, margin, 35);
+  doc.setFontSize(11); doc.setFont('helvetica','normal');
+  doc.text('Source: '+scoreResult.sourceName, margin, 36);
 
+  // Score circle (text version)
   const scoreColor = scoreResult.overall>=80?[29,158,117]:scoreResult.overall>=60?[239,159,39]:[216,90,48];
   doc.setFillColor(...scoreColor);
-  doc.circle(W-margin-14, 42, 13, 'F');
+  doc.circle(W-margin-18, 46, 16, 'F');
   doc.setTextColor(255,255,255);
-  doc.setFontSize(13); doc.setFont('helvetica','bold');
-  doc.text(String(scoreResult.overall), W-margin-14, 43, {align:'center'});
-  doc.setFontSize(7); doc.setFont('helvetica','normal');
-  doc.text('/100', W-margin-14, 49, {align:'center'});
+  doc.setFontSize(14); doc.setFont('helvetica','bold');
+  doc.text(String(scoreResult.overall), W-margin-18, 47, {align:'center'});
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text('/100', W-margin-18, 53, {align:'center'});
 
-  // ── Metrics grid ──
-  let y=39;
+  // Metrics grid
+  let y=42;
+  doc.setTextColor(30,30,50);
   const metrics=[
     ['Pitch accuracy', scoreResult.pitchAcc+'%'],
     ['Timing consistency', scoreResult.timing+'%'],
@@ -2148,164 +2589,173 @@ async function exportPDF(){
     ['Unique notes', String(scoreResult.notes.length)],
   ];
   metrics.forEach(([lbl,val],i)=>{
-    const x=margin+(i%2)*75;
-    if(i%2===0 && i>0) y+=19;
-    doc.setFillColor(245,244,255); doc.roundedRect(x,y,67,16,2,2,'F');
-    doc.setFontSize(7); doc.setTextColor(100,97,170); doc.text(lbl.toUpperCase(),x+4,y+6);
-    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,50);
-    doc.text(val,x+4,y+13);
+    const x=margin+(i%2)*80;
+    if(i%2===0 && i>0) y+=22;
+    doc.setFillColor(245,244,255); doc.roundedRect(x,y,72,18,3,3,'F');
+    doc.setFontSize(8); doc.setTextColor(100,97,170); doc.text(lbl.toUpperCase(),x+5,y+7);
+    doc.setFontSize(13); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,50);
+    doc.text(val,x+5,y+15);
     doc.setFont('helvetica','normal');
   });
-  y+=25;
+  y+=30;
 
-  // ── Notes played pills ──
-  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
-  doc.text('NOTES PLAYED', margin, y); y+=5;
-  const noteChunks=scoreResult.notes.reduce((rows,n,i)=>{ const row=Math.floor(i/12); if(!rows[row]) rows[row]=[]; rows[row].push(n); return rows; },[]);
+  // Notes played
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+  doc.text('NOTES PLAYED',margin,y); y+=6;
+  const noteChunks=scoreResult.notes.reduce((rows,n,i)=>{ const row=Math.floor(i/10); if(!rows[row]) rows[row]=[]; rows[row].push(n); return rows; },[]);
   noteChunks.forEach(row=>{
-    doc.setFontSize(8); doc.setFont('helvetica','normal');
+    doc.setFontSize(9); doc.setFont('helvetica','normal');
     row.forEach((n,i)=>{
-      doc.setFillColor(237,235,254); doc.roundedRect(margin+i*15,y,13,6,1.5,1.5,'F');
-      doc.setTextColor(83,74,183); doc.text(n,margin+i*15+6.5,y+4.5,{align:'center'});
+      doc.setFillColor(237,235,254); doc.roundedRect(margin+i*18,y,16,7,2,2,'F');
+      doc.setTextColor(83,74,183); doc.text(n,margin+i*18+8,y+5,{align:'center'});
     });
-    y+=9;
+    y+=10;
   });
-  y+=3;
+  y+=4;
 
-  // ── MUSIC NOTATION STAFF ──────────────────────────────
+  // ── MUSIC NOTATION STAFF ─────────────────────────────
+  // Draws detected notes on a treble-clef staff using
+  // jsPDF line/ellipse primitives, colour-coded by pitch.
+  // ─────────────────────────────────────────────────────
   doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
-  doc.text('PERFORMANCE — MUSIC NOTATION', margin, y); y+=4;
+  doc.text('PERFORMANCE — MUSIC NOTATION', margin, y); y += 4;
 
-  const staffL      = margin + 10;
-  const staffW      = W - margin - staffL - 4;
-  const lineGap     = 2.8;
-  const staffTop    = y;
-  const staffBottom = staffTop + 4 * lineGap * 2;
+  const staffL       = margin + 10;   // left edge (after clef space)
+  const staffW       = W - margin - staffL - 4;
+  const lineGap      = 2.8;           // mm between adjacent staff lines
+  const staffTop     = y;
+  const staffBottom  = staffTop + 4 * lineGap * 2;
 
   // 5 staff lines
   doc.setDrawColor(150,145,180); doc.setLineWidth(0.22);
-  for(let sl=0;sl<5;sl++){
+  for(let sl = 0; sl < 5; sl++){
     const ly = staffTop + sl * lineGap * 2;
-    doc.line(staffL-2, ly, staffL+staffW, ly);
+    doc.line(staffL - 2, ly, staffL + staffW, ly);
   }
 
-  // Treble clef
+  // Treble clef symbol
   doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.setTextColor(140,135,175);
-  doc.text('&', staffL-8, staffBottom+2);
+  doc.text('&', staffL - 8, staffBottom + 2);
 
-  // Note position table
+  // Note position table (line units from bottom E4)
   const PDF_POS = {
     'C4':6,'C#4':6,'Db4':6,'D4':5.5,'D#4':5.5,'Eb4':5.5,'E4':5,
     'F4':4.5,'F#4':4.5,'Gb4':4.5,'G4':4,'G#4':4,'Ab4':4,
     'A4':3.5,'A#4':3.5,'Bb4':3.5,'B4':3,
     'C5':2.5,'C#5':2.5,'Db5':2.5,'D5':2,'D#5':2,'Eb5':2,'E5':1.5,
     'F5':1,'F#5':1,'Gb5':1,'G5':0.5,'G#5':0.5,'Ab5':0.5,
-    'A5':0,'B5':-0.5,'C6':-1
+    'A5':0,'A#5':0,'Bb5':0,'B5':-0.5,'C6':-1
   };
 
-  // Deduplicate notes (max 24)
-  const pdfNotes=[]; const pdfSeen=new Set();
+  // Deduplicate: max 24 unique notes in play order
+  const pdfNotes = [];
+  const pdfSeen  = new Set();
   for(const d of scoreResult.pitchData){
     if(!pdfSeen.has(d.note)){ pdfSeen.add(d.note); pdfNotes.push(d); }
-    if(pdfNotes.length>=24) break;
+    if(pdfNotes.length >= 24) break;
   }
 
-  const noteSpacing = pdfNotes.length > 0 ? Math.min(7, staffW/pdfNotes.length) : 7;
+  const noteSpacing = Math.min(7, pdfNotes.length > 0 ? staffW / pdfNotes.length : 7);
 
-  pdfNotes.forEach((d,idx)=>{
-    const base   = d.note.replace(/\d+$/,'');
-    const octave = parseInt((d.note.match(/\d+/)||['4'])[0]);
-    const pos    = PDF_POS[base+octave];
-    if(pos===undefined) return;
+  pdfNotes.forEach((d, idx) => {
+    const base   = d.note.replace(/\d+$/, '');
+    const octave = parseInt((d.note.match(/\d+/) || ['4'])[0]);
+    const pos    = PDF_POS[base + octave];
+    if(pos === undefined) return;
 
-    const nx = staffL + idx*noteSpacing + noteSpacing*0.5;
-    const ny = staffBottom - pos*lineGap*2;
+    const nx = staffL + idx * noteSpacing + noteSpacing * 0.5;
+    const ny = staffBottom - pos * lineGap * 2;
 
     // Colour by intonation
-    const absC = Math.abs(d.cents||0);
-    let r=238,g=238,b=245;
-    if(absC>20){r=216;g=90;b=48;}
-    else if(d.cents>5){r=29;g=158;b=117;}
-    else if(d.cents<-5){r=55;g=138;b=221;}
+    const absC = Math.abs(d.cents || 0);
+    let r = 238, g = 238, b = 245;        // in tune
+    if(absC > 20){ r=216; g=90;  b=48; }  // off — coral
+    else if(d.cents >  5){ r=29;  g=158; b=117; }  // sharp — teal
+    else if(d.cents < -5){ r=55;  g=138; b=221; }  // flat  — blue
 
-    // Ledger lines
+    // Ledger lines below staff
     doc.setDrawColor(150,145,180); doc.setLineWidth(0.22);
-    if(ny>staffBottom+0.5)
-      for(let ll=staffBottom+lineGap*2;ll<=ny+0.5;ll+=lineGap*2)
-        doc.line(nx-2.8,ll,nx+2.8,ll);
-    if(ny<staffTop-0.5)
-      for(let ll=staffTop-lineGap*2;ll>=ny-0.5;ll-=lineGap*2)
-        doc.line(nx-2.8,ll,nx+2.8,ll);
+    if(ny > staffBottom + 0.5){
+      for(let ll = staffBottom + lineGap*2; ll <= ny + 0.5; ll += lineGap*2)
+        doc.line(nx - 2.8, ll, nx + 2.8, ll);
+    }
+    // Ledger lines above staff
+    if(ny < staffTop - 0.5){
+      for(let ll = staffTop - lineGap*2; ll >= ny - 0.5; ll -= lineGap*2)
+        doc.line(nx - 2.8, ll, nx + 2.8, ll);
+    }
 
-    // Note head
-    doc.setFillColor(r,g,b); doc.setDrawColor(r,g,b);
-    doc.ellipse(nx,ny,1.7,1.25,'F');
+    // Filled note head
+    doc.setFillColor(r, g, b); doc.setDrawColor(r, g, b);
+    doc.ellipse(nx, ny, 1.7, 1.25, 'F');
 
     // Stem
-    doc.setLineWidth(0.38);
-    const midY=staffTop+2*lineGap*2;
-    if(ny>=midY){ doc.line(nx+1.6,ny,nx+1.6,ny-6.5); }
-    else          { doc.line(nx-1.6,ny,nx-1.6,ny+6.5); }
+    doc.setLineWidth(0.38); doc.setDrawColor(r, g, b);
+    const midY = staffTop + 2 * lineGap * 2;
+    if(ny >= midY){ doc.line(nx + 1.6, ny, nx + 1.6, ny - 6.5); }
+    else           { doc.line(nx - 1.6, ny, nx - 1.6, ny + 6.5); }
 
-    // Note name label
+    // Note label below staff
     doc.setFontSize(5); doc.setFont('helvetica','normal');
-    doc.setTextColor(r,g,b);
-    doc.text(d.note, nx, staffBottom+6.5, {align:'center'});
+    doc.setTextColor(r, g, b);
+    doc.text(d.note, nx, staffBottom + 6.5, {align:'center'});
   });
 
   // Bar lines every 4 notes
   doc.setDrawColor(150,145,180); doc.setLineWidth(0.3);
-  for(let bl=4;bl<pdfNotes.length;bl+=4){
-    const bx=staffL+bl*noteSpacing+noteSpacing*0.1;
-    doc.line(bx,staffTop,bx,staffBottom);
+  for(let bl = 4; bl < pdfNotes.length; bl += 4){
+    const bx = staffL + bl * noteSpacing + noteSpacing * 0.1;
+    doc.line(bx, staffTop, bx, staffBottom);
   }
 
   // Colour legend
   y = staffBottom + 10;
-  const legend=[[238,238,245,'In tune'],[29,158,117,'Sharp'],[55,138,221,'Flat'],[216,90,48,'Off (>20c)']];
+  const legend = [
+    [238,238,245,'In tune'], [29,158,117,'Sharp'],
+    [55,138,221,'Flat'],     [216,90,48,'Off (>20c)']
+  ];
   doc.setFontSize(6.5); doc.setFont('helvetica','normal');
-  legend.forEach((l,i)=>{
-    const lx=margin+i*40;
-    doc.setFillColor(l[0],l[1],l[2]); doc.circle(lx+2,y-1,1.5,'F');
-    doc.setTextColor(80,80,100); doc.text(l[3],lx+5,y);
+  legend.forEach((l, i) => {
+    const lx = margin + i * 40;
+    doc.setFillColor(l[0], l[1], l[2]); doc.circle(lx + 2, y - 1, 1.5, 'F');
+    doc.setTextColor(80, 80, 100); doc.text(l[3], lx + 5, y);
   });
-  y+=9;
+  y += 9;
 
-  // ── Coaching notes ──
-  if(y+10>270){ doc.addPage(); y=20; }
-  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
-  doc.text('TONEWISE COACHING NOTES', margin, y); y+=5;
-  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(55,55,75);
+  // ── Coaching notes ────────────────────────────────────
+  doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+  doc.text('TONEWISE COACHING NOTES',margin,y); y+=6;
+  doc.setFontSize(9); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,80);
   const lines=doc.splitTextToSize(scoreResult.coaching, W-margin*2);
-  if(y+lines.length*4.5>275){ doc.addPage(); y=20; }
-  doc.text(lines,margin,y); y+=lines.length*4.5+8;
+  if(y + lines.length * 5 > 275){ doc.addPage(); y = 20; }
+  doc.text(lines,margin,y); y+=lines.length*5+8;
 
-  // ── Pitch accuracy bar chart ──
-  if(scoreResult.pitchData.length>4 && y<255){
-    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
-    doc.text('PITCH ACCURACY OVER SESSION', margin, y); y+=4;
-    const cW=W-margin*2, cH=18, chunks=20;
-    const cSize=Math.floor(scoreResult.pitchData.length/chunks);
+  // Pitch accuracy over time (simple bar chart)
+  if(scoreResult.pitchData.length>4){
+    doc.setFontSize(10); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+    doc.text('PITCH ACCURACY OVER SESSION',margin,y); y+=4;
+    const chartW=W-margin*2, chartH=24, chunks=20;
+    const chunkSize=Math.floor(scoreResult.pitchData.length/chunks);
     for(let i=0;i<chunks;i++){
-      const slice=scoreResult.pitchData.slice(i*cSize,(i+1)*cSize);
+      const slice=scoreResult.pitchData.slice(i*chunkSize,(i+1)*chunkSize);
       if(!slice.length) continue;
       const avg=slice.reduce((s,d)=>s+Math.abs(d.cents),0)/slice.length;
       const acc=Math.max(0,100-avg)/100;
-      const bh=acc*cH;
-      const col=acc>0.8?[29,158,117]:acc>0.6?[239,159,39]:[216,90,48];
-      doc.setFillColor(...col);
-      doc.rect(margin+i*(cW/chunks), y+cH-bh, cW/chunks-0.5, bh,'F');
+      const bh=acc*chartH;
+      const c=acc>0.8?[29,158,117]:acc>0.6?[239,159,39]:[216,90,48];
+      doc.setFillColor(...c);
+      doc.rect(margin+i*(chartW/chunks), y+chartH-bh, chartW/chunks-1, bh,'F');
     }
-    y+=cH+4;
+    y+=chartH+6;
   }
 
-  // ── Footer ──
-  doc.setFillColor(245,244,255); doc.rect(0,286,W,11,'F');
+  // Footer
+  doc.setFillColor(245,244,255); doc.rect(0,287,W,10,'F');
   doc.setFontSize(7); doc.setTextColor(127,119,221);
   doc.text('ToneWise AI · ' + currentInstrument + ' Coach · tonewiseapp.netlify.app', W/2, 293, {align:'center'});
 
   doc.save('ToneWise_' + currentInstrument + '_Report_' + new Date().toISOString().slice(0,10) + '.pdf');
-  geneSpeak("Your PDF report with music notation has been downloaded!");
+  geneSpeak("Your PDF report has been downloaded!");
 }
 
 /* ════════════════════════════════════════════════════════
@@ -2386,8 +2836,9 @@ const GENE_TIPS=[
 ];
 let tipIndex=0;
 function geneGreet(){
-  setTimeout(()=>{
-    geneSpeak('Hi! I am Gene, your AI ' + currentInstrument.toLowerCase() + ' coach. Tap me anytime for tips!');
+  setTimeout(function(){
+    var inst = currentInstrument || "trumpet";
+    geneSpeak("Hi! I am Gene, your AI " + inst.toLowerCase() + " coach. Tap me anytime for tips!");
   }, 1200);
 }
 function geneSpeak(text){
@@ -2522,24 +2973,608 @@ async function persistProfile(){
 ═══════════════════════════════════════════════════════════ */
 function $(id){ return document.getElementById(id); }
 function showPage(p){
-  document.querySelectorAll('.page').forEach(function(el){
+  // Hide every page completely first
+  document.querySelectorAll('.page').forEach(el=>{
     el.classList.remove('active');
-    el.style.display='none';
+    el.style.display = 'none';
   });
-  var target=$('page-'+p);
-  if(!target) return;
+  const target = $('page-'+p);
+  if(!target){ console.error('showPage: no element page-'+p); return; }
   target.classList.add('active');
-  if(p==='auth'){
-    target.style.display='flex';
-    target.style.alignItems='center';
-    target.style.justifyContent='center';
-    target.style.flexDirection='column';
-    target.style.minHeight='100vh';
+  // Auth page must be flex for vertical+horizontal centering
+  if(p === 'auth'){
+    target.style.display    = 'flex';
+    target.style.alignItems = 'center';
+    target.style.justifyContent = 'center';
+    target.style.flexDirection  = 'column';
+    target.style.minHeight      = '100vh';
   } else {
-    target.style.display='block';
+    target.style.display = 'block';
   }
-  window.scrollTo(0,0);
-  var abw=$('admin-btn-wrap'); if(abw) abw.style.display=(p==='app'&&isAdmin)?'inline-flex':'none';
+  window.scrollTo(0, 0);
+  // Show admin button only on app page for admin users
+  const abw = $('admin-btn-wrap');
+  if(abw) abw.style.display = (p === 'app' && isAdmin) ? 'inline-flex' : 'none';
+}
+
+
+/* ════════════════════════════════════════════════════════
+   ADMIN CONSOLE
+═══════════════════════════════════════════════════════════ */
+
+/* In-memory cache of all users fetched from Supabase */
+let adminUsers = [];
+
+/* ── Open admin page ─────────────────────────────────── */
+function openAdmin(){
+  if(!isAdmin){ alert('Access denied.'); return; }
+  showPage('admin');
+  loadAdminStats();
+  loadAdminUsers();
+  loadAdminConfig();
+}
+
+/* ── Stats ───────────────────────────────────────────── */
+async function loadAdminStats(){
+  try {
+    const { data, error } = await sb.from('profiles').select('id, is_pro, sessions_used, last_session_day');
+    if(error || !data) return;
+    const total = data.length;
+    const proCount = data.filter(u => u.is_pro).length;
+    const today = new Date().toISOString().slice(0,10);
+    const activeToday = data.filter(u => u.last_session_day === today).length;
+    const totalSessions = data.reduce((sum, u) => sum + (u.sessions_used || 0), 0);
+    $('adm-total-users').textContent = total;
+    $('adm-pro-users').textContent = proCount;
+    $('adm-active-today').textContent = activeToday;
+    $('adm-total-sessions').textContent = totalSessions;
+  } catch(e) {
+    console.error('Admin stats error:', e);
+  }
+}
+
+/* ── Load all users ──────────────────────────────────── */
+async function loadAdminUsers(){
+  const tbody = $('adm-user-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:16px">Loading…</td></tr>';
+  try {
+    /* Fetch profiles joined with auth users via email stored in profiles */
+    const { data, error } = await sb
+      .from('profiles')
+      .select('id, email, is_pro, is_active, sessions_used, created_at, last_session_day')
+      .order('created_at', { ascending: false });
+
+    if(error) throw error;
+    adminUsers = data || [];
+    renderAdminUsers(adminUsers);
+  } catch(e) {
+    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--coral);font-size:12px;padding:16px">Could not load users. Check Supabase RLS policy — admin needs SELECT on profiles.</td></tr>';
+  }
+}
+
+/* ── Render user rows ────────────────────────────────── */
+function renderAdminUsers(users){
+  const tbody = $('adm-user-tbody');
+  if(!users.length){
+    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:16px">No users found.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = users.map(u => {
+    const planTag = u.is_pro
+      ? '<span class="atag atag-pro">Pro</span>'
+      : '<span class="atag atag-free">Free</span>';
+    const isAdminUser = u.email === ADMIN_EMAIL;
+    const adminTag = isAdminUser ? ' <span class="atag atag-admin">Admin</span>' : '';
+    const activeTag = u.is_active === false
+      ? ' <span class="atag atag-inactive">Suspended</span>'
+      : '';
+    const joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
+    const proBtn = u.is_pro
+      ? `<button class="admin-action-btn danger" onclick="togglePlan('${u.id}',false,'${escAttr(u.email)}')">Remove Pro</button>`
+      : `<button class="admin-action-btn success" onclick="togglePlan('${u.id}',true,'${escAttr(u.email)}')">Grant Pro</button>`;
+    const suspendBtn = u.is_active === false
+      ? `<button class="admin-action-btn success" onclick="toggleActive('${u.id}',true,'${escAttr(u.email)}')">Reactivate</button>`
+      : `<button class="admin-action-btn danger" onclick="toggleActive('${u.id}',false,'${escAttr(u.email)}')">Suspend</button>`;
+    const resetBtn = `<button class="admin-action-btn" onclick="resetUserSessions('${u.id}','${escAttr(u.email)}')">Reset sessions</button>`;
+    return `<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(u.email||'—')}${adminTag}${activeTag}</td>
+      <td>${planTag}</td>
+      <td style="font-family:'DM Mono',monospace;font-size:12px">${u.sessions_used||0}</td>
+      <td style="font-size:11px;color:var(--text3)">${joined}</td>
+      <td style="white-space:nowrap">${isAdminUser?'<span style="font-size:11px;color:var(--text3)">—</span>':(proBtn+' '+suspendBtn+' '+resetBtn)}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ── Filter / search ─────────────────────────────────── */
+function filterAdminUsers(query){
+  const q = query.trim().toLowerCase();
+  if(!q){ renderAdminUsers(adminUsers); return; }
+  renderAdminUsers(adminUsers.filter(u => (u.email||'').toLowerCase().includes(q)));
+}
+
+/* ── Toggle Pro plan for a user ──────────────────────── */
+async function togglePlan(userId, makePro, email){
+  const action = makePro ? 'Grant Pro to' : 'Remove Pro from';
+  if(!confirm(action + ' ' + email + '?')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ is_pro: makePro }).eq('id', userId);
+    if(error) throw error;
+    /* Update local cache */
+    const u = adminUsers.find(x => x.id === userId);
+    if(u) u.is_pro = makePro;
+    renderAdminUsers(adminUsers.filter(x => ($('adm-search').value ? (x.email||'').toLowerCase().includes($('adm-search').value.toLowerCase()) : true)));
+    loadAdminStats();
+    showAdminToast(email + (makePro ? ' upgraded to Pro.' : ' reverted to Free.'));
+  } catch(e) {
+    alert('Could not update plan: ' + e.message);
+  }
+}
+
+/* ── Suspend / reactivate a user ─────────────────────── */
+async function toggleActive(userId, makeActive, email){
+  const action = makeActive ? 'Reactivate' : 'Suspend';
+  if(!confirm(action + ' account for ' + email + '?')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ is_active: makeActive }).eq('id', userId);
+    if(error) throw error;
+    const u = adminUsers.find(x => x.id === userId);
+    if(u) u.is_active = makeActive;
+    renderAdminUsers(adminUsers);
+    showAdminToast(email + (makeActive ? ' reactivated.' : ' suspended.'));
+  } catch(e) {
+    alert('Could not update status: ' + e.message);
+  }
+}
+
+/* ── Reset one user's session count ──────────────────── */
+async function resetUserSessions(userId, email){
+  if(!confirm('Reset session count for ' + email + '?')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ sessions_used: 0 }).eq('id', userId);
+    if(error) throw error;
+    const u = adminUsers.find(x => x.id === userId);
+    if(u) u.sessions_used = 0;
+    renderAdminUsers(adminUsers);
+    loadAdminStats();
+    showAdminToast(email + ' — sessions reset to 0.');
+  } catch(e) {
+    alert('Could not reset sessions: ' + e.message);
+  }
+}
+
+/* ── Reset ALL free-tier sessions ────────────────────── */
+async function resetAllSessions(){
+  if(!confirm('Reset session count to 0 for ALL free users? This cannot be undone.')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ sessions_used: 0 }).eq('is_pro', false);
+    if(error) throw error;
+    adminUsers.forEach(u => { if(!u.is_pro) u.sessions_used = 0; });
+    renderAdminUsers(adminUsers);
+    loadAdminStats();
+    showAdminToast('All free user sessions reset.');
+  } catch(e) {
+    alert('Could not reset sessions: ' + e.message);
+  }
+}
+
+/* ── Load/save platform config from localStorage ─────── */
+/* (In a production app this would be a Supabase config   */
+/*  table, but localStorage works for a single-file app.) */
+function loadAdminConfig(){
+  const cfg = JSON.parse(localStorage.getItem('tw_admin_cfg') || '{}');
+  if(cfg.freeSessions)  $('adm-free-sessions').value  = cfg.freeSessions;
+  if(cfg.sessionDur)    $('adm-session-dur').value    = cfg.sessionDur;
+  if(cfg.priceMonthly)  $('adm-price-monthly').value  = cfg.priceMonthly;
+  if(cfg.priceAnnual)   $('adm-price-annual').value   = cfg.priceAnnual;
+  if(cfg.stripeMonthly) $('adm-stripe-monthly').value = cfg.stripeMonthly;
+  if(cfg.paypalMonthly) $('adm-paypal-monthly').value = cfg.paypalMonthly;
+}
+
+function saveAdminConfig(){
+  const cfg = {
+    freeSessions:  parseInt($('adm-free-sessions').value)  || FREE_SESSIONS,
+    sessionDur:    parseInt($('adm-session-dur').value)    || 180,
+    priceMonthly:  $('adm-price-monthly').value.trim()     || '$9.99',
+    priceAnnual:   $('adm-price-annual').value.trim()      || '$79',
+    stripeMonthly: $('adm-stripe-monthly').value.trim(),
+    paypalMonthly: $('adm-paypal-monthly').value.trim(),
+  };
+  localStorage.setItem('tw_admin_cfg', JSON.stringify(cfg));
+
+  /* Apply live — patch the runtime constants where used */
+  if(cfg.stripeMonthly) window._admStripe = cfg.stripeMonthly;
+  if(cfg.paypalMonthly) window._admPaypal = cfg.paypalMonthly;
+
+  const msg = $('adm-save-msg');
+  msg.style.display = 'block';
+  setTimeout(() => msg.style.display='none', 2500);
+  showAdminToast('Settings saved successfully.');
+}
+
+/* ── Export user list as CSV ─────────────────────────── */
+function exportUsers(){
+  if(!adminUsers.length){ alert('No users loaded. Open admin console first.'); return; }
+  const header = ['Email','Plan','Sessions Used','Joined','Active'];
+  const rows = adminUsers.map(u => [
+    '"' + (u.email||'').replace(/"/g,'""') + '"',
+    u.is_pro ? 'Pro' : 'Free',
+    u.sessions_used || 0,
+    u.created_at ? new Date(u.created_at).toLocaleDateString() : '',
+    u.is_active === false ? 'Suspended' : 'Active'
+  ]);
+  const csv = [header, ...rows].map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'tonewise_users_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+/* ── Toast notification ──────────────────────────────── */
+function showAdminToast(msg){
+  let toast = $('adm-toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'adm-toast';
+    toast.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--text);z-index:9999;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis';
+    document.body.appendChild(toast);
+  }
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => { toast.style.opacity='0'; }, 2800);
+}
+
+/* ── Safety helpers ──────────────────────────────────── */
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+
+/* Apply any saved config on page load */
+(function applyAdminConfig(){
+  try {
+    const cfg = JSON.parse(localStorage.getItem('tw_admin_cfg') || '{}');
+    if(cfg.stripeMonthly) window._admStripe = cfg.stripeMonthly;
+    if(cfg.paypalMonthly) window._admPaypal = cfg.paypalMonthly;
+  } catch(_){}
+})();
+
+
+/* ════════════════════════════════════════════════════════
+   MUSIC NOTATION RENDERER
+   Draws detected notes on a treble-clef staff as filled
+   note-heads with stems, coloured by intonation accuracy.
+   Based on the Chopin waltz sample — standard 5-line staff.
+═══════════════════════════════════════════════════════════ */
+
+// Staff layout constants
+const STAFF_TOP    = 30;   // y of top line
+const STAFF_STEP   = 8;    // pixels per half-step (line gap = 2 steps = 16px)
+const STAFF_LEFT   = 52;   // x start after clef
+const NOTE_SPACING = 28;   // horizontal spacing between notes
+const MAX_NOTES    = 22;   // max notes to display per staff row
+const STAFF_LINES  = 5;
+
+// Note → staff position (distance in half-steps from middle C = 0)
+// Treble clef: middle C is one ledger line below staff
+// Line positions from bottom of staff (E4): E4=0, F4=0.5, G4=1 ... B5=5
+const NOTE_STAFF_POS = {
+  'C4':  6,  'C#4': 6,  'Db4': 6,
+  'D4':  5.5,'D#4': 5.5,'Eb4': 5.5,
+  'E4':  5,
+  'F4':  4.5,'F#4': 4.5,'Gb4': 4.5,
+  'G4':  4,  'G#4': 4,  'Ab4': 4,
+  'A4':  3.5,'A#4': 3.5,'Bb4': 3.5,
+  'B4':  3,
+  'C5':  2.5,'C#5': 2.5,'Db5': 2.5,
+  'D5':  2,  'D#5': 2,  'Eb5': 2,
+  'E5':  1.5,
+  'F5':  1,  'F#5': 1,  'Gb5': 1,
+  'G5':  0.5,'G#5': 0.5,'Ab5': 0.5,
+  'A5':  0,  'A#5': 0,  'Bb5': 0,
+  'B5': -0.5,
+  'C6': -1,
+};
+
+function noteStaffY(noteName) {
+  // Clean note name to base form
+  const base = noteName.replace(/\d+$/,'');
+  const octave = parseInt(noteName.match(/\d+/)?.[0] || '4');
+  const key = base + octave;
+  const pos = NOTE_STAFF_POS[key];
+  if(pos === undefined) return null;
+  // pos 0 = top of staff (B5 area), pos 5 = E4 bottom line
+  // Convert: bottom staff line (E4) is at y = STAFF_TOP + 4*STAFF_STEP*2
+  const bottomY = STAFF_TOP + (STAFF_LINES - 1) * STAFF_STEP * 2;
+  return bottomY - pos * STAFF_STEP * 2;
+}
+
+function renderNotationStaff(pitchData) {
+  const svg = $('notation-svg');
+  if(!svg || !pitchData || !pitchData.length) return;
+
+  // Deduplicate: keep unique notes in order played
+  const unique = [];
+  const seen = new Set();
+  for(const d of pitchData) {
+    if(!seen.has(d.note)) { seen.add(d.note); unique.push(d); }
+    if(unique.length >= MAX_NOTES) break;
+  }
+
+  const staffWidth  = STAFF_LEFT + unique.length * NOTE_SPACING + 40;
+  const viewWidth   = Math.max(680, Math.min(staffWidth, 680));
+  const viewHeight  = 180;
+  const bottomLine  = STAFF_TOP + (STAFF_LINES - 1) * STAFF_STEP * 2;
+
+  let html = '';
+
+  // ── Staff lines ──────────────────────────────────────────
+  for(let i = 0; i < STAFF_LINES; i++) {
+    const y = STAFF_TOP + i * STAFF_STEP * 2;
+    html += `<line class="staff-line" x1="10" y1="${y}" x2="${viewWidth - 10}" y2="${y}"/>`;
+  }
+
+  // ── Treble clef (simplified SVG path) ───────────────────
+  html += `<text class="clef-text" x="12" y="${bottomLine + 6}" style="font-size:52px;fill:#9897b2;font-family:serif;">𝄞</text>`;
+
+  // ── Notes ────────────────────────────────────────────────
+  unique.forEach((d, idx) => {
+    const x = STAFF_LEFT + idx * NOTE_SPACING + 20;
+    const y = noteStaffY(d.note);
+    if(y === null) return;
+
+    const absC = Math.abs(d.cents || 0);
+    const cls  = absC > 20 ? 'off' : d.cents > 5 ? 'sharp' : d.cents < -5 ? 'flat' : '';
+    const fillCol = cls === 'off' ? '#d85a30' : cls === 'sharp' ? '#1d9e75' : cls === 'flat' ? '#378add' : '#eeeef5';
+
+    // Ledger lines for notes outside staff
+    if(y > bottomLine) {
+      // Below staff (e.g. middle C ledger line)
+      for(let ly = bottomLine + STAFF_STEP * 2; ly <= y + 2; ly += STAFF_STEP * 2) {
+        html += `<line class="ledger-line" x1="${x-8}" y1="${ly}" x2="${x+8}" y2="${ly}"/>`;
+      }
+    }
+    if(y < STAFF_TOP) {
+      for(let ly = STAFF_TOP - STAFF_STEP * 2; ly >= y - 2; ly -= STAFF_STEP * 2) {
+        html += `<line class="ledger-line" x1="${x-8}" y1="${ly}" x2="${x+8}" y2="${ly}"/>`;
+      }
+    }
+
+    // Note head (filled ellipse)
+    html += `<ellipse class="note-head ${cls}" cx="${x}" cy="${y}" rx="5.5" ry="4.2" fill="${fillCol}" stroke="${fillCol}" stroke-width="0.5"/>`;
+
+    // Stem (up if below middle line, down if above)
+    const midY = STAFF_TOP + 4 * STAFF_STEP;
+    if(y >= midY) {
+      html += `<line class="note-stem" x1="${x+5}" y1="${y}" x2="${x+5}" y2="${y-26}" stroke="${fillCol}"/>`;
+    } else {
+      html += `<line class="note-stem" x1="${x-5}" y1="${y}" x2="${x-5}" y2="${y+26}" stroke="${fillCol}"/>`;
+    }
+
+    // Note label below
+    html += `<text class="note-label" x="${x}" y="${viewHeight - 12}" style="fill:${fillCol}">${d.note}</text>`;
+  });
+
+  // ── Bar lines every 4 notes ──────────────────────────────
+  for(let b = 4; b < unique.length; b += 4) {
+    const bx = STAFF_LEFT + b * NOTE_SPACING + 6;
+    html += `<line class="bar-line" x1="${bx}" y1="${STAFF_TOP}" x2="${bx}" y2="${bottomLine}"/>`;
+  }
+
+  svg.setAttribute('viewBox', `0 0 ${viewWidth} ${viewHeight}`);
+  svg.innerHTML = html;
+  $('notation-wrap').style.display = 'block';
+}
+
+/* ════════════════════════════════════════════════════════
+   AFFILIATE SYSTEM
+═══════════════════════════════════════════════════════════ */
+let affData = null; // loaded from Supabase
+
+/* ── Open affiliate page ─────────────────────────────── */
+function openAffiliate(){
+  showPage('affiliate');
+  $('aff-plan-badge').textContent   = isPro ? 'Pro' : 'Free';
+  $('aff-plan-badge').className     = 'topbar-plan ' + (isPro ? 'plan-pro' : 'plan-free');
+  loadAffiliateData();
+}
+
+/* ── Generate deterministic code from user id ────────── */
+function generateAffCode(userId) {
+  // Takes first 8 chars of UUID, uppercases, prefix TW
+  const clean = userId.replace(/-/g,'').substring(0,6).toUpperCase();
+  return 'TW' + clean;
+}
+
+function generateAffLink(code) {
+  const base = window.location.href.split('?')[0].split('#')[0];
+  return base + '?ref=' + code;
+}
+
+/* ── Load / create affiliate record ──────────────────── */
+async function loadAffiliateData(){
+  if(!user) return;
+
+  const code = generateAffCode(user.id);
+  const link = generateAffLink(code);
+
+  // Update UI with code/link immediately (optimistic)
+  $('aff-code-display').textContent = code;
+  $('aff-link-display').textContent = link;
+  $('aff-wa-btn').href = 'https://wa.me/?text=' + encodeURIComponent(
+    "I use ToneWise AI to practice trumpet — it's amazing! Use my code " + code + ' for 20% off: ' + link
+  );
+
+  try {
+    // Load or create affiliate row in Supabase
+    let { data, error } = await sb.from('affiliates')
+      .select('*').eq('user_id', user.id).single();
+
+    if(!data) {
+      // Create new affiliate entry
+      const { data: created } = await sb.from('affiliates').insert({
+        user_id:   user.id,
+        email:     user.email,
+        code:      code,
+        link:      link,
+        clicks:    0,
+        signups:   0,
+        conversions: 0,
+        earned:    0,
+        pending:   0,
+        payout_email: ''
+      }).select().single();
+      data = created;
+    }
+
+    if(data) {
+      affData = data;
+      // Update stats
+      $('aff-stat-clicks').textContent      = data.clicks || 0;
+      $('aff-stat-signups').textContent     = data.signups || 0;
+      $('aff-stat-conversions').textContent = data.conversions || 0;
+      $('aff-stat-earned').textContent      = '$' + (data.earned || 0).toFixed(2);
+      $('aff-stat-pending').textContent     = '$' + (data.pending || 0).toFixed(2);
+      if(data.payout_email) $('aff-payout-email').value = data.payout_email;
+      // Tier highlight
+      const refs = data.conversions || 0;
+      $('aff-tier-starter').classList.toggle('active', refs < 5);
+      $('aff-tier-pro').classList.toggle('active',     refs >= 5 && refs < 20);
+      $('aff-tier-elite').classList.toggle('active',   refs >= 20);
+      renderReferralList(data);
+    }
+  } catch(e) {
+    // Table may not exist yet — show informational message
+    console.warn('Affiliate table not found:', e.message);
+  }
+
+  renderPromoMessages(code, link);
+}
+
+/* ── Copy helpers ────────────────────────────────────── */
+function copyAffCode(){
+  const code = $('aff-code-display').textContent;
+  navigator.clipboard.writeText(code).catch(()=>{});
+  flashCopy('aff-copy-code');
+}
+function copyAffLink(){
+  const link = $('aff-link-display').textContent;
+  navigator.clipboard.writeText(link).catch(()=>{});
+  flashCopy('aff-copy-link');
+}
+function flashCopy(btnId){
+  const btn = $(btnId); if(!btn) return;
+  btn.textContent='Copied!'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent=btnId.includes('code')?'Copy code':'Copy link'; },1800);
+}
+async function shareAffLink(){
+  const link = $('aff-link-display').textContent;
+  if(navigator.share){
+    try {
+      await navigator.share({ title:'ToneWise AI — Trumpet Coach', text:'Use my code for 20% off!', url: link });
+    } catch(_){}
+  } else { copyAffLink(); }
+}
+
+/* ── Save payout email ───────────────────────────────── */
+async function savePayoutEmail(){
+  const email = $('aff-payout-email').value.trim();
+  if(!email || !user) return;
+  await sb.from('affiliates').update({ payout_email: email }).eq('user_id', user.id);
+  showAdminToast('Payout email saved.');
+}
+
+/* ── Render referral table ───────────────────────────── */
+function renderReferralList(data){
+  const wrap = $('aff-referral-list');
+  // In a full implementation referrals come from a referral_events table
+  // For now show a placeholder with real stats
+  if(!data.signups){
+    wrap.innerHTML = '<p class="aff-empty">No referrals yet. Share your link to get started!</p>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table class="aff-referral-table">
+      <thead><tr><th>Event</th><th>Date</th><th>Status</th><th>Commission</th></tr></thead>
+      <tbody>
+        <tr><td colspan="4" style="color:var(--text3);font-size:12px;padding:12px">
+          ${data.signups} sign-up${data.signups>1?'s':''} recorded · ${data.conversions} conversion${data.conversions!==1?'s':''}
+        </td></tr>
+      </tbody>
+    </table>`;
+}
+
+/* ── Render promo messages ───────────────────────────── */
+function renderPromoMessages(code, link){
+  const msgs = [
+    {
+      label: 'WhatsApp / SMS',
+      text: `Hey! I've been using ToneWise AI to practice trumpet and it's genuinely brilliant. AI coaching, ear training, fingering charts — all in one app. Use my code ${code} for 20% off your first month: ${link}`
+    },
+    {
+      label: 'Social media post',
+      text: `If you play trumpet (or want to start), check out ToneWise AI — it gives you real-time AI coaching as you play. Use code ${code} for 20% off 🎺 ${link}`
+    },
+    {
+      label: 'Email to a friend',
+      text: `Subject: You need to try this trumpet app\n\nHi,\n\nI've been using ToneWise AI and it's made a real difference to my practice. It listens while you play and gives you instant coaching feedback.\n\nUse my code ${code} to get 20% off your first month: ${link}\n\nHope you enjoy it!`
+    }
+  ];
+
+  const wrap = $('aff-promo-messages');
+  wrap.innerHTML = msgs.map((m,i) => `
+    <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:12px 14px;margin-bottom:10px">
+      <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:6px">${m.label.toUpperCase()}</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.6;white-space:pre-wrap">${m.text}</div>
+      <button class="aff-copy-btn" style="margin-top:8px" onclick="copyPromoMsg(${i},this)">Copy message</button>
+    </div>`).join('');
+
+  // Store messages for copy
+  window._promoMsgs = msgs;
+}
+function copyPromoMsg(idx, btn){
+  const text = window._promoMsgs[idx].text.replace(/\\n/g,'\n');
+  navigator.clipboard.writeText(text).catch(()=>{});
+  btn.textContent='Copied!'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.textContent='Copy message'; btn.classList.remove('copied'); },1800);
+}
+
+/* ── Affiliate tab switcher ──────────────────────────── */
+function setAffTab(id, btn){
+  document.querySelectorAll('.aff-section').forEach(s=>s.classList.remove('on'));
+  document.querySelectorAll('.aff-tab-btn').forEach(b=>b.classList.remove('on'));
+  $('aff-sec-'+id).classList.add('on');
+  if(btn) btn.classList.add('on');
+}
+
+/* ── Track referral click on page load ──────────────── */
+(function trackRefClick(){
+  const urlParams = new URLSearchParams(window.location.search);
+  const ref = urlParams.get('ref');
+  if(!ref) return;
+  // Store in session so we can credit after sign-up
+  sessionStorage.setItem('tw_ref', ref);
+  // Increment click counter in Supabase
+  sb.from('affiliates').select('id,clicks').eq('code', ref).single()
+    .then(({data})=>{
+      if(data) sb.from('affiliates').update({ clicks: (data.clicks||0)+1 }).eq('code', ref);
+    }).catch(()=>{});
+})();
+
+/* ── Credit referral after sign-up ──────────────────── */
+async function creditReferral(newUserId){
+  const ref = sessionStorage.getItem('tw_ref');
+  if(!ref) return;
+  try {
+    const { data } = await sb.from('affiliates').select('id,signups,user_id').eq('code', ref).single();
+    if(data && data.user_id !== newUserId){
+      await sb.from('affiliates').update({ signups: (data.signups||0)+1 }).eq('code', ref);
+      // Store who referred this user for conversion tracking
+      await sb.from('profiles').update({ referred_by: ref }).eq('id', newUserId);
+    }
+    sessionStorage.removeItem('tw_ref');
+  } catch(_){}
 }
 
 /* close upgrade modal on backdrop click */
@@ -2548,5 +3583,210 @@ $('modal-upgrade').addEventListener('click', e=>{ if(e.target===$('modal-upgrade
 /* keyboard: Escape closes modal */
 document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeUpgrade(); });
 </script>
+
+<!-- ══ PAGE: ADMIN ════════════════════════════════════ -->
+<div class="page" id="page-admin" style="display:none">
+  <header class="admin-topbar" role="banner">
+    <div class="logo-spin" style="width:22px;height:22px" aria-hidden="true"><div class="logo-inner" style="width:11px;height:11px"></div></div>
+    <span class="topbar-logo" style="font-family:'DM Serif Display',serif;font-size:16px">Tone<em style="font-style:italic;color:var(--pl)">Wise</em></span>
+    <span class="admin-badge">Admin Console</span>
+    <nav style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button class="btn-sm" onclick="showPage('app')" aria-label="Back to app">Back to app</button>
+      <button class="btn-sm btn-logout" onclick="signOut()" aria-label="Log out">Log out</button>
+    </nav>
+  </header>
+
+  <div class="admin-body">
+    <div class="admin-notice"><strong>Admin access:</strong> You are logged in as the platform administrator. All changes here affect live users immediately. Use with care.</div>
+
+    <!-- Stats -->
+    <div class="admin-section">
+      <div class="admin-section-title">Platform overview</div>
+      <div class="admin-stats-grid">
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-total-users">—</div><div class="admin-stat-label">Total users</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-pro-users">—</div><div class="admin-stat-label">Pro subscribers</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-active-today">—</div><div class="admin-stat-label">Active today</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-total-sessions">—</div><div class="admin-stat-label">Total sessions</div></div>
+      </div>
+    </div>
+
+    <!-- User management -->
+    <div class="admin-section">
+      <div class="admin-section-title">User management</div>
+      <input type="search" class="admin-search" id="adm-search" placeholder="Search by email…" oninput="filterAdminUsers(this.value)">
+      <div style="overflow-x:auto">
+        <table class="admin-table" role="grid" aria-label="Users">
+          <thead>
+            <tr>
+              <th>Email</th>
+              <th>Plan</th>
+              <th>Sessions used</th>
+              <th>Joined</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="adm-user-tbody">
+            <tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:16px">Loading users…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Platform config -->
+    <div class="admin-section">
+      <div class="admin-section-title">Platform settings</div>
+      <div class="admin-config-grid">
+        <div class="admin-input-group">
+          <label>Free sessions per month</label>
+          <input type="number" id="adm-free-sessions" min="1" max="100" value="5">
+        </div>
+        <div class="admin-input-group">
+          <label>Free session duration (seconds)</label>
+          <input type="number" id="adm-session-dur" min="30" max="3600" value="180">
+        </div>
+        <div class="admin-input-group">
+          <label>Monthly price (display only)</label>
+          <input type="text" id="adm-price-monthly" placeholder="$9.99">
+        </div>
+        <div class="admin-input-group">
+          <label>Annual price (display only)</label>
+          <input type="text" id="adm-price-annual" placeholder="$79">
+        </div>
+        <div class="admin-input-group">
+          <label>Stripe monthly link</label>
+          <input type="url" id="adm-stripe-monthly" placeholder="https://buy.stripe.com/…">
+        </div>
+        <div class="admin-input-group">
+          <label>PayPal monthly link</label>
+          <input type="url" id="adm-paypal-monthly" placeholder="https://www.paypal.com/…">
+        </div>
+      </div>
+      <button class="admin-save-btn" onclick="saveAdminConfig()">Save settings</button>
+      <div id="adm-save-msg" style="font-size:12px;color:var(--tl);margin-top:8px;display:none">Settings saved.</div>
+    </div>
+
+    <!-- Admin tools -->
+    <div class="admin-section">
+      <div class="admin-section-title">Admin tools</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="admin-action-btn success" onclick="resetAllSessions()">Reset all free sessions</button>
+        <button class="admin-action-btn" onclick="exportUsers()">Export user list (CSV)</button>
+        <button class="admin-action-btn danger" onclick="if(confirm('Purge all session data?'))alert('Purge would run here')">Purge session logs</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══ PAGE: AFFILIATE ═════════════════════════════════ -->
+<div class="page" id="page-affiliate" style="display:none">
+  <header class="topbar" role="banner">
+    <div class="logo-spin" style="width:22px;height:22px" aria-hidden="true"><div class="logo-inner" style="width:11px;height:11px"></div></div>
+    <span class="topbar-logo" style="font-family:'DM Serif Display',serif;font-size:17px">Tone<em style="font-style:italic;color:var(--pl)">Wise</em></span>
+    <span class="topbar-plan plan-free" id="aff-plan-badge">Free</span>
+    <nav style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button class="btn-sm" onclick="showPage('app')" aria-label="Back to app">Back to practice</button>
+      <button class="btn-sm btn-logout" onclick="signOut()">Log out</button>
+    </nav>
+  </header>
+
+  <div class="aff-body">
+
+    <div class="aff-hero">
+      <h2>Refer friends. Earn real rewards.</h2>
+      <p>Share your personal referral code or link. Every friend who subscribes earns you commission — and gives them a discount. Grow together.</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="aff-stats">
+      <div class="aff-stat"><div class="aff-stat-val" id="aff-stat-clicks">0</div><div class="aff-stat-label">Link clicks</div></div>
+      <div class="aff-stat"><div class="aff-stat-val" id="aff-stat-signups">0</div><div class="aff-stat-label">Sign-ups</div></div>
+      <div class="aff-stat"><div class="aff-stat-val" id="aff-stat-conversions">0</div><div class="aff-stat-label">Conversions</div></div>
+      <div class="aff-stat"><div class="aff-stat-val" id="aff-stat-earned">$0</div><div class="aff-stat-label">Total earned</div></div>
+      <div class="aff-stat"><div class="aff-stat-val" id="aff-stat-pending">$0</div><div class="aff-stat-label">Pending payout</div></div>
+    </div>
+
+    <!-- Your code and link -->
+    <div class="card" style="margin-bottom:10px">
+      <h2 style="margin-bottom:12px">Your referral tools</h2>
+      <div class="aff-code-box">
+        <div class="aff-code-label">YOUR DISCOUNT CODE <span style="color:var(--tl)">— gives referred users 20% off</span></div>
+        <div class="aff-code-row">
+          <div class="aff-code-val" id="aff-code-display">Loading…</div>
+          <button class="aff-copy-btn" id="aff-copy-code" onclick="copyAffCode()">Copy code</button>
+        </div>
+      </div>
+      <div class="aff-link-box">
+        <div class="aff-code-label" style="margin-bottom:6px">YOUR REFERRAL LINK</div>
+        <div class="aff-link-val" id="aff-link-display">Loading…</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="aff-copy-btn" id="aff-copy-link" onclick="copyAffLink()">Copy link</button>
+          <button class="aff-copy-btn" onclick="shareAffLink()">Share link</button>
+          <a class="aff-copy-btn" id="aff-wa-btn" href="#" target="_blank" style="text-decoration:none">Share on WhatsApp</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Commission tiers -->
+    <div class="card" style="margin-bottom:10px">
+      <h2 style="margin-bottom:4px">Commission tiers</h2>
+      <p style="margin-bottom:12px">Your rate increases as you bring in more subscribers.</p>
+      <div class="aff-tiers">
+        <div class="aff-tier" id="aff-tier-starter">
+          <div class="aff-tier-name">Starter</div>
+          <div class="aff-tier-req">0–4 referrals</div>
+          <div class="aff-tier-pct" style="color:var(--text2)">15%</div>
+        </div>
+        <div class="aff-tier" id="aff-tier-pro">
+          <div class="aff-tier-name">Pro</div>
+          <div class="aff-tier-req">5–19 referrals</div>
+          <div class="aff-tier-pct">20%</div>
+        </div>
+        <div class="aff-tier" id="aff-tier-elite">
+          <div class="aff-tier-name">Elite</div>
+          <div class="aff-tier-req">20+ referrals</div>
+          <div class="aff-tier-pct" style="color:var(--amber)">30%</div>
+        </div>
+      </div>
+      <p style="font-size:11px;color:var(--text3);margin-top:8px">Referred users receive 20% off their first month. Commission is paid on confirmed subscriptions.</p>
+    </div>
+
+    <!-- Tabs: Referrals / Payouts -->
+    <div class="card">
+      <div class="aff-tab-nav">
+        <button class="aff-tab-btn on" onclick="setAffTab('referrals',this)">Referral history</button>
+        <button class="aff-tab-btn" onclick="setAffTab('payouts',this)">Payouts</button>
+        <button class="aff-tab-btn" onclick="setAffTab('promo',this)">Promo materials</button>
+      </div>
+
+      <!-- Referral history -->
+      <div class="aff-section on" id="aff-sec-referrals">
+        <div id="aff-referral-list">
+          <p class="aff-empty">No referrals yet. Share your link to get started!</p>
+        </div>
+      </div>
+
+      <!-- Payouts -->
+      <div class="aff-section" id="aff-sec-payouts">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.55">Minimum payout is $20. We pay via PayPal or bank transfer on the 1st of each month.</p>
+        <div class="aff-payout-row">
+          <input type="email" class="aff-payout-input" id="aff-payout-email" placeholder="PayPal email for payouts">
+          <button class="btn-sm" style="padding:9px 16px;background:var(--teal);color:#fff;border-color:var(--teal)" onclick="savePayoutEmail()">Save</button>
+        </div>
+        <div id="aff-payout-history" style="margin-top:1rem">
+          <p class="aff-empty">No payouts yet. Earn $20+ to request your first payout.</p>
+        </div>
+      </div>
+
+      <!-- Promo materials -->
+      <div class="aff-section" id="aff-sec-promo">
+        <p style="font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.55">Copy these ready-made messages to share on social media, WhatsApp, or email.</p>
+        <div id="aff-promo-messages"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
