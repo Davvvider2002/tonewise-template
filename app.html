@@ -1,0 +1,2968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ToneWise AI — Wind and Brass Coach</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ── CONFIG ─────────────────────────────────────────── */
+/* SUPABASE_URL      → hcppslccegbqohukmtox                          */
+/* SUPABASE_ANON_KEY → eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...KTP4  */
+/* WORKER_URL        → https://tonewise.godigitsall.workers.dev       */
+/* STRIPE_PRO_LINK   → your Stripe Payment Link                      */
+/* PAYPAL_PRO_LINK   → your PayPal payment link                      */
+
+:root{
+  --bg:#09090f;--bg2:#111119;--bg3:#1a1a26;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#eeeef5;--text2:#9897b2;--text3:#5a5972;
+  --purple:#7f77dd;--pl:#aeaaee;--teal:#1d9e75;--tl:#5dcaa5;
+  --amber:#ef9f27;--coral:#d85a30;--blue:#378add;
+  --r:12px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;min-height:100vh}
+.bg-grid{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(127,119,221,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(127,119,221,.025) 1px,transparent 1px);background-size:52px 52px;pointer-events:none}
+
+/* ── PAGES ─────────────────────────────────────────── */
+.page{display:none;position:relative;z-index:1}
+.page.active{display:block}
+#page-auth.active{display:flex!important}
+
+/* ── AUTH ──────────────────────────────────────────── */
+#page-auth{min-height:100vh;align-items:center;justify-content:center;padding:2rem 1rem}
+.auth-card{background:var(--bg2);border:0.5px solid var(--border2);border-radius:20px;padding:2.5rem 2rem;width:100%;max-width:400px;text-align:center}
+.logo-wrap{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:1.5rem}
+.logo-spin{width:38px;height:38px;border-radius:50%;background:conic-gradient(from 180deg,#7f77dd,#1d9e75,#ef9f27,#7f77dd);display:flex;align-items:center;justify-content:center;animation:spin 8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.logo-inner{width:20px;height:20px;border-radius:50%;background:var(--bg2)}
+.logo-name{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--text)}
+.logo-name em{font-style:italic;color:var(--pl)}
+.auth-title{font-family:'DM Serif Display',serif;font-size:26px;font-weight:400;color:var(--text);line-height:1.2;margin-bottom:8px}
+.auth-sub{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.8rem}
+.input-group{margin-bottom:12px;text-align:left}
+.input-group label{font-size:12px;color:var(--text2);display:block;margin-bottom:5px}
+input[type=email],input[type=password],input[type=text]{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:11px 14px;color:var(--text);font-size:14px;font-family:'Instrument Sans',sans-serif;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--purple)}
+input::placeholder{color:var(--text3)}
+.btn{width:100%;padding:11px 20px;border-radius:9px;border:none;font-size:14px;font-family:'Instrument Sans',sans-serif;font-weight:500;cursor:pointer;transition:all .2s}
+.btn-primary{background:var(--purple);color:#fff}
+.btn-primary:hover{background:#6a63cc}
+.btn-secondary{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text2);margin-top:8px}
+.btn-secondary:hover{border-color:var(--border2);color:var(--text)}
+.btn-google{background:var(--bg3);border:0.5px solid var(--border2);color:var(--text);margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-google:hover{border-color:var(--border2);background:var(--bg2)}
+.divider-or{display:flex;align-items:center;gap:10px;margin:14px 0;color:var(--text3);font-size:12px}
+.divider-or::before,.divider-or::after{content:'';flex:1;height:0.5px;background:var(--border)}
+.auth-switch{font-size:12px;color:var(--text2);margin-top:16px}
+.auth-switch a{color:var(--pl);cursor:pointer;text-decoration:none}
+.auth-switch a:hover{text-decoration:underline}
+.auth-error{background:rgba(216,90,48,.12);border:0.5px solid rgba(216,90,48,.3);border-radius:7px;padding:9px 13px;font-size:12px;color:#f0997b;margin-bottom:12px;display:none}
+
+/* ── MAIN APP ──────────────────────────────────────── */
+#page-app{min-height:100vh}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;border-bottom:0.5px solid var(--border);background:rgba(9,9,15,.85);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100}
+.topbar-logo{font-family:'DM Serif Display',serif;font-size:17px;font-weight:400;color:var(--text)}
+.topbar-logo em{font-style:italic;color:var(--pl)}
+.topbar-plan{font-size:11px;padding:3px 9px;border-radius:999px;font-family:'DM Mono',monospace}
+.plan-free{background:rgba(88,88,128,.2);color:var(--text2);border:0.5px solid var(--border2)}
+.plan-pro{background:rgba(127,119,221,.15);color:var(--pl);border:0.5px solid rgba(127,119,221,.3)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:8px}
+.topbar-email{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.btn-sm{padding:5px 12px;border-radius:7px;font-size:12px;border:0.5px solid var(--border2);background:transparent;color:var(--text2);cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s}
+.btn-sm:hover{color:var(--text);border-color:var(--border2);background:var(--bg3)}
+.btn-upgrade{background:rgba(127,119,221,.15);color:var(--pl);border-color:rgba(127,119,221,.35)}
+.btn-upgrade:hover{background:rgba(127,119,221,.25);color:var(--pl)}
+.btn-logout{display:inline-flex;align-items:center;color:var(--text2);border-color:var(--border)}
+.btn-logout:hover{color:var(--coral);border-color:rgba(216,90,48,.4);background:rgba(216,90,48,.06)}
+
+.app-body{max-width:740px;margin:0 auto;padding:1.5rem 1rem 4rem}
+
+/* ── SESSION COUNTER ───────────────────────────────── */
+.session-banner{display:flex;align-items:center;gap:10px;background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:10px 16px;margin-bottom:1.2rem;font-size:13px;color:var(--text2)}
+.session-bar{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.session-fill{height:100%;border-radius:3px;background:var(--teal);transition:width .4s}
+.session-fill.warn{background:var(--amber)}
+.session-fill.full{background:var(--coral)}
+
+/* ── MODE TABS ─────────────────────────────────────── */
+.mode-tabs{display:flex;gap:6px;margin-bottom:1.2rem;overflow-x:auto;padding-bottom:2px}
+.mtab{flex-shrink:0;padding:7px 15px;border-radius:8px;border:0.5px solid var(--border);background:var(--bg2);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s;white-space:nowrap}
+.mtab:hover{color:var(--text);border-color:var(--border2)}
+.mtab.on{background:rgba(127,119,221,.12);border-color:rgba(127,119,221,.35);color:var(--pl)}
+.mtab.pro-tab{position:relative}
+.mtab.pro-tab::after{content:'PRO';font-size:8px;font-family:'DM Mono',monospace;background:var(--amber);color:#000;padding:1px 4px;border-radius:3px;position:absolute;top:-4px;right:-4px}
+.mode-panel{display:none}.mode-panel.on{display:block}
+
+/* ── CARD ──────────────────────────────────────────── */
+.card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:10px}
+.card h2{font-size:15px;font-weight:500;color:var(--text);margin-bottom:4px}
+.card p{font-size:13px;color:var(--text2);line-height:1.55;margin-bottom:1rem}
+.card p:last-child{margin-bottom:0}
+
+/* ── LEVEL PILLS ───────────────────────────────────── */
+.pills{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:1rem}
+.pill{padding:5px 12px;border-radius:6px;font-size:12px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s}
+.pill.on{border-color:var(--teal);color:var(--tl);background:rgba(29,158,117,.08)}
+
+/* ── RECORD BUTTON ─────────────────────────────────── */
+.record-zone{display:flex;flex-direction:column;align-items:center;gap:12px;padding:1rem 0}
+.rbtn{width:84px;height:84px;border-radius:50%;border:1.5px solid var(--border2);background:var(--bg3);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;outline:none}
+.rbtn:hover{border-color:var(--purple);transform:scale(1.04)}
+.rbtn:focus-visible{box-shadow:0 0 0 3px var(--purple)}
+.rbtn.on{border-color:var(--coral);background:rgba(216,90,48,.12);animation:rpulse 1.2s ease-in-out infinite}
+@keyframes rpulse{0%,100%{box-shadow:0 0 0 0 rgba(216,90,48,.4)}50%{box-shadow:0 0 0 14px rgba(216,90,48,0)}}
+.rlabel{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;letter-spacing:.06em}
+
+/* ── PITCH DISPLAY ─────────────────────────────────── */
+.pitch-box{background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:12px 16px;margin:10px 0}
+.pnote{font-family:'DM Serif Display',serif;font-size:44px;color:var(--tl);line-height:1;letter-spacing:-.04em}
+.pnote.off{color:var(--coral)}
+.pmeta{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);display:flex;gap:14px;margin-top:4px}
+.pmeta span{color:var(--text2)}
+.viz{display:flex;gap:2px;align-items:flex-end;height:36px;margin:8px 0}
+.vbar{flex:1;background:var(--border);border-radius:2px;min-height:2px;transition:height .05s,background .1s}
+
+/* ── FEEDBACK ──────────────────────────────────────── */
+.feedback{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:10px;min-height:90px}
+.feedback h3{font-size:10px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:10px;font-family:'DM Mono',monospace}
+.ftext{font-size:13px;color:var(--text2);line-height:1.7}
+.dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--purple);animation:db 1.2s ease-in-out infinite}
+.dots span:nth-child(2){animation-delay:.15s}
+.dots span:nth-child(3){animation-delay:.3s}
+@keyframes db{0%,80%,100%{transform:scale(.5);opacity:.4}40%{transform:scale(1);opacity:1}}
+
+/* ── TOOLBAR ───────────────────────────────────────── */
+.toolbar{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}
+.tbtn{padding:6px 13px;border-radius:7px;border:0.5px solid var(--border);background:var(--bg2);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s}
+.tbtn:hover{border-color:var(--border2);color:var(--text)}
+.tbtn.on{border-color:var(--teal);color:var(--tl)}
+
+/* ── UPGRADE GATE ──────────────────────────────────── */
+.upgrade-gate{background:linear-gradient(135deg,rgba(127,119,221,.1),rgba(29,158,117,.07));border:1px solid rgba(127,119,221,.25);border-radius:14px;padding:1.5rem;text-align:center;margin-bottom:10px}
+.upgrade-gate h3{font-family:'DM Serif Display',serif;font-size:22px;font-weight:400;color:var(--text);margin-bottom:8px}
+.upgrade-gate p{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:1.2rem}
+.btn-upgrade-big{display:inline-block;padding:12px 28px;background:var(--purple);color:#fff;border-radius:9px;font-size:14px;font-weight:500;text-decoration:none;cursor:pointer;transition:all .2s;border:none;font-family:'Instrument Sans',sans-serif}
+.btn-upgrade-big:hover{background:#6a63cc}
+.upgrade-perks{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px}
+.perk{font-size:11px;background:rgba(127,119,221,.12);color:var(--pl);padding:3px 10px;border-radius:999px;border:0.5px solid rgba(127,119,221,.2)}
+
+/* ── ASK MODE ──────────────────────────────────────── */
+.ask-input-wrap{display:flex;gap:8px;margin:10px 0}
+.ask-input-wrap input{flex:1;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:10px 14px;color:var(--text);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none}
+.ask-input-wrap input:focus{border-color:var(--purple)}
+.ask-input-wrap button{padding:10px 16px;background:var(--purple);border:none;border-radius:8px;color:#fff;font-size:13px;cursor:pointer;font-family:'Instrument Sans',sans-serif;font-weight:500;white-space:nowrap}
+.ask-input-wrap button:hover{background:#6a63cc}
+.quick-asks{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}
+.qa{font-size:11px;padding:4px 10px;border-radius:6px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s}
+.qa:hover{color:var(--text);border-color:var(--border2)}
+
+/* ── SESSION LIST ──────────────────────────────────── */
+.slist{display:flex;flex-direction:column;gap:8px}
+.sitem{background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:10px 14px}
+.sitem-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.stime{font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)}
+.sacc{font-family:'DM Mono',monospace;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
+.sacc.g{background:rgba(29,158,117,.15);color:var(--tl)}
+.sacc.a{background:rgba(239,159,39,.15);color:var(--amber)}
+.sacc.r{background:rgba(216,90,48,.12);color:var(--coral)}
+.sfeed{font-size:12px;color:var(--text2);line-height:1.5}
+.snotes{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:3px}
+
+/* ── STATUS ────────────────────────────────────────── */
+.status-bar{display:flex;align-items:center;gap:8px;background:var(--bg2);border:0.5px solid var(--border);border-radius:999px;padding:6px 14px;width:fit-content;font-size:12px;color:var(--text2);font-family:'DM Mono',monospace;margin-bottom:1rem}
+.sdot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.idle{background:var(--text3)}
+.listening{background:var(--teal);animation:p 1s ease-in-out infinite}
+.thinking{background:var(--purple);animation:p .6s ease-in-out infinite}
+.speaking{background:var(--amber);animation:p .8s ease-in-out infinite}
+.err{background:var(--coral)}
+@keyframes p{0%,100%{opacity:1}50%{opacity:.25}}
+
+/* ── A11Y ──────────────────────────────────────────── */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+#live{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+footer{text-align:center;padding:2rem 0 1.5rem;font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;border-top:0.5px solid var(--border);margin-top:2rem}
+
+/* ── PAYMENT / MODAL ───────────────────────────────── */
+.gate-prices{display:flex;gap:8px;margin:1rem 0;justify-content:center}
+.gate-price-opt{flex:1;max-width:150px;background:var(--bg3);border:0.5px solid var(--border2);border-radius:10px;padding:10px 12px;cursor:pointer;transition:border-color .15s}
+.gate-price-opt:hover{border-color:var(--purple)}
+.gate-price-label{font-size:11px;color:var(--text2);margin-bottom:3px}
+.gate-price-val{font-size:16px;font-weight:500;color:var(--text)}
+.gate-save{font-size:9px;background:rgba(29,158,117,.15);color:var(--tl);padding:1px 5px;border-radius:4px}
+.gate-pay-btns{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.btn-pay{display:flex;align-items:center;justify-content:center;gap:8px;padding:11px 20px;border-radius:9px;font-size:13px;font-weight:500;text-decoration:none;cursor:pointer;transition:all .2s;font-family:'Instrument Sans',sans-serif}
+.btn-pay-stripe{background:var(--purple);color:#fff;border:none}
+.btn-pay-stripe:hover{background:#6a63cc}
+.btn-pay-paypal{background:#003087;color:#fff;border:none}
+.btn-pay-paypal:hover{background:#002069}
+.modal-price-row{display:flex;gap:8px}
+.modal-plan{flex:1;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 10px;cursor:pointer;transition:border-color .15s}
+.modal-plan:hover{border-color:var(--border2)}
+.modal-plan.on{border-color:var(--purple);background:rgba(127,119,221,.07)}
+
+/* ── TIMER BAR ─────────────────────────────────────── */
+.timer-bar-wrap{height:4px;background:var(--border);border-radius:2px;margin:8px 0;overflow:hidden;display:none}
+.timer-bar-fill{height:100%;background:var(--teal);border-radius:2px;transition:width .5s linear}
+.timer-bar-fill.warn{background:var(--amber)}
+.timer-bar-fill.crit{background:var(--coral)}
+.timer-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-align:right;margin-top:2px;display:none}
+
+/* ══ GENE MASCOT ══════════════════════════════════════ */
+#gene-wrap{
+  position:fixed;bottom:24px;right:24px;z-index:200;
+  display:flex;flex-direction:column;align-items:flex-end;gap:8px;
+}
+#gene-bubble{
+  background:var(--bg2);border:0.5px solid var(--border2);border-radius:14px;
+  padding:12px 15px;max-width:220px;font-size:12px;color:var(--text);
+  line-height:1.55;position:relative;display:none;
+  animation:fadeUp .3s ease;
+}
+#gene-bubble::after{
+  content:'';position:absolute;bottom:-7px;right:18px;
+  width:14px;height:14px;background:var(--bg2);
+  border-right:0.5px solid var(--border2);border-bottom:0.5px solid var(--border2);
+  transform:rotate(45deg);
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+#gene-btn{
+  width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--bg3);border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .2s;position:relative;
+  box-shadow:0 4px 20px rgba(0,0,0,.4);
+}
+#gene-btn:hover{transform:scale(1.08);border-color:var(--purple)}
+#gene-btn .gene-ring{
+  position:absolute;inset:-3px;border-radius:50%;
+  background:conic-gradient(from 0deg,var(--purple),var(--teal),var(--amber),var(--purple));
+  z-index:-1;animation:spin 4s linear infinite;
+  display:none;
+}
+#gene-btn.talking .gene-ring{display:block}
+#gene-btn svg{transition:transform .2s}
+#gene-close-bubble{
+  position:absolute;top:6px;right:8px;background:none;border:none;
+  color:var(--text3);font-size:14px;cursor:pointer;line-height:1;
+}
+#gene-voice-cmd{
+  font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;
+  text-align:right;padding-right:4px;
+}
+
+/* ══ METRONOME PANEL ══════════════════════════════════ */
+.metro-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:10px}
+.metro-bpm-display{font-family:'DM Serif Display',serif;font-size:52px;color:var(--text);text-align:center;line-height:1}
+.metro-bpm-unit{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-bottom:1rem}
+.metro-controls{display:flex;align-items:center;gap:10px;justify-content:center;margin-bottom:1rem}
+.metro-adj{width:36px;height:36px;border-radius:50%;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.metro-adj:hover{border-color:var(--purple);color:var(--pl)}
+input[type=range].metro-slider{width:100%;accent-color:var(--purple);height:4px;margin:8px 0}
+.metro-beat-viz{display:flex;gap:8px;justify-content:center;margin:12px 0}
+.beat-dot{width:12px;height:12px;border-radius:50%;background:var(--border);transition:background .05s}
+.beat-dot.hit{background:var(--teal)}
+.beat-dot.beat1.hit{background:var(--purple)}
+.metro-play-btn{width:100%;padding:10px;border-radius:9px;background:var(--teal);border:none;color:#fff;font-size:13px;font-weight:500;font-family:'Instrument Sans',sans-serif;cursor:pointer;transition:all .2s}
+.metro-play-btn:hover{background:#168a62}
+.metro-play-btn.on{background:var(--coral)}
+.metro-play-btn.on:hover{background:#b54826}
+.tap-btn{padding:8px 16px;border-radius:7px;border:0.5px solid var(--border2);background:var(--bg3);color:var(--text2);font-size:12px;cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s}
+.tap-btn:hover{color:var(--text);border-color:var(--purple)}
+
+/* ══ FINGERING CHART ══════════════════════════════════ */
+.fing-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:10px}
+.fing-note-select{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.fing-note-btn{padding:5px 11px;border-radius:6px;font-size:12px;border:0.5px solid var(--border);background:var(--bg3);color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Mono',monospace}
+.fing-note-btn.on{border-color:var(--purple);color:var(--pl);background:rgba(127,119,221,.1)}
+.fing-diagram{display:flex;flex-direction:column;align-items:center;gap:12px;padding:1rem}
+.fing-valves{display:flex;gap:16px;justify-content:center}
+.valve{display:flex;flex-direction:column;align-items:center;gap:6px}
+.valve-num{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace}
+.valve-btn{width:44px;height:60px;border-radius:8px;border:1.5px solid var(--border2);background:var(--bg3);transition:all .25s;display:flex;align-items:center;justify-content:center;cursor:default}
+.valve-btn.pressed{background:var(--purple);border-color:var(--pl);box-shadow:0 4px 14px rgba(127,119,221,.35)}
+.fing-name{font-family:'DM Serif Display',serif;font-size:32px;color:var(--text);text-align:center}
+.fing-alt{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-top:4px}
+
+/* ══ AUDIO UPLOAD (PRO) ═══════════════════════════════ */
+.upload-zone{
+  border:1.5px dashed var(--border2);border-radius:12px;
+  padding:2rem;text-align:center;cursor:pointer;transition:all .2s;
+  background:var(--bg3);margin-bottom:1rem;
+}
+.upload-zone:hover,.upload-zone.drag{border-color:var(--purple);background:rgba(127,119,221,.05)}
+.upload-zone svg{margin:0 auto 10px;display:block;opacity:.5}
+.upload-zone p{font-size:13px;color:var(--text2)}
+.upload-zone span{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+#upload-input{display:none}
+.upload-progress{background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:12px 16px;margin-bottom:10px;display:none}
+.upload-prog-bar{height:4px;background:var(--border);border-radius:2px;margin:8px 0;overflow:hidden}
+.upload-prog-fill{height:100%;background:var(--purple);border-radius:2px;transition:width .3s}
+.upload-prog-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
+.score-result{background:var(--bg2);border:0.5px solid var(--border);border-radius:var(--r);padding:1.25rem;margin-bottom:10px;display:none}
+.score-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem}
+.score-grade{font-family:'DM Serif Display',serif;font-size:44px;color:var(--tl)}
+.score-grade.warn{color:var(--amber)}
+.score-grade.low{color:var(--coral)}
+.score-breakdown{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin:1rem 0}
+.score-metric{background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:10px 12px}
+.score-metric-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px}
+.score-metric-val{font-size:18px;font-weight:500;color:var(--text)}
+.score-notes-list{display:flex;flex-wrap:wrap;gap:5px;margin:10px 0}
+.score-note-tag{font-size:10px;font-family:'DM Mono',monospace;padding:3px 8px;border-radius:4px;background:rgba(127,119,221,.1);border:0.5px solid rgba(127,119,221,.2);color:var(--pl)}
+.score-note-tag.bad{background:rgba(216,90,48,.08);border-color:rgba(216,90,48,.25);color:var(--coral)}
+.btn-pdf{display:inline-flex;align-items:center;gap:8px;padding:9px 18px;border-radius:8px;background:var(--teal);color:#fff;border:none;font-size:13px;font-weight:500;font-family:'Instrument Sans',sans-serif;cursor:pointer;transition:all .2s}
+.btn-pdf:hover{background:#168a62}
+
+/* ══ PROGRESS DASHBOARD ═══════════════════════════════ */
+.prog-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.prog-metric{background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:12px}
+.prog-metric-label{font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.prog-metric-val{font-size:22px;font-weight:500;color:var(--text)}
+.prog-metric-delta{font-size:11px;color:var(--tl)}
+.prog-chart{background:var(--bg3);border:0.5px solid var(--border);border-radius:9px;padding:12px;margin-bottom:10px}
+.prog-chart-title{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:8px}
+.prog-bars{display:flex;align-items:flex-end;gap:4px;height:60px}
+.prog-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;height:100%}
+.prog-bar{width:100%;border-radius:3px 3px 0 0;background:var(--purple);opacity:.6;transition:height .4s,opacity .2s;min-height:2px}
+.prog-bar:hover{opacity:1}
+.prog-bar-label{font-size:9px;color:var(--text3);font-family:'DM Mono',monospace}
+
+/* ══ DAILY CHALLENGE ══════════════════════════════════ */
+.challenge-card{background:linear-gradient(135deg,rgba(239,159,39,.08),rgba(127,119,221,.06));border:0.5px solid rgba(239,159,39,.2);border-radius:var(--r);padding:1.25rem;margin-bottom:10px}
+.challenge-card h3{font-size:13px;color:var(--amber);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px}
+.streak{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.streak-count{font-family:'DM Serif Display',serif;font-size:28px;color:var(--amber)}
+.streak-label{font-size:11px;color:var(--text3)}
+.streak-dots{display:flex;gap:4px}
+.streak-dot{width:8px;height:8px;border-radius:50%;background:var(--border)}
+.streak-dot.done{background:var(--amber)}
+
+/* ══ VOICE CMD INDICATOR ══════════════════════════════ */
+.vcmd-banner{display:flex;align-items:center;gap:8px;background:rgba(127,119,221,.07);border:0.5px solid rgba(127,119,221,.2);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:11px;color:var(--pl);font-family:'DM Mono',monospace;display:none}
+.vcmd-dot{width:6px;height:6px;border-radius:50%;background:var(--purple);animation:p .8s ease-in-out infinite;flex-shrink:0}
+
+/* ══ OVERLAY MODAL ════════════════════════════════════ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal-box{background:var(--bg2);border:0.5px solid var(--border2);border-radius:16px;padding:1.75rem;max-width:380px;width:100%;position:relative}
+.modal-close{position:absolute;top:12px;right:14px;background:none;border:none;color:var(--text3);font-size:20px;cursor:pointer;line-height:1}
+.modal-close:hover{color:var(--text)}
+.modal-title{font-family:'DM Serif Display',serif;font-size:20px;color:var(--text);margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:1.2rem}
+
+/* ══ ADMIN PAGE ═══════════════════════════════════════ */
+#page-admin{min-height:100vh;padding-bottom:4rem}
+.admin-topbar{display:flex;align-items:center;gap:12px;padding:14px 1.5rem;border-bottom:0.5px solid var(--border);background:rgba(9,9,15,.92);backdrop-filter:blur(10px);position:sticky;top:0;z-index:100}
+.admin-badge{font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(239,159,39,.15);color:var(--amber);border:0.5px solid rgba(239,159,39,.3);font-family:'DM Mono',monospace}
+.admin-body{max-width:900px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.admin-section{margin-bottom:2rem}
+.admin-section-title{font-size:11px;font-weight:500;letter-spacing:.08em;text-transform:uppercase;color:var(--text3);margin-bottom:12px;font-family:'DM Mono',monospace;padding-bottom:8px;border-bottom:0.5px solid var(--border)}
+.admin-stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:1rem}
+.admin-stat{background:var(--bg2);border:0.5px solid var(--border);border-radius:10px;padding:12px 14px}
+.admin-stat-val{font-size:24px;font-weight:500;color:var(--text);line-height:1}
+.admin-stat-label{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:4px}
+.admin-table{width:100%;border-collapse:collapse;font-size:13px}
+.admin-table th{text-align:left;padding:8px 12px;font-size:10px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--text3);font-family:'DM Mono',monospace;border-bottom:0.5px solid var(--border)}
+.admin-table td{padding:10px 12px;border-bottom:0.5px solid var(--border);color:var(--text2);vertical-align:middle}
+.admin-table tr:hover td{background:rgba(255,255,255,.02)}
+.atag{display:inline-block;font-size:10px;font-weight:500;padding:2px 8px;border-radius:4px;font-family:'DM Mono',monospace}
+.atag-pro{background:rgba(127,119,221,.15);color:var(--pl);border:0.5px solid rgba(127,119,221,.25)}
+.atag-free{background:rgba(88,88,128,.15);color:var(--text2);border:0.5px solid var(--border)}
+.atag-admin{background:rgba(239,159,39,.15);color:var(--amber);border:0.5px solid rgba(239,159,39,.25)}
+.atag-inactive{background:rgba(216,90,48,.1);color:var(--coral);border:0.5px solid rgba(216,90,48,.2)}
+.admin-action-btn{padding:4px 10px;border-radius:5px;font-size:11px;border:0.5px solid var(--border);background:transparent;color:var(--text2);cursor:pointer;font-family:'Instrument Sans',sans-serif;transition:all .15s;margin-right:4px}
+.admin-action-btn:hover{color:var(--text);border-color:var(--border2);background:var(--bg3)}
+.admin-action-btn.danger{color:var(--coral);border-color:rgba(216,90,48,.3)}
+.admin-action-btn.danger:hover{background:rgba(216,90,48,.08)}
+.admin-action-btn.success{color:var(--tl);border-color:rgba(29,158,117,.3)}
+.admin-action-btn.success:hover{background:rgba(29,158,117,.08)}
+.admin-search{width:100%;background:var(--bg3);border:0.5px solid var(--border2);border-radius:8px;padding:9px 14px;color:var(--text);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;margin-bottom:12px;transition:border-color .2s}
+.admin-search:focus{border-color:var(--purple)}
+.admin-config-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.admin-input-group{display:flex;flex-direction:column;gap:5px}
+.admin-input-group label{font-size:11px;color:var(--text2);font-family:'DM Mono',monospace}
+.admin-input-group input{background:var(--bg3);border:0.5px solid var(--border2);border-radius:7px;padding:8px 12px;color:var(--text);font-size:13px;font-family:'Instrument Sans',sans-serif;outline:none;width:100%;transition:border-color .2s}
+.admin-input-group input:focus{border-color:var(--purple)}
+.admin-save-btn{padding:9px 20px;background:var(--purple);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:500;font-family:'Instrument Sans',sans-serif;cursor:pointer;transition:all .2s;margin-top:10px}
+.admin-save-btn:hover{background:#6a63cc}
+.admin-notice{background:rgba(239,159,39,.07);border:0.5px solid rgba(239,159,39,.2);border-radius:8px;padding:10px 14px;font-size:12px;color:var(--text2);margin-bottom:12px;line-height:1.55}
+.admin-notice strong{color:var(--amber)}
+@media(max-width:600px){.admin-config-grid{grid-template-columns:1fr}.admin-stats-grid{grid-template-columns:1fr 1fr}.admin-topbar{padding:10px 1rem}}
+</style>
+</head>
+<body>
+<div class="bg-grid" aria-hidden="true"></div>
+<div id="live" aria-live="assertive" aria-atomic="true" role="status"></div>
+
+<!-- ══ GENE MASCOT ════════════════════════════════════ -->
+<div id="gene-wrap" role="complementary" aria-label="Gene — your AI trumpet coach">
+  <div id="gene-bubble" role="status" aria-live="polite">
+    <button id="gene-close-bubble" onclick="closeGeneBubble()" aria-label="Dismiss Gene's tip">×</button>
+    <span id="gene-text"></span>
+  </div>
+  <div id="gene-voice-cmd">
+    <span id="vcmd-status" style="display:none">🎙 listening…</span>
+  </div>
+  <button id="gene-btn" onclick="toggleGene()" aria-label="Toggle Gene coaching assistant" aria-expanded="false">
+    <div class="gene-ring"></div>
+    <!-- Gene trumpet character SVG -->
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="10" r="6" fill="#aeaaee" opacity=".9"/>
+      <ellipse cx="14" cy="9.5" rx="3" ry="3.5" fill="#7f77dd"/>
+      <circle cx="12.5" cy="8.5" r="1" fill="#eeeef5" opacity=".6"/>
+      <rect x="10" y="16" width="8" height="2" rx="1" fill="#aeaaee" opacity=".7"/>
+      <path d="M14 18 Q8 20 6 24 H22 Q20 20 14 18Z" fill="#7f77dd" opacity=".6"/>
+      <path d="M18 17 Q22 16 24 20 L22 21 Q21 18 18 18Z" fill="#ef9f27"/>
+      <rect x="17" y="19" width="7" height="2.5" rx="1.2" fill="#ef9f27"/>
+      <circle cx="20" cy="17" r="1.5" fill="#5dcaa5"/>
+      <circle cx="22.5" cy="18" r="1.2" fill="#5dcaa5"/>
+      <circle cx="25" cy="19.5" r="1" fill="#5dcaa5"/>
+      <path d="M6 8 Q4 8 4 10 Q4 12 6 12" stroke="#5dcaa5" stroke-width="1.2" fill="none"/>
+    </svg>
+  </button>
+</div>
+
+<!-- ══ PAGE: AUTH ══════════════════════════════════════ -->
+<div class="page active" id="page-auth" role="main">
+  <div class="auth-card">
+    <div class="logo-wrap" aria-hidden="true">
+      <div class="logo-spin"><div class="logo-inner"></div></div>
+      <span class="logo-name">Tone<em>Wise</em> AI</span>
+    </div>
+    <h1 class="auth-title" id="auth-title">Welcome back</h1>
+    <p class="auth-sub" id="auth-sub">Sign in to continue your practice</p>
+    <div style="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:8px">v5.5 · Wind &amp; Brass Coach</div>
+    <div class="auth-error" id="auth-error" role="alert"></div>
+
+    <div id="form-signin">
+      <div class="input-group">
+        <label for="email-in">Email address</label>
+        <input type="email" id="email-in" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label for="pass-in">Password</label>
+        <input type="password" id="pass-in" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')signIn()">
+      </div>
+      <button class="btn btn-primary" onclick="signIn()">Sign in</button>
+      <div class="divider-or">or</div>
+      <button class="btn btn-google" onclick="signInGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <p class="auth-switch">Don't have an account? <a onclick="showSignup()">Create one free</a></p>
+    </div>
+
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:20px">
+      <a href="index.html" style="color:var(--text3);text-decoration:none;transition:color .2s" onmouseover="this.style.color='var(--pl)'" onmouseout="this.style.color='var(--text3)'">← Back to home</a>
+    </p>
+
+    <div id="form-signup" style="display:none">
+      <div class="input-group">
+        <label for="email-up">Email address</label>
+        <input type="email" id="email-up" placeholder="you@example.com" autocomplete="email">
+      </div>
+      <div class="input-group">
+        <label for="pass-up">Choose a password</label>
+        <input type="password" id="pass-up" placeholder="8+ characters" autocomplete="new-password" onkeydown="if(event.key==='Enter')signUp()">
+      </div>
+      <button class="btn btn-primary" onclick="signUp()">Create free account</button>
+      <div class="divider-or">or</div>
+      <button class="btn btn-google" onclick="signInGoogle()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <p class="auth-switch">Already have an account? <a onclick="showSignin()">Sign in</a></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PAGE: APP ═══════════════════════════════════════ -->
+<div class="page" id="page-app">
+  <header class="topbar" role="banner">
+    <div class="logo-spin" style="width:26px;height:26px;" aria-hidden="true"><div class="logo-inner" style="width:13px;height:13px;"></div></div>
+    <a href="index.html" class="topbar-logo" style="text-decoration:none">Tone<em>Wise</em></a>
+    <span class="topbar-plan plan-free" id="plan-badge">Free</span>
+    <select id="inst-sel" onchange="setInstrument(this.value)"
+      style="background:var(--bg3);border:0.5px solid var(--border2);border-radius:7px;
+             color:var(--text2);font-size:11px;padding:4px 8px;cursor:pointer;outline:none;max-width:130px;">
+      <option value="Trumpet">Trumpet</option>
+      <option value="Saxophone">Saxophone</option>
+      <option value="Clarinet">Clarinet</option>
+      <option value="Flugelhorn">Flugelhorn</option>
+      <option value="French Horn">French Horn</option>
+      <option value="Trombone">Trombone</option>
+      <option value="Cornet">Cornet</option>
+      <option value="Euphonium">Euphonium</option>
+    </select>
+    <nav class="topbar-right" aria-label="Account">
+      <span class="topbar-email" id="topbar-email"></span>
+      <button class="btn-sm btn-upgrade" id="btn-upgrade-top" onclick="openUpgrade()" aria-label="Upgrade to Pro">Upgrade to Pro</button>
+      <span id="admin-btn-wrap" style="display:none"><button class="btn-sm" style="background:rgba(239,159,39,.12);color:var(--amber);border-color:rgba(239,159,39,.3)" onclick="openAdmin()">Admin</button></span>
+      <button class="btn-sm btn-logout" onclick="signOut()" aria-label="Log out">Log out</button>
+    </nav>
+  </header>
+
+  <main class="app-body" role="main">
+
+    <!-- voice command hint -->
+    <div class="vcmd-banner" id="vcmd-banner">
+      <div class="vcmd-dot"></div>
+      <span id="vcmd-text">Voice commands active — try "Hey Gene, start recording"</span>
+    </div>
+
+    <!-- Session counter -->
+    <div class="session-banner" id="session-banner" role="status" aria-live="polite">
+      <span id="sess-label">5 sessions remaining</span>
+      <div class="session-bar" aria-hidden="true"><div class="session-fill" id="sess-fill" style="width:100%"></div></div>
+      <button class="btn-sm btn-upgrade" onclick="openUpgrade()" style="flex-shrink:0">Upgrade</button>
+    </div>
+
+    <!-- Mode tabs -->
+    <nav class="mode-tabs" role="tablist" aria-label="Practice modes">
+      <button class="mtab on" role="tab" aria-selected="true"  onclick="setTab('coach')"    id="tab-coach">AI Coaching</button>
+      <button class="mtab"    role="tab" aria-selected="false" onclick="setTab('ear')"      id="tab-ear">Ear Training</button>
+      <button class="mtab"    role="tab" aria-selected="false" onclick="setTab('ask')"      id="tab-ask">Ask the teacher</button>
+      <button class="mtab"    role="tab" aria-selected="false" onclick="setTab('metro')"    id="tab-metro">Metronome</button>
+      <button class="mtab"    role="tab" aria-selected="false" onclick="setTab('fing')"     id="tab-fing">Fingering chart</button>
+      <button class="mtab pro-tab" role="tab" aria-selected="false" onclick="setTab('upload')"  id="tab-upload">Score recording</button>
+      <button class="mtab pro-tab" role="tab" aria-selected="false" onclick="setTab('progress')" id="tab-progress">Progress</button>
+      <button class="mtab"    role="tab" aria-selected="false" onclick="setTab('log')"      id="tab-log">Session log</button>
+    </nav>
+
+    <!-- ── PANEL: AI COACHING ─────────────────────────── -->
+    <section class="mode-panel on" id="panel-coach" role="tabpanel" aria-labelledby="tab-coach">
+      <div class="card">
+        <h2>Live practice session</h2>
+        <p>Select your level, then press Record and play your trumpet. Claude listens to your pitch and gives you spoken coaching feedback.</p>
+        <div class="pills" role="group" aria-label="Skill level">
+          <button class="pill on" onclick="setPill(this,'level')">Beginner</button>
+          <button class="pill" onclick="setPill(this,'level')">Intermediate</button>
+          <button class="pill" onclick="setPill(this,'level')">Advanced</button>
+          <button class="pill" onclick="setPill(this,'level')">Jazz / Improv</button>
+        </div>
+        <div class="record-zone">
+          <button class="rbtn" id="rbtn" onclick="toggleRecord()" aria-label="Start recording" aria-pressed="false">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" id="rec-icon" aria-hidden="true">
+              <circle cx="14" cy="14" r="9" fill="#d85a30"/>
+            </svg>
+          </button>
+          <span class="rlabel" id="rlabel" aria-live="polite">PRESS TO RECORD</span>
+        </div>
+
+        <div class="timer-bar-wrap" id="timer-bar-wrap" aria-hidden="true">
+          <div class="timer-bar-fill" id="timer-bar-fill" style="width:100%"></div>
+        </div>
+        <div class="timer-label" id="timer-label" aria-live="polite"></div>
+
+        <div class="pitch-box" aria-live="polite" aria-label="Pitch detection">
+          <div class="pnote" id="pnote" aria-label="Current note">—</div>
+          <div class="pmeta">
+            <span>Hz: <span id="phz">—</span></span>
+            <span>Cents: <span id="pcents">—</span></span>
+            <span>Vol: <span id="pvol">—</span></span>
+          </div>
+          <div class="viz" id="viz" aria-hidden="true"></div>
+        </div>
+
+        <div class="toolbar" role="group" aria-label="Playback controls">
+          <button class="tbtn" onclick="repeatFeedback()" aria-label="Repeat last feedback">Repeat feedback</button>
+          <button class="tbtn on" id="voice-toggle" onclick="toggleVoice()" aria-pressed="true">Voice on</button>
+          <button class="tbtn" onclick="clearSession()" aria-label="Clear session">Clear</button>
+        </div>
+        <div class="timer-label" id="time-remain" aria-live="polite">3:00 remaining</div>
+      </div>
+
+      <div class="feedback" role="region" aria-label="Claude coaching">
+        <h3>Claude coaching</h3>
+        <div class="ftext" id="coach-text">Start recording and play a note or phrase. Claude will analyse your pitch and give spoken coaching advice.</div>
+      </div>
+
+      <!-- status -->
+      <div class="status-bar" role="status" aria-live="polite">
+        <div class="sdot idle" id="sdot"></div>
+        <span id="stext">Ready — press Record to begin</span>
+      </div>
+    </section>
+
+    <!-- ── PANEL: EAR TRAINING ────────────────────────── -->
+    <section class="mode-panel" id="panel-ear" role="tabpanel" aria-labelledby="tab-ear">
+      <div class="card">
+        <h2>AI ear training</h2>
+        <p>ToneWise generates an exercise and plays the actual notes. Listen, then identify what you heard.</p>
+        <div class="pills" role="group" aria-label="Exercise type">
+          <button class="pill on" onclick="setPill(this,'ear')">Intervals</button>
+          <button class="pill" onclick="setPill(this,'ear')">Scales</button>
+          <button class="pill" onclick="setPill(this,'ear')">Chord tones</button>
+          <button class="pill" onclick="setPill(this,'ear')">Melody recall</button>
+          <button class="pill" onclick="setPill(this,'ear')">Rhythm patterns</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px">
+          <button class="btn btn-primary" style="width:auto;padding:10px 24px" onclick="genEar()">Generate &amp; Play</button>
+          <button class="tbtn" id="ear-play-btn" onclick="playEarTones()" style="display:none">Play again</button>
+          <button class="tbtn" id="ear-reveal-btn" onclick="revealEarAnswer()" style="display:none">Reveal answer</button>
+        </div>
+      </div>
+      <div class="feedback" role="region" aria-label="Ear training exercise">
+        <h3>Your exercise</h3>
+        <div class="ftext" id="ear-text">Press Generate and Play to start your ear training exercise.</div>
+        <div id="ear-status" style="font-size:11px;color:var(--tl);font-family:'DM Mono',monospace;margin-top:8px;min-height:16px"></div>
+        <div id="ear-answer" style="display:none;margin-top:12px;padding:12px 14px;background:rgba(29,158,117,.1);border:0.5px solid rgba(29,158,117,.3);border-radius:8px;font-size:14px;font-weight:500;color:var(--tl)"></div>
+      </div>
+    </section>
+
+    <!-- ── PANEL: ASK ─────────────────────────────────── -->
+    <section class="mode-panel" id="panel-ask" role="tabpanel" aria-labelledby="tab-ask">
+      <div class="card">
+        <h2>Ask your AI trumpet teacher</h2>
+        <p>Ask anything about trumpet technique, music theory, or practice strategy. All answers spoken aloud.</p>
+        <div class="quick-asks" role="group" aria-label="Quick questions">
+          <button class="qa" onclick="setQ(this.textContent)">High notes</button>
+          <button class="qa" onclick="setQ(this.textContent)">Embouchure</button>
+          <button class="qa" onclick="setQ(this.textContent)">Long tones</button>
+          <button class="qa" onclick="setQ(this.textContent)">Jazz improv</button>
+          <button class="qa" onclick="setQ(this.textContent)">Tone quality</button>
+        </div>
+        <div class="ask-input-wrap">
+          <input type="text" id="ask-input" placeholder="Type your question" aria-label="Your question" onkeydown="if(event.key==='Enter')askTeacher()">
+          <button onclick="askTeacher()">Ask</button>
+        </div>
+      </div>
+      <div class="feedback" role="region" aria-label="Claude's answer">
+        <h3>Claude's answer</h3>
+        <div class="ftext" id="ask-text">Ask any question above to get expert guidance from your AI trumpet teacher.</div>
+      </div>
+    </section>
+
+    <!-- ── PANEL: METRONOME ───────────────────────────── -->
+    <section class="mode-panel" id="panel-metro" role="tabpanel" aria-labelledby="tab-metro">
+      <div class="metro-card">
+        <h2 style="margin-bottom:1rem">Metronome</h2>
+        <div class="metro-bpm-display" id="metro-bpm-display" aria-live="polite" aria-label="BPM">120</div>
+        <div class="metro-bpm-unit">BPM</div>
+        <div class="metro-controls">
+          <button class="metro-adj" onclick="adjBpm(-10)" aria-label="Decrease BPM by 10">−−</button>
+          <button class="metro-adj" onclick="adjBpm(-1)"  aria-label="Decrease BPM by 1">−</button>
+          <input type="range" class="metro-slider" id="metro-slider" min="40" max="240" value="120" oninput="setBpm(+this.value)" aria-label="BPM slider">
+          <button class="metro-adj" onclick="adjBpm(1)"  aria-label="Increase BPM by 1">+</button>
+          <button class="metro-adj" onclick="adjBpm(10)" aria-label="Increase BPM by 10">++</button>
+        </div>
+
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px">
+          <label style="font-size:12px;color:var(--text2)">Beats per bar</label>
+          <div class="pills" style="margin:0">
+            <button class="pill on" onclick="setBeats(this,2)">2</button>
+            <button class="pill" onclick="setBeats(this,3)">3</button>
+            <button class="pill on" onclick="setBeats(this,4)">4</button>
+          </div>
+        </div>
+
+        <div class="metro-beat-viz" id="metro-beat-viz" aria-hidden="true"></div>
+
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <button class="metro-play-btn" id="metro-play-btn" onclick="toggleMetro()" aria-label="Start metronome">Start metronome</button>
+          <button class="tap-btn" onclick="tapTempo()" aria-label="Tap tempo">Tap tempo</button>
+        </div>
+
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <label style="font-size:12px;color:var(--text2)">Subdivisions</label>
+          <div class="pills" style="margin:0">
+            <button class="pill on" onclick="setSub(this,1)">Quarter</button>
+            <button class="pill" onclick="setSub(this,2)">Eighth</button>
+            <button class="pill" onclick="setSub(this,3)">Triplet</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PANEL: FINGERING CHART ─────────────────────── -->
+    <section class="mode-panel" id="panel-fing" role="tabpanel" aria-labelledby="tab-fing">
+      <div class="fing-card">
+        <h2 style="margin-bottom:8px" id="fing-chart-title">Trumpet fingering chart</h2>
+        <p id="fing-chart-desc">Select a note — Gene reads the fingering aloud.</p>
+        <div class="fing-note-select" role="group" aria-label="Select note"></div>
+        <div class="fing-diagram" role="img" aria-label="Instrument diagram">
+          <div class="fing-name" id="fing-note-name" aria-live="polite">Select a note</div>
+          <div class="fing-alt" id="fing-alt"></div>
+          <div id="fing-visual" style="display:flex;flex-direction:column;align-items:center;gap:10px;padding:0.5rem 0"></div>
+        </div>
+        <p id="fing-legend" style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;text-align:center;margin-top:8px">Active = purple</p>
+      </div>
+    </section>
+
+    <!-- ── PANEL: SCORE RECORDING (PRO) ──────────────── -->
+    <section class="mode-panel" id="panel-upload" role="tabpanel" aria-labelledby="tab-upload">
+
+      <div id="upload-gate-free"><!-- shown to free users --></div>
+
+      <div id="upload-pro-content" style="display:none">
+        <div class="card">
+          <h2>Score a recording</h2>
+          <p>Upload an audio file of your practice or performance. Claude will analyse each note, grade your accuracy, timing, and dynamics, then export a full PDF report.</p>
+          <div class="upload-zone" id="upload-zone" role="button" tabindex="0" aria-label="Upload audio file — click or drag and drop" onclick="document.getElementById('upload-input').click()" onkeydown="if(event.key==='Enter'||event.key===' ')document.getElementById('upload-input').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event)">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="7" width="26" height="18" rx="3" stroke="#9897b2" stroke-width="1.2"/>
+              <path d="M16 22V10M16 10L11 15M16 10L21 15" stroke="#9897b2" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+            <p>Drop an audio file here or click to browse</p>
+            <span>MP3, WAV, M4A · max 50 MB</span>
+          </div>
+          <input type="file" id="upload-input" accept="audio/*" onchange="handleUpload(this.files[0])">
+
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px">
+            <label style="font-size:12px;color:var(--text2)">Or score your last live session:</label>
+            <button class="tbtn" onclick="scoreLiveSession()" style="color:var(--pl);border-color:rgba(127,119,221,.3)">Score last session</button>
+          </div>
+        </div>
+
+        <div class="upload-progress" id="upload-progress">
+          <div class="upload-prog-label" id="upload-prog-label">Analysing audio…</div>
+          <div class="upload-prog-bar"><div class="upload-prog-fill" id="upload-prog-fill" style="width:0%"></div></div>
+        </div>
+
+        <div class="score-result" id="score-result" role="region" aria-label="Scoring results" aria-live="polite">
+          <div class="score-header">
+            <div>
+              <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin-bottom:4px">OVERALL SCORE</div>
+              <div class="score-grade" id="score-grade">—</div>
+            </div>
+            <button class="btn-pdf" id="btn-pdf" onclick="exportPDF()" aria-label="Export PDF report">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="10" height="13" rx="1.5" stroke="white" stroke-width="1.2"/><path d="M5 5h6M5 8h6M5 11h4" stroke="white" stroke-width="1.2" stroke-linecap="round"/><path d="M10 1v4h4" stroke="white" stroke-width="1" stroke-linecap="round"/></svg>
+              Export PDF
+            </button>
+          </div>
+          <div class="score-breakdown" id="score-breakdown"></div>
+          <div style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace;margin:10px 0 5px">NOTES DETECTED</div>
+          <div class="score-notes-list" id="score-notes-list"></div>
+          <!-- On-screen music notation staff -->
+          <div id="notation-wrap" style="display:none;background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:14px;margin:12px 0;overflow-x:auto">
+            <div style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">Performance — music notation</div>
+            <svg id="notation-svg" viewBox="0 0 680 160" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:280px;display:block"></svg>
+            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-size:11px">
+              <span style="color:var(--text2)">&#9679; In tune</span>
+              <span style="color:var(--tl)">&#9679; Sharp</span>
+              <span style="color:var(--blue)">&#9679; Flat</span>
+              <span style="color:var(--coral)">&#9679; Off (&gt;20c)</span>
+            </div>
+          </div>
+          <div class="feedback" style="margin-top:10px">
+            <h3>ToneWise coaching notes</h3>
+            <div class="ftext" id="score-coaching"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PANEL: PROGRESS ────────────────────────────── -->
+    <section class="mode-panel" id="panel-progress" role="tabpanel" aria-labelledby="tab-progress">
+
+      <div id="progress-gate-free"></div>
+
+      <div id="progress-pro-content" style="display:none">
+        <!-- Daily challenge streak -->
+        <div class="challenge-card">
+          <h3>Daily challenge</h3>
+          <div class="streak">
+            <div class="streak-count" id="streak-count" aria-label="Current streak">0</div>
+            <div>
+              <div style="font-size:13px;color:var(--text)">day streak</div>
+              <div class="streak-label">Keep practising daily to grow your streak</div>
+            </div>
+          </div>
+          <div class="streak-dots" id="streak-dots" aria-label="Last 7 days"></div>
+          <button class="btn btn-primary" style="width:auto;padding:9px 22px;margin-top:12px" onclick="startChallenge()">Today's challenge</button>
+        </div>
+
+        <!-- Metrics -->
+        <div class="prog-grid" role="region" aria-label="Practice metrics">
+          <div class="prog-metric">
+            <div class="prog-metric-label">Sessions this week</div>
+            <div class="prog-metric-val" id="prog-sessions">0</div>
+          </div>
+          <div class="prog-metric">
+            <div class="prog-metric-label">Avg pitch accuracy</div>
+            <div class="prog-metric-val" id="prog-accuracy">—</div>
+            <div class="prog-metric-delta" id="prog-accuracy-delta"></div>
+          </div>
+          <div class="prog-metric">
+            <div class="prog-metric-label">Total practice time</div>
+            <div class="prog-metric-val" id="prog-time">0m</div>
+          </div>
+          <div class="prog-metric">
+            <div class="prog-metric-label">Notes scored</div>
+            <div class="prog-metric-val" id="prog-notes">0</div>
+          </div>
+        </div>
+
+        <!-- Chart -->
+        <div class="prog-chart" role="img" aria-label="Weekly pitch accuracy chart">
+          <div class="prog-chart-title">PITCH ACCURACY — LAST 7 SESSIONS</div>
+          <div class="prog-bars" id="prog-bars"></div>
+        </div>
+
+        <!-- AI weekly summary -->
+        <div class="feedback">
+          <h3>Claude's weekly summary</h3>
+          <div class="ftext" id="prog-summary">Complete a few sessions to receive a personalised weekly summary from Claude.</div>
+          <button class="tbtn" style="margin-top:10px" onclick="getWeeklySummary()">Generate summary</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PANEL: SESSION LOG ─────────────────────────── -->
+    <section class="mode-panel" id="panel-log" role="tabpanel" aria-labelledby="tab-log">
+      <div class="card">
+        <h2>Session log</h2>
+        <p>Your practice history from this session.</p>
+      </div>
+      <div class="slist" id="slist" role="list" aria-label="Practice sessions" aria-live="polite">
+        <p style="font-size:13px;color:var(--text3);padding:10px 0">No sessions yet — start recording to build your history.</p>
+      </div>
+    </section>
+
+  </main>
+  <footer>ToneWise AI · Powered by Claude (Anthropic) · Web Audio API · WCAG 2.2 AA</footer>
+</div>
+
+<!-- ══ UPGRADE MODAL ══════════════════════════════════ -->
+<div class="modal-bg" id="modal-upgrade" role="dialog" aria-modal="true" aria-labelledby="modal-upgrade-title">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeUpgrade()" aria-label="Close">×</button>
+    <div class="modal-title" id="modal-upgrade-title">Upgrade to ToneWise Pro</div>
+    <div class="modal-sub">Unlimited AI coaching, all practice modes, full ear training, session scoring PDF, progress dashboard, and your complete session history.</div>
+    <div class="modal-price-row">
+      <div class="modal-plan on" id="plan-monthly" onclick="selectPlan('monthly')">
+        <div style="font-size:11px;color:var(--text2)">Monthly</div>
+        <div style="font-size:16px;font-weight:500;color:var(--text)">$9.99<span style="font-size:11px;color:var(--text3)">/month</span></div>
+      </div>
+      <div class="modal-plan" id="plan-annual" onclick="selectPlan('annual')">
+        <div style="font-size:11px;color:var(--text2)">Annual <span class="gate-save">Save 34%</span></div>
+        <div style="font-size:16px;font-weight:500;color:var(--text)">$79<span style="font-size:11px;color:var(--text3)">/year</span></div>
+      </div>
+    </div>
+    <div class="gate-pay-btns">
+      <a class="btn-pay btn-pay-stripe" id="pay-stripe" href="#" onclick="handlePayment('stripe')">Pay with Stripe</a>
+      <a class="btn-pay btn-pay-paypal" id="pay-paypal" href="#" onclick="handlePayment('paypal')">Pay with PayPal</a>
+    </div>
+    <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">Secure payment · Cancel anytime · Instant access</p>
+    <div class="upgrade-perks" style="margin-top:10px">
+      <span class="perk">Unlimited sessions</span>
+      <span class="perk">Session scoring PDF</span>
+      <span class="perk">Progress dashboard</span>
+      <span class="perk">Audio upload analysis</span>
+      <span class="perk">Daily challenges</span>
+    </div>
+    <button class="btn btn-secondary" style="margin-top:12px" onclick="closeUpgrade()">Maybe later</button>
+  </div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════
+   CONFIG  — replace with your real values
+═══════════════════════════════════════════════════════════ */
+const SUPABASE_URL    = 'https://hcppslccegbqohukmtox.supabase.co';
+const SUPABASE_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhjcHBzbGNjZWdicW9odWttdG94Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzYxMDg2OTEsImV4cCI6MjA5MTY4NDY5MX0.AVCVktWfmTq9z3kgE836BW7dQxgC6zt_4vaJq7-KTP4';
+const WORKER_URL      = 'https://tonewise.godigitsall.workers.dev';
+const STRIPE_MONTHLY  = '#';   // replace with Stripe Payment Link
+const STRIPE_ANNUAL   = '#';
+const PAYPAL_MONTHLY  = '#';
+const PAYPAL_ANNUAL   = '#';
+const FREE_SESSIONS   = 5;
+const ADMIN_EMAIL     = 'godigitsall@gmail.com';
+
+/* ════════════════════════════════════════════════════════
+   SUPABASE INIT
+═══════════════════════════════════════════════════════════ */
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage,
+    storageKey: 'tonewise-auth',
+    flowType: 'implicit'
+  }
+});
+
+/* ════════════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════════════ */
+let user = null, isPro = false, isAdmin = false;
+var currentInstrument = 'Trumpet';
+let sessionsUsed = 0;
+let recording = false, audioCtx = null, analyser = null, micStream = null;
+let pitchWorker = null, animFrame = null;
+let currentLevel = 'Beginner', currentEarType = 'Intervals';
+let voiceOn = true, lastFeedback = '', coachTimer = null, sessionTimer = null, timeLeft = 180;
+let sessionLog = [], sessionPitchData = [], sessionNotes = [];
+
+// Metronome
+let metroBpm = 120, metroBeats = 4, metroSub = 1, metroPlaying = false;
+let metroCtx = null, metroNext = 0, metroCurrent = 0, metroTimer = null, metroTaps = [];
+
+// Progress
+let progressData = { sessions:[], scores:[], totalTime:0, streak:0, lastDay:null };
+
+// Gene
+let geneSilent = false, geneQueue = [], geneTimeout = null;
+
+// Score result state
+let scoreResult = null;
+var analysisAborted = false;  // set true during signOut to cancel in-flight AI calls
+
+/* ════════════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════════════ */
+// Immediately check for existing session (handles page refresh)
+var appLoading=false;
+(async function(){
+  try{
+    var r=await sb.auth.getSession();
+    var sess=r.data&&r.data.session?r.data.session:null;
+    if(sess&&sess.user){ user=sess.user; await loadApp(); }
+    else { showPage('auth'); }
+  }catch(err){ showPage('auth'); }
+})();
+
+// Listen for runtime auth events
+sb.auth.onAuthStateChange(async function(event,session){
+  if(event==='TOKEN_REFRESHED') return;
+  if(event==='INITIAL_SESSION') return; // handled by getSession IIFE below
+  if(event==='SIGNED_OUT'){
+    user=null; isPro=false; isAdmin=false; appLoading=false;
+    showPage('auth'); return;
+  }
+  // SIGNED_IN or USER_UPDATED
+  var newUser=session?session.user:null;
+  if(newUser&&newUser.id!==(user?user.id:null)&&!appLoading){
+    user=newUser; await loadApp();
+  }
+});
+async function signIn(){
+  var errEl=$('auth-error');
+  var btn=document.querySelector('#form-signin .btn-primary');
+  function resetBtn(){ if(btn){ btn.textContent='Sign in'; btn.disabled=false; } }
+  function showErr(msg){ if(errEl){ errEl.textContent=msg; errEl.style.display='block'; } resetBtn(); }
+  try{
+    var e=$('email-in').value.trim();
+    var p=$('pass-in').value;
+    if(!e||!p){ showErr('Please enter your email and password.'); return; }
+    if(errEl){ errEl.style.display='none'; errEl.textContent=''; }
+    if(btn){ btn.textContent='Signing in...'; btn.disabled=true; }
+    var r = await sb.auth.signInWithPassword({email:e, password:p});
+    resetBtn();
+    if(r.error){
+      var msg = (r.error.message||'').toLowerCase();
+      if(msg.indexOf('invalid')!==-1||msg.indexOf('credentials')!==-1)
+        showErr('Incorrect email or password.');
+      else if(msg.indexOf('confirm')!==-1)
+        showErr('Please confirm your email first — check your inbox.');
+      else
+        showErr(r.error.message||'Sign in failed. Please try again.');
+      return;
+    }
+    if(!r.data||!r.data.session||!r.data.session.user){
+      showErr('No session returned. Please try again.');
+      return;
+    }
+    // Success — load the app
+    user = r.data.session.user;
+    if(!appLoading){ await loadApp(); }
+    else {
+      // appLoading was set by onAuthStateChange firing first — wait briefly
+      setTimeout(function(){
+        if(document.getElementById('page-app').style.display==='none'||
+           document.getElementById('page-app').style.display===''){
+          showErr('Sign in succeeded but app did not load. Please refresh the page.');
+        }
+      }, 3000);
+    }
+  }catch(err){
+    resetBtn();
+    showErr('Error: '+(err.message||String(err))+'. Please refresh and try again.');
+  }
+}
+async function signUp(){
+  var e=$('email-up').value.trim(), p=$('pass-up').value;
+  if(!e||!p){ showError('Please enter your email and a password.'); return; }
+  if(p.length<6){ showError('Password must be at least 6 characters.'); return; }
+  var btn=document.querySelector('#form-signup .btn-primary');
+  if(btn){ btn.textContent='Creating account...'; btn.disabled=true; }
+  try{
+    var r=await sb.auth.signUp({email:e,password:p,
+      options:{emailRedirectTo:location.origin+location.pathname}});
+    if(btn){ btn.textContent='Create free account'; btn.disabled=false; }
+    if(r.error){ showError(r.error.message); return; }
+    if(r.data&&r.data.session&&r.data.session.user&&!appLoading){
+      user=r.data.session.user; await loadApp();
+    } else {
+      showError('Account created! Check your email to confirm, then sign in.');
+    }
+  }catch(err){
+    if(btn){ btn.textContent='Create free account'; btn.disabled=false; }
+    showError('Could not create account. Please try again.');
+  }
+}
+async function signInGoogle(){
+  await sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: location.href } });
+}
+async function signOut(){
+  if(!confirm('Log out of ToneWise?')) return;
+  // Stop all audio and cancel any in-flight AI analysis
+  analysisAborted = true;
+  try{ if(recording) stopRecord(); }catch(_){}
+  try{ stopMetro(); }catch(_){}
+  try{ if(voiceCmdRecognition) voiceCmdRecognition.stop(); }catch(_){}
+  // Clear all state
+  user=null; isPro=false; isAdmin=false; appLoading=false;
+  scoreResult=null; sessionPitchData=[]; sessionNotes=[]; sessionLog=[];
+  try{ await sb.auth.signOut(); }catch(_){}
+  showPage('auth');
+  // Reset abort flag after small delay (for next session)
+  setTimeout(function(){ analysisAborted=false; }, 500);
+}
+function showError(msg){ const el=$('auth-error'); el.textContent=msg; el.style.display='block'; }
+function showSignup(){ $('form-signin').style.display='none'; $('form-signup').style.display='block'; $('auth-title').textContent='Create account'; $('auth-sub').textContent='Start your free practice today'; }
+function showSignin(){ $('form-signup').style.display='none'; $('form-signin').style.display='block'; $('auth-title').textContent='Welcome back'; $('auth-sub').textContent='Sign in to continue your practice'; }
+
+/* ════════════════════════════════════════════════════════
+   APP LOAD
+═══════════════════════════════════════════════════════════ */
+async function loadApp(){
+  if(appLoading){ console.log('loadApp: already loading, skipping'); return; }
+  appLoading = true;
+  console.log('loadApp: starting for', user ? user.email : 'NO USER');
+
+  try {
+    // Step 1: Resolve admin
+    try {
+      isAdmin = !!(user && user.email && user.email === ADMIN_EMAIL);
+      if(isAdmin) isPro = true;
+      console.log('loadApp: isAdmin='+isAdmin+' isPro='+isPro);
+    } catch(e){ console.error('loadApp step 1 (admin):', e); }
+
+    // Step 2: Load Supabase profile
+    try {
+      var profileRes = await sb.from('profiles')
+        .select('is_pro,sessions_used,streak,last_session_day,progress_data')
+        .eq('id', user.id).single();
+      var profileData = profileRes.data;
+      if(profileData){
+          if(!isAdmin) isPro = !!profileData.is_pro;
+        sessionsUsed = profileData.sessions_used || 0;
+        if(profileData.streak) progressData.streak = profileData.streak;
+        if(profileData.last_session_day) progressData.lastDay = profileData.last_session_day;
+        if(profileData.progress_data){
+          try{ progressData = Object.assign({}, progressData, profileData.progress_data); }catch(_){}
+        }
+      }
+      console.log('loadApp: profile loaded');
+    } catch(e){ console.warn('loadApp: profile load failed (ok for new users):', e.message); }
+
+    // Step 3: Show app page
+    try {
+      showPage('app');
+      console.log('loadApp: showPage done');
+    } catch(e){ console.error('loadApp step 3 (showPage):', e); }
+
+    // Step 4: Set email in topbar
+    try {
+      var te = $('topbar-email');
+      if(te) te.textContent = user.email;
+    } catch(e){ console.error('loadApp step 4 (email):', e); }
+
+    // Step 5: Admin button
+    try {
+      if(isAdmin){
+        var abw = $('admin-btn-wrap');
+        if(abw) abw.style.display = 'inline-flex';
+      }
+    } catch(e){ console.error('loadApp step 5 (admin btn):', e); }
+
+    // Step 6: UI updates — each isolated
+    try{ updatePlanUI(); }catch(e){ console.error('loadApp: updatePlanUI:', e); }
+    try{ updateSessionBanner(); }catch(e){ console.error('loadApp: updateSessionBanner:', e); }
+    try{ buildViz(); }catch(e){ console.error('loadApp: buildViz:', e); }
+    try{ buildMetroBeatViz(); }catch(e){ console.error('loadApp: buildMetroBeatViz:', e); }
+    try{ setInstrument(currentInstrument); }catch(e){ console.error('loadApp: setInstrument:', e); }
+    try{ buildProgressUI(); }catch(e){ console.error('loadApp: buildProgressUI:', e); }
+    try{ geneGreet(); }catch(e){ console.error('loadApp: geneGreet:', e); }
+    try{ initVoiceCommands(); }catch(e){ console.error('loadApp: initVoiceCommands:', e); }
+
+    console.log('loadApp: complete');
+
+  } catch(fatalErr){
+    console.error('loadApp FATAL:', fatalErr);
+    // Still try to show the app even if something crashed
+    try{ showPage('app'); }catch(_){}
+    try{ var te=$('topbar-email'); if(te&&user) te.textContent=user.email; }catch(_){}
+  } finally {
+    appLoading = false;
+    console.log('loadApp: appLoading released');
+  }
+}
+
+function updatePlanUI(){
+  const badge = $('plan-badge');
+  if(isPro){
+    badge.textContent = 'Pro'; badge.className = 'topbar-plan plan-pro';
+    $('btn-upgrade-top').style.display = 'none';
+    $('session-banner').style.display = 'none';
+  } else {
+    badge.textContent = 'Free'; badge.className = 'topbar-plan plan-free';
+  }
+  renderProGates();
+}
+
+function renderProGates(){
+  const uploadGate = $('upload-gate-free'), progressGate = $('progress-gate-free');
+  if(isPro){
+    $('upload-pro-content').style.display = 'block';
+    $('progress-pro-content').style.display = 'block';
+    if(uploadGate) uploadGate.innerHTML = '';
+    if(progressGate) progressGate.innerHTML = '';
+  } else {
+    const gateHtml = (feature) => `
+      <div class="upgrade-gate">
+        <h3>${feature}</h3>
+        <p>This feature is available on ToneWise Pro. Upgrade for unlimited AI coaching, session scoring PDF exports, progress analytics, and daily challenges.</p>
+        <button class="btn-upgrade-big" onclick="openUpgrade()">Upgrade to Pro</button>
+        <div class="upgrade-perks">
+          <span class="perk">Unlimited sessions</span>
+          <span class="perk">PDF reports</span>
+          <span class="perk">Progress charts</span>
+          <span class="perk">Daily challenges</span>
+        </div>
+      </div>`;
+    if(uploadGate) uploadGate.innerHTML = gateHtml('Score a recording');
+    if(progressGate) progressGate.innerHTML = gateHtml('Progress dashboard');
+    $('upload-pro-content').style.display = 'none';
+    $('progress-pro-content').style.display = 'none';
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════════════ */
+function setTab(id){
+  document.querySelectorAll('.mtab').forEach(t => { t.classList.remove('on'); t.setAttribute('aria-selected','false'); });
+  document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('on'));
+  $('tab-'+id).classList.add('on'); $('tab-'+id).setAttribute('aria-selected','true');
+  $('panel-'+id).classList.add('on');
+  if(id==='metro') buildMetroBeatViz();
+  if(id==='progress') refreshProgressUI();
+}
+
+/* ════════════════════════════════════════════════════════
+   SESSION BANNER
+═══════════════════════════════════════════════════════════ */
+function updateSessionBanner(){
+  if(isPro) return;
+  const rem = Math.max(0, FREE_SESSIONS - sessionsUsed);
+  $('sess-label').textContent = rem + ' sessions remaining';
+  const fill = $('sess-fill');
+  const pct = (rem / FREE_SESSIONS) * 100;
+  fill.style.width = pct + '%';
+  fill.className = 'session-fill' + (pct<=40?' warn':'') + (pct===0?' full':'');
+}
+
+/* ════════════════════════════════════════════════════════
+   PITCH DETECTION + RECORDING
+═══════════════════════════════════════════════════════════ */
+function buildViz(){
+  const viz = $('viz'); viz.innerHTML = '';
+  for(let i=0;i<32;i++){ const b=document.createElement('div'); b.className='vbar'; viz.appendChild(b); }
+}
+
+async function toggleRecord(){
+  if(recording) { stopRecord(); return; }
+  if(!isPro && sessionsUsed >= FREE_SESSIONS){ openUpgrade(); return; }
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio:{ echoCancellation:false, noiseSuppression:false, autoGainControl:false } });
+    audioCtx = new (window.AudioContext||window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 4096;
+    audioCtx.createMediaStreamSource(micStream).connect(analyser);
+    recording = true;
+    $('rbtn').classList.add('on'); $('rbtn').setAttribute('aria-pressed','true');
+    $('rlabel').textContent = 'RECORDING…';
+    setStatus('listening','Listening to your trumpet…');
+    startSessionTimer();
+    sessionPitchData = []; sessionNotes = [];
+    requestAnimationFrame(detectPitch);
+    geneSpeak("I'm listening! Play a note whenever you're ready.");
+    scheduleCoaching();
+  } catch(e){
+    setStatus('err','Microphone access denied');
+    geneSpeak("I couldn't access your microphone. Please allow microphone permissions and try again.");
+  }
+}
+
+function stopRecord(){
+  if(!recording) return;
+  recording = false;
+  if(animFrame) cancelAnimationFrame(animFrame);
+  if(micStream) micStream.getTracks().forEach(t=>t.stop());
+  if(audioCtx){ audioCtx.close(); audioCtx=null; }
+  if(coachTimer) clearTimeout(coachTimer);
+  if(sessionTimer) clearInterval(sessionTimer);
+  $('rbtn').classList.remove('on'); $('rbtn').setAttribute('aria-pressed','false');
+  $('rlabel').textContent = 'PRESS TO RECORD';
+  $('timer-bar-wrap').style.display='none'; $('timer-label').style.display='none';
+  setStatus('idle','Ready — press Record to begin');
+  $('pnote').textContent='—'; $('phz').textContent='—'; $('pcents').textContent='—'; $('pvol').textContent='—';
+  saveSession();
+  sessionsUsed++;
+  updateSessionBanner();
+  persistProfile();
+  getEndOfSessionAnalysis();
+}
+
+function detectPitch(){
+  if(!recording){ return; }
+  animFrame = requestAnimationFrame(detectPitch);
+  const buf = new Float32Array(analyser.fftSize);
+  analyser.getFloatTimeDomainData(buf);
+  // Update visualiser
+  const freq = new Uint8Array(analyser.frequencyBinCount);
+  analyser.getByteFrequencyData(freq);
+  const bars = $('viz').children;
+  const step = Math.floor(freq.length / bars.length);
+  for(let i=0;i<bars.length;i++){
+    const v = freq[i*step] / 255;
+    bars[i].style.height = Math.max(2, v*36)+'px';
+    bars[i].style.background = v>0.6?'var(--coral)':v>0.3?'var(--amber)':'var(--purple)';
+  }
+  // Autocorrelation pitch detection
+  const hz = autoCorrelate(buf, audioCtx.sampleRate);
+  let vol = 0; for(let s of buf) vol+=s*s; vol=Math.sqrt(vol/buf.length);
+  $('pvol').textContent = (vol*100).toFixed(1)+'%';
+  if(hz > 0 && vol > 0.01){
+    const note = hzToNote(hz);
+    const cents = hzToCents(hz, note);
+    $('pnote').textContent = note.name;
+    $('pnote').className = 'pnote' + (Math.abs(cents)>15?' off':'');
+    $('phz').textContent = hz.toFixed(1);
+    $('pcents').textContent = (cents>0?'+':'')+cents.toFixed(0);
+    sessionPitchData.push({ hz, note:note.name, cents, time:Date.now() });
+    if(!sessionNotes.includes(note.name)) sessionNotes.push(note.name);
+    announce(note.name);
+  }
+}
+
+function autoCorrelate(buf, sr){
+  const SIZE=buf.length; let rms=0;
+  for(let i=0;i<SIZE;i++) rms+=buf[i]*buf[i];
+  rms=Math.sqrt(rms/SIZE);
+  if(rms<0.01) return -1;
+  let r1=0,r2=SIZE-1;
+  for(let i=0;i<SIZE/2;i++) if(Math.abs(buf[i])<0.2){r1=i;break;}
+  for(let i=1;i<SIZE/2;i++) if(Math.abs(buf[SIZE-i])<0.2){r2=SIZE-i;break;}
+  buf=buf.slice(r1,r2);
+  const c=new Array(buf.length).fill(0);
+  for(let i=0;i<buf.length;i++) for(let j=0;j<buf.length-i;j++) c[i]+=buf[j]*buf[j+i];
+  let d=0; while(c[d]>c[d+1]) d++;
+  let maxval=-1,maxpos=-1;
+  for(let i=d;i<buf.length;i++) if(c[i]>maxval){maxval=c[i];maxpos=i;}
+  let T0=maxpos;
+  const x1=c[T0-1],x2=c[T0],x3=c[T0+1];
+  const a=(x1+x3-2*x2)/2, b=(x3-x1)/2;
+  if(a) T0 -= b/(2*a);
+  return sr/T0;
+}
+
+const NOTES=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+function hzToNote(hz){
+  const n=Math.round(12*(Math.log2(hz/440)))+69;
+  return { name:NOTES[n%12]+(Math.floor(n/12)-1), midi:n };
+}
+function hzToCents(hz, note){
+  const ideal=440*Math.pow(2,(note.midi-69)/12);
+  return 1200*Math.log2(hz/ideal);
+}
+
+/* ════════════════════════════════════════════════════════
+   COACHING — LIVE CHECK-INS + END-OF-SESSION REPORT
+=══════════════════════════════════════════════════════════ */
+function scheduleCoaching(){
+  if(coachTimer) clearTimeout(coachTimer);
+  coachTimer = setTimeout(function(){ if(recording) getCoaching(); }, 12000);
+}
+
+async function getCoaching(){
+  if(!recording || sessionPitchData.length < 10){ scheduleCoaching(); return; }
+  setStatus('thinking','ToneWise is analysing...');
+  var recent   = sessionPitchData.slice(-80);
+  var avgCents = recent.reduce(function(s,d){ return s+Math.abs(d.cents); },0)/recent.length;
+  var noteSet  = [...new Set(recent.map(function(d){ return d.note; }))];
+  var sharpN   = recent.filter(function(d){ return d.cents > 15; }).length;
+  var flatN    = recent.filter(function(d){ return d.cents < -15; }).length;
+  var inPct    = Math.round(recent.filter(function(d){ return Math.abs(d.cents)<=15; }).length/recent.length*100);
+  var loNote   = noteSet.slice().sort()[0] || '?';
+  var hiNote   = noteSet.slice().sort().slice(-1)[0] || '?';
+
+  var prompt = "You are Gene, a master " + currentInstrument + " coach inside ToneWise AI. " +
+    "Student self-reported level: " + currentLevel + ". " +
+    "Live data from last " + recent.length + " pitch samples: " +
+    "Notes: " + noteSet.join(", ") + ". Range: " + loNote + " to " + hiNote + ". " +
+    "Pitch accuracy: " + (100-avgCents).toFixed(0) + "%. In-tune: " + inPct + "%. " +
+    "Sharp deviations: " + sharpN + ", flat: " + flatN + ". " +
+    "Give exactly 3 spoken sentences: " +
+    "1) One precise observation about what you just heard (name specific notes or patterns). " +
+    "2) One technical correction specific to " + currentInstrument + " (embouchure, air, slide position, reed, etc). " +
+    "3) One immediate exercise they can try in the next 30 seconds. " +
+    "Be direct, warm, specific. No generic advice.";
+
+  try {
+    var res = await fetch(WORKER_URL, {method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+    var data = await res.json();
+    var text = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
+    if(data.error){
+      showCoaching('Worker error: ' + (data.error.message||JSON.stringify(data.error)).substring(0,100));
+    } else if(text){
+      showCoaching(text);
+      if(voiceOn) speak(text);
+    }
+    setStatus('listening','Listening to your ' + currentInstrument.toLowerCase() + '...');
+  } catch(e){
+    showCoaching('Connection error during live coaching: ' + e.message);
+    setStatus('err','Connection error');
+  }
+  scheduleCoaching();
+}
+
+async function getEndOfSessionAnalysis(){
+  if(sessionPitchData.length < 5){
+    geneSpeak("Good warm-up! Play a full session for a detailed analysis.");
+    return;
+  }
+  if(analysisAborted) return;
+
+  // Show immediate feedback — switch to coaching panel so user sees the report appear
+  setTab('coach');
+  $('coach-text').textContent = 'Analysing your session... ToneWise is reviewing your pitch data and preparing your report.';
+  setStatus('thinking','Generating session analysis...');
+  geneSpeak("Session complete! Generating your full analysis now...");
+
+  var all      = sessionPitchData.slice(); // snapshot before any clear
+  var avgC     = all.reduce(function(s,d){ return s+Math.abs(d.cents); },0)/all.length;
+  var pitchAcc = Math.max(0,100-avgC).toFixed(1);
+  var noteSet  = [...new Set(all.map(function(d){ return d.note; }))];
+  var sharpCt  = all.filter(function(d){ return d.cents>15; }).length;
+  var flatCt   = all.filter(function(d){ return d.cents<-15; }).length;
+  var inPct    = Math.round(all.filter(function(d){ return Math.abs(d.cents)<=15; }).length/all.length*100);
+  var loNote   = noteSet.slice().sort()[0] || '?';
+  var hiNote   = noteSet.slice().sort().slice(-1)[0] || '?';
+  var sesMins  = Math.max(1, Math.round(all.length/22));
+
+  // Compact prompt — under 400 chars to avoid worker limits
+  var prompt = "You are Gene, an expert " + currentInstrument + " coach. " +
+    "Session data: " + all.length + " samples, " + sesMins + " min. " +
+    "Level: " + currentLevel + ". " +
+    "Notes: " + noteSet.slice(0,12).join(",") + ". Range: " + loNote + "-" + hiNote + ". " +
+    "Accuracy: " + pitchAcc + "%. In-tune: " + inPct + "%. Sharp: " + sharpCt + " Flat: " + flatCt + ". " +
+    "Write a coaching report with these EXACT headings on separate lines:\n" +
+    "LEVEL ASSESSMENT: [Beginner/Intermediate/Advanced and one reason why]\n" +
+    "STRENGTHS: [two specific strengths]\n" +
+    "AREAS TO IMPROVE: [two specific weaknesses for " + currentInstrument + "]\n" +
+    "PRACTICE EXERCISES: [three named exercises with instructions]\n" +
+    "SESSION GOAL: [one measurable goal for next session]\n" +
+    "ENCOURAGEMENT: [one warm closing sentence]\n" +
+    "Be specific to " + currentInstrument + ". No generic advice.";
+
+  try {
+    if(analysisAborted) return;
+    var res = await fetch(WORKER_URL, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:500,messages:[{role:'user',content:prompt}]})
+    });
+    if(analysisAborted) return;
+
+    // Parse response — show raw response if something goes wrong
+    var rawText = await res.text();
+    var dat;
+    try { dat = JSON.parse(rawText); }
+    catch(pe){
+      $('coach-text').textContent = 'Worker returned unexpected response. Raw: ' + rawText.substring(0,200);
+      setStatus('err','Worker response error');
+      return;
+    }
+
+    if(analysisAborted) return;
+
+    // Check for API-level error
+    if(dat.error){
+      var errMsg = (dat.error.message || JSON.stringify(dat.error)).substring(0,200);
+      $('coach-text').textContent = 'AI error: ' + errMsg;
+      setStatus('err','AI error — see coaching panel');
+      return;
+    }
+
+    var txt = (dat.content && dat.content[0] && dat.content[0].text) ? dat.content[0].text.trim() : '';
+    if(analysisAborted) return;
+
+    if(txt){
+      $('coach-text').textContent = txt;
+      lastFeedback = txt;
+      addToLog(txt);
+      geneSpeak(txt.substring(0,120));
+      if(voiceOn){
+        var firstLine = txt.split("\n").find(function(l){ return l.trim().length>0; }) || '';
+        speak("Session complete. " + firstLine + " Full report in the coaching panel.");
+      }
+      setStatus('idle','Session analysis complete');
+    } else {
+      // Empty text — show full raw response for debugging
+      $('coach-text').textContent = 'AI returned empty response. Debug: ' + JSON.stringify(dat).substring(0,300);
+      setStatus('idle','No analysis returned — check coaching panel');
+    }
+  } catch(err){
+    if(analysisAborted) return;
+    console.error('getEndOfSessionAnalysis error:', err);
+    $('coach-text').textContent = 'Connection failed: ' + err.message + '. Worker: ' + WORKER_URL;
+    setStatus('err','Connection failed — see coaching panel');
+  }
+}
+
+function showCoaching(text){
+  $('coach-text').textContent = text;
+  lastFeedback = text;
+  addToLog(text);
+  geneSpeak(text.substring(0,120));
+}
+
+function repeatFeedback(){ if(lastFeedback && voiceOn) speak(lastFeedback); }
+function toggleVoice(){
+  voiceOn = !voiceOn;
+  const btn=$('voice-toggle');
+  btn.textContent = voiceOn?'Voice on':'Voice off';
+  btn.className = 'tbtn' + (voiceOn?' on':'');
+  btn.setAttribute('aria-pressed', voiceOn);
+}
+function clearSession(){ stopRecord(); $('coach-text').textContent='Start recording and play a note or phrase.'; $('slist').innerHTML='<p style="font-size:13px;color:var(--text3);padding:10px 0">No sessions yet.</p>'; sessionLog=[]; }
+
+/* ════════════════════════════════════════════════════════
+   SESSION TIMER
+═══════════════════════════════════════════════════════════ */
+function startSessionTimer(){
+  timeLeft = isPro ? 600 : 180;
+  const wrap=$('timer-bar-wrap'), lbl=$('timer-label');
+  wrap.style.display='block'; lbl.style.display='block';
+  updateTimerUI();
+  sessionTimer = setInterval(()=>{
+    timeLeft--;
+    updateTimerUI();
+    if(timeLeft<=0){ stopRecord(); geneSpeak("Time's up! Great session. Check your log for a summary."); }
+  },1000);
+}
+function updateTimerUI(){
+  const total = isPro?600:180;
+  const pct=(timeLeft/total)*100;
+  const fill=$('timer-bar-fill');
+  fill.style.width=pct+'%';
+  fill.className='timer-bar-fill'+(pct<=33?' warn':'')+(pct<=10?' crit':'');
+  const m=Math.floor(timeLeft/60), s=timeLeft%60;
+  $('timer-label').textContent=`${m}:${s.toString().padStart(2,'0')} remaining`;
+  $('time-remain').textContent=`${m}:${s.toString().padStart(2,'0')} remaining`;
+}
+
+/* ════════════════════════════════════════════════════════
+   SESSION LOG
+═══════════════════════════════════════════════════════════ */
+function addToLog(feedback){
+  const now = new Date();
+  const notes = [...new Set(sessionPitchData.slice(-30).map(d=>d.note))];
+  const avgCents = sessionPitchData.length ? sessionPitchData.slice(-30).reduce((s,d)=>s+Math.abs(d.cents),0)/Math.min(30,sessionPitchData.length) : 0;
+  const acc = Math.max(0,100-avgCents).toFixed(0)+'%';
+  const cls = +acc>80?'g':+acc>60?'a':'r';
+  sessionLog.unshift({ time:now.toLocaleTimeString(), feedback, notes:notes.slice(0,6).join(' '), acc, cls });
+  renderLog();
+}
+function saveSession(){
+  if(sessionPitchData.length<3) return;
+  const avgCents=sessionPitchData.reduce((s,d)=>s+Math.abs(d.cents),0)/sessionPitchData.length;
+  const acc=Math.max(0,100-avgCents);
+  progressData.sessions.push({ date:Date.now(), acc, time: 180-timeLeft });
+  progressData.totalTime += (180-timeLeft);
+  progressData.scores.push(acc);
+}
+function renderLog(){
+  if(!sessionLog.length){ $('slist').innerHTML='<p style="font-size:13px;color:var(--text3);padding:10px 0">No sessions yet.</p>'; return; }
+  $('slist').innerHTML = sessionLog.map(s=>`
+    <div class="sitem" role="listitem">
+      <div class="sitem-head">
+        <span class="stime">${s.time}</span>
+        <span class="sacc ${s.cls}">${s.acc}</span>
+      </div>
+      <div class="snotes">${s.notes}</div>
+      <div class="sfeed">${s.feedback}</div>
+    </div>`).join('');
+}
+
+/* ════════════════════════════════════════════════════════
+   EAR TRAINING — AUDIO PLAYBACK ENGINE
+   Builds real musical tones via Web Audio API.
+   No external service needed — works in any browser.
+=══════════════════════════════════════════════════════════ */
+
+var earToneSeq   = [];
+var earAnswerStr = '';
+
+function noteToHz(name){
+  var semis={'C':0,'C#':1,'Db':1,'D':2,'D#':3,'Eb':3,'E':4,
+             'F':5,'F#':6,'Gb':6,'G':7,'G#':8,'Ab':8,'A':9,
+             'A#':10,'Bb':10,'B':11};
+  var m = name.match(/^([A-Ga-g][#b]?)(\d+)$/);
+  if(!m) return 440;
+  var pitch = (semis[m[1]] !== undefined) ? semis[m[1]] : 9;
+  var octave = parseInt(m[2]);
+  var midi = (octave+1)*12 + pitch;
+  return 440 * Math.pow(2, (midi-69)/12);
+}
+
+function playToneSequence(seq, onDone){
+  var ctx = new (window.AudioContext||window.webkitAudioContext)();
+  var t = ctx.currentTime + 0.1;
+  seq.forEach(function(item){
+    if(!item.hz){ t += item.dur; return; }
+    var osc = ctx.createOscillator();
+    var env = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = item.hz;
+    env.gain.setValueAtTime(0, t);
+    env.gain.linearRampToValueAtTime(0.32, t+0.025);
+    env.gain.setValueAtTime(0.32, t+item.dur-0.06);
+    env.gain.linearRampToValueAtTime(0, t+item.dur);
+    osc.connect(env); env.connect(ctx.destination);
+    osc.start(t); osc.stop(t+item.dur);
+    t += item.dur + 0.07;
+  });
+  var ms = Math.max(500, (t - ctx.currentTime)*1000 + 200);
+  setTimeout(function(){ ctx.close(); if(onDone) onDone(); }, ms);
+}
+
+function semiHz(rootHz, semi){ return rootHz * Math.pow(2, semi/12); }
+
+var EAR_INTERVALS=[
+  {name:'minor 2nd',steps:[0,1]},{name:'major 2nd',steps:[0,2]},
+  {name:'minor 3rd',steps:[0,3]},{name:'major 3rd',steps:[0,4]},
+  {name:'perfect 4th',steps:[0,5]},{name:'tritone',steps:[0,6]},
+  {name:'perfect 5th',steps:[0,7]},{name:'minor 6th',steps:[0,8]},
+  {name:'major 6th',steps:[0,9]},{name:'minor 7th',steps:[0,10]},
+  {name:'major 7th',steps:[0,11]},{name:'octave',steps:[0,12]}
+];
+var EAR_SCALES=[
+  {name:'major',steps:[0,2,4,5,7,9,11,12]},
+  {name:'minor',steps:[0,2,3,5,7,8,10,12]},
+  {name:'pentatonic',steps:[0,2,4,7,9,12]},
+  {name:'blues',steps:[0,3,5,6,7,10,12]},
+  {name:'dorian',steps:[0,2,3,5,7,9,10,12]}
+];
+var EAR_CHORDS=[
+  {name:'major triad',steps:[0,4,7]},
+  {name:'minor triad',steps:[0,3,7]},
+  {name:'dominant 7th',steps:[0,4,7,10]},
+  {name:'major 7th chord',steps:[0,4,7,11]},
+  {name:'minor 7th chord',steps:[0,3,7,10]},
+  {name:'diminished triad',steps:[0,3,6]}
+];
+var EAR_ROOTS=['C4','D4','E4','F4','G4','A4','Bb4'];
+function randItem(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+
+function buildEarExercise(type, rootName){
+  var rHz = noteToHz(rootName);
+  var rName = rootName.replace(/\d/,'');
+  var seq=[], answer='', desc='';
+  var t = type.toLowerCase();
+  if(t.includes('interval')){
+    var iv = randItem(EAR_INTERVALS);
+    seq = iv.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:1.0}; });
+    answer = iv.name + ' (from ' + rName + ')';
+    desc = 'Two notes will play. Name the interval between them.';
+  } else if(t.includes('scale')){
+    var sc = randItem(EAR_SCALES);
+    var asc = sc.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:0.5}; });
+    var dsc = sc.steps.slice(0,-1).reverse().map(function(s){ return {hz:semiHz(rHz,s),dur:0.5}; });
+    seq = asc.concat(dsc);
+    answer = rName + ' ' + sc.name + ' scale';
+    desc = 'A scale ascending then descending. Name it.';
+  } else if(t.includes('chord')){
+    var ch = randItem(EAR_CHORDS);
+    seq = ch.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:0.55}; });
+    seq.push({hz:0,dur:0.12});
+    seq = seq.concat(ch.steps.map(function(s){ return {hz:semiHz(rHz,s),dur:1.1}; }));
+    answer = rName + ' ' + ch.name;
+    desc = 'Notes arpeggiated then played together. Name the chord.';
+  } else if(t.includes('melody')){
+    var msc=[0,2,4,5,7,9,11,12];
+    var mel=[]; for(var i=0;i<7;i++) mel.push(randItem(msc));
+    seq = mel.map(function(s){ return {hz:semiHz(rHz,s),dur:0.6}; });
+    var sn=['C','C#','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+    answer = 'Melody in '+rName+' major: '+mel.map(function(s){ return sn[s%12]; }).join('-');
+    desc = 'A short melody. Try to sing or hum it back.';
+  } else {
+    var pats=[[1,0.5,0.5,1],[0.5,0.5,0.5,0.5,1],[0.75,0.25,1,0.5,0.5],[1,1,0.5,0.5]];
+    var pat=randItem(pats);
+    seq=pat.map(function(d){ return {hz:rHz,dur:d*0.55}; });
+    answer='Rhythm: '+pat.map(function(d){ return d===1?'1 beat':d===0.75?'dotted 3/4':'half beat'; }).join(' | ');
+    desc='A rhythm pattern on one pitch. Can you clap it back?';
+  }
+  return {seq:seq, answer:answer, desc:desc};
+}
+
+async function genEar(){
+  var el=$('ear-text');
+  el.innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  el.style.color='';
+  $('ear-answer').style.display='none';
+  $('ear-play-btn').style.display='none';
+  $('ear-reveal-btn').style.display='none';
+  $('ear-status').textContent='';
+
+  var root = randItem(EAR_ROOTS);
+  var ex   = buildEarExercise(currentEarType, root);
+  earToneSeq   = ex.seq;
+  earAnswerStr = ex.answer;
+
+  var prompt = "You are Gene, the ToneWise " + currentInstrument + " ear training coach. " +
+    "The student is about to hear a " + currentEarType + " exercise. Root note: " + root + ". " +
+    "Hint: " + ex.desc + " " +
+    "In 2 sentences: (1) Tell them what to listen for. (2) Tell them the tones are about to play. " +
+    "Do NOT reveal the answer. Be warm and specific to " + currentInstrument + ".";
+
+  $('ear-play-btn').style.display='inline-block';
+  $('ear-reveal-btn').style.display='inline-block';
+  $('ear-status').textContent='Preparing tones...';
+
+  setTimeout(playEarTones, 700);
+
+  try {
+    var res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:140,messages:[{role:'user',content:prompt}]})});
+    var dat=await res.json();
+    var txt=(dat.content&&dat.content[0]&&dat.content[0].text)?dat.content[0].text:'';
+    el.textContent = txt || (ex.desc + ' Listen carefully — the tones are playing now.');
+    if(voiceOn && txt) speak(txt);
+  } catch(e){
+    el.textContent = ex.desc + ' Press Play again to hear the tones.';
+  }
+}
+
+function playEarTones(){
+  if(!earToneSeq.length) return;
+  $('ear-status').textContent='Playing...';
+  $('ear-play-btn').disabled=true;
+  playToneSequence(earToneSeq, function(){
+    $('ear-status').textContent='What did you hear? Press Reveal answer when ready.';
+    $('ear-play-btn').disabled=false;
+  });
+}
+
+function revealEarAnswer(){
+  $('ear-answer').textContent='Answer: ' + earAnswerStr;
+  $('ear-answer').style.display='block';
+  $('ear-status').textContent='Generate a new exercise to continue.';
+  if(voiceOn) speak('The answer is: ' + earAnswerStr);
+}
+
+/* ════════════════════════════════════════════════════════
+   ASK TEACHER
+═══════════════════════════════════════════════════════════ */
+function setQ(q){ $('ask-input').value=q; }
+async function askTeacher(){
+  const q=$('ask-input').value.trim(); if(!q) return;
+  $('ask-text').innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  setStatus('thinking','Claude is thinking…', 'panel-ask');
+  var prompt = "You are Gene, a warm expert " + currentInstrument + " coach. Answer this question from a " + currentInstrument + " student in 3-5 sentences, naturally spoken. Question: " + q;
+  try {
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:200,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Great question! Keep practising.';
+    $('ask-text').textContent=text;
+    if(voiceOn) speak(text);
+    geneSpeak(text.substring(0,80)+(text.length>80?'…':''));
+    setStatus('idle','Ready');
+  } catch(e){ $('ask-text').textContent='Could not reach Claude. Check your connection.'; setStatus('err','Connection error'); }
+}
+
+/* ════════════════════════════════════════════════════════
+   METRONOME  (Web Audio)
+═══════════════════════════════════════════════════════════ */
+function buildMetroBeatViz(){
+  const viz=$('metro-beat-viz'); viz.innerHTML='';
+  for(let i=0;i<metroBeats;i++){
+    const d=document.createElement('div');
+    d.className='beat-dot'+(i===0?' beat1':'');
+    viz.appendChild(d);
+  }
+}
+function adjBpm(delta){ setBpm(Math.min(240,Math.max(40,metroBpm+delta))); }
+function setBpm(v){ metroBpm=v; $('metro-bpm-display').textContent=v; $('metro-slider').value=v; if(metroPlaying){stopMetro();startMetro();} }
+function setBeats(el,n){ metroBeats=n; setPill(el,'metro-beats'); buildMetroBeatViz(); if(metroPlaying){stopMetro();startMetro();} }
+function setSub(el,n){ metroSub=n; setPill(el,'metro-sub'); }
+let tapTimes=[];
+function tapTempo(){
+  const now=Date.now(); tapTimes.push(now);
+  tapTimes=tapTimes.filter(t=>now-t<3000);
+  if(tapTimes.length>=2){
+    const diffs=[]; for(let i=1;i<tapTimes.length;i++) diffs.push(tapTimes[i]-tapTimes[i-1]);
+    const avg=diffs.reduce((a,b)=>a+b,0)/diffs.length;
+    setBpm(Math.round(60000/avg));
+  }
+}
+function toggleMetro(){ metroPlaying?stopMetro():startMetro(); }
+function startMetro(){
+  metroCtx=new (window.AudioContext||window.webkitAudioContext)();
+  metroPlaying=true; metroCurrent=0; metroNext=metroCtx.currentTime+0.1;
+  $('metro-play-btn').textContent='Stop metronome'; $('metro-play-btn').className='metro-play-btn on';
+  scheduleMetro();
+}
+function scheduleMetro(){
+  if(!metroPlaying) return;
+  while(metroNext<metroCtx.currentTime+0.1){
+    const isAccent=(metroCurrent%metroBeats===0);
+    const subCount=metroSub===3?3:metroSub;
+    for(let s=0;s<subCount;s++){
+      const t=metroNext+(s*(60/metroBpm)/subCount);
+      const osc=metroCtx.createOscillator(), gain=metroCtx.createGain();
+      osc.frequency.value=isAccent&&s===0?1200:800;
+      gain.gain.setValueAtTime(isAccent&&s===0?0.6:0.3,t);
+      gain.gain.exponentialRampToValueAtTime(0.001,t+0.06);
+      osc.connect(gain); gain.connect(metroCtx.destination);
+      osc.start(t); osc.stop(t+0.07);
+    }
+    // flash beat viz
+    const idx=metroCurrent%metroBeats;
+    const dots=$('metro-beat-viz').children;
+    const delay=(metroNext-metroCtx.currentTime)*1000;
+    setTimeout(()=>{
+      if(!metroPlaying) return;
+      Array.from(dots).forEach(d=>d.classList.remove('hit'));
+      if(dots[idx]) dots[idx].classList.add('hit');
+    },Math.max(0,delay));
+    metroNext+=60/metroBpm; metroCurrent++;
+  }
+  metroTimer=setTimeout(scheduleMetro,25);
+}
+function stopMetro(){
+  metroPlaying=false;
+  if(metroTimer) clearTimeout(metroTimer);
+  if(metroCtx){ metroCtx.close(); metroCtx=null; }
+  $('metro-play-btn').textContent='Start metronome'; $('metro-play-btn').className='metro-play-btn';
+  Array.from($('metro-beat-viz').children).forEach(d=>d.classList.remove('hit'));
+}
+
+/* ════════════════════════════════════════════════════════
+   MULTI-INSTRUMENT SYSTEM
+   All data uses double quotes. No apostrophes in values.
+   Brass valves = integers [1,2,3]
+   Sax/Clarinet = string key IDs ["sax-b","cl-reg"]
+   Trombone = position number [3]
+=══════════════════════════════════════════════════════════ */
+var INST_DATA = {
+  "Trumpet":{
+    title:"Trumpet fingering chart", desc:"Select a note — Gene reads the valve combination.",
+    legend:"Valve pressed = purple   Open = dark",
+    greet:"Trumpet mode. Press Record and start playing!",
+    quickAsks:["High notes","Embouchure","Long tones","Jazz improv","Tone quality"],
+    notes:{
+      "C4":{v:[],d:"Open"},"C#4":{v:[1,2,3],d:"1-2-3"},"D4":{v:[1,3],d:"1-3"},
+      "Eb4":{v:[2,3],d:"2-3"},"E4":{v:[1,2],d:"1-2"},"F4":{v:[1],d:"1"},
+      "F#4":{v:[2],d:"2"},"G4":{v:[],d:"Open"},"Ab4":{v:[2,3],d:"2-3"},
+      "A4":{v:[1,2],d:"1-2"},"Bb4":{v:[1],d:"1"},"B4":{v:[2],d:"2"},
+      "C5":{v:[],d:"Open"},"C#5":{v:[1,2],d:"1-2"},"D5":{v:[1,3],d:"1-3"},
+      "Eb5":{v:[2,3],d:"2-3"},"E5":{v:[1,2],d:"1-2"},"F5":{v:[1],d:"1"},
+      "F#5":{v:[2],d:"2"},"G5":{v:[],d:"Open"}
+    }
+  },
+  "Flugelhorn":{
+    title:"Flugelhorn fingering chart", desc:"Same valves as trumpet — warmer conical bore.",
+    legend:"Valve pressed = purple   Open = dark",
+    greet:"Flugelhorn mode. Aim for a warm, open sound!",
+    quickAsks:["Warm tone","Air support","High notes","Jazz ballads","Intonation"],
+    notes:{
+      "C4":{v:[],d:"Open"},"C#4":{v:[1,2,3],d:"1-2-3"},"D4":{v:[1,3],d:"1-3"},
+      "Eb4":{v:[2,3],d:"2-3"},"E4":{v:[1,2],d:"1-2"},"F4":{v:[1],d:"1"},
+      "F#4":{v:[2],d:"2"},"G4":{v:[],d:"Open"},"Ab4":{v:[2,3],d:"2-3"},
+      "A4":{v:[1,2],d:"1-2"},"Bb4":{v:[1],d:"1"},"B4":{v:[2],d:"2"},
+      "C5":{v:[],d:"Open"},"D5":{v:[1,3],d:"1-3"},"E5":{v:[1,2],d:"1-2"},"G5":{v:[],d:"Open"}
+    }
+  },
+  "Cornet":{
+    title:"Cornet fingering chart", desc:"Same valves as trumpet — mellower tone.",
+    legend:"Valve pressed = purple   Open = dark",
+    greet:"Cornet mode. Classic brass band sound — let it ring!",
+    quickAsks:["Tone colour","High notes","Brass band","Embouchure","Intonation"],
+    notes:{
+      "C4":{v:[],d:"Open"},"C#4":{v:[1,2,3],d:"1-2-3"},"D4":{v:[1,3],d:"1-3"},
+      "Eb4":{v:[2,3],d:"2-3"},"E4":{v:[1,2],d:"1-2"},"F4":{v:[1],d:"1"},
+      "F#4":{v:[2],d:"2"},"G4":{v:[],d:"Open"},"Ab4":{v:[2,3],d:"2-3"},
+      "A4":{v:[1,2],d:"1-2"},"Bb4":{v:[1],d:"1"},"B4":{v:[2],d:"2"},
+      "C5":{v:[],d:"Open"},"D5":{v:[1,3],d:"1-3"},"E5":{v:[1,2],d:"1-2"},"G5":{v:[],d:"Open"}
+    }
+  },
+  "Euphonium":{
+    title:"Euphonium fingering chart", desc:"Select a note — Gene reads the valve combination.",
+    legend:"Valve pressed = purple   Open = dark",
+    greet:"Euphonium mode. Deep velvet tone — breathe fully!",
+    quickAsks:["Low register","Tone depth","Valves","Breath support","Intonation"],
+    notes:{
+      "Bb1":{v:[1,2,3],d:"1-2-3 Low Bb"},"B1":{v:[1,2],d:"1-2"},"C2":{v:[1],d:"1"},
+      "D2":{v:[1,3],d:"1-3"},"Eb2":{v:[2,3],d:"2-3"},"F2":{v:[1],d:"1"},
+      "G2":{v:[],d:"Open"},"A2":{v:[1,2],d:"1-2"},"Bb2":{v:[1],d:"1"},
+      "C3":{v:[],d:"Open"},"D3":{v:[1,3],d:"1-3"},"Eb3":{v:[2,3],d:"2-3"},
+      "F3":{v:[1],d:"1"},"G3":{v:[],d:"Open"},"Bb3":{v:[1],d:"1"},"C4":{v:[],d:"Open"}
+    }
+  },
+  "French Horn":{
+    title:"French Horn fingering chart", desc:"Rotary valves. Right hand in bell affects pitch.",
+    legend:"Rotor pressed = purple   Open = dark",
+    greet:"French Horn mode. Most demanding brass — stay relaxed!",
+    quickAsks:["Hand stopping","High range","Transposition","Tone colour","Orchestral"],
+    notes:{
+      "F#2":{v:[1,2,3],d:"All rotors"},"G2":{v:[2,3],d:"2nd and 3rd"},"A2":{v:[1,2],d:"1st and 2nd"},
+      "Bb2":{v:[1],d:"1st rotor"},"B2":{v:[2],d:"2nd rotor"},"C3":{v:[],d:"Open"},
+      "D3":{v:[1,3],d:"1st and 3rd"},"E3":{v:[1,2],d:"1st and 2nd"},"F3":{v:[1],d:"1st rotor"},
+      "G3":{v:[],d:"Open"},"A3":{v:[1,2],d:"1st and 2nd"},"Bb3":{v:[1],d:"1st rotor"},
+      "C4":{v:[],d:"Open"},"D4":{v:[1,3],d:"1st and 3rd"},"E4":{v:[1,2],d:"1st and 2nd"},
+      "F4":{v:[1],d:"1st rotor"},"G4":{v:[],d:"Open"},"A4":{v:[1,2],d:"1st and 2nd"}
+    }
+  },
+  "Trombone":{
+    title:"Trombone slide positions", desc:"Select a note — Gene names the slide position. 1 = closed.",
+    legend:"Active position = purple   Others = dark",
+    greet:"Trombone mode. No valves — your ear guides the slide!",
+    quickAsks:["Slide positions","Glissandi","Legato tone","High range","Jazz phrasing"],
+    notes:{
+      "Bb1":{v:[1],d:"Position 1 closed"},"A1":{v:[2],d:"Position 2"},
+      "Ab1":{v:[3],d:"Position 3"},"G1":{v:[4],d:"Position 4"},
+      "F#1":{v:[5],d:"Position 5"},"F1":{v:[6],d:"Position 6"},
+      "E1":{v:[7],d:"Position 7 extended"},
+      "Bb2":{v:[1],d:"Position 1"},"A2":{v:[2],d:"Position 2"},
+      "Ab2":{v:[3],d:"Position 3"},"G2":{v:[4],d:"Position 4"},
+      "F2":{v:[6],d:"Position 6"},"E2":{v:[7],d:"Position 7"},
+      "Bb3":{v:[1],d:"Position 1"},"A3":{v:[2],d:"Position 2"},
+      "G3":{v:[4],d:"Position 4"},"F3":{v:[1],d:"Position 1 upper partial"},
+      "Eb3":{v:[3],d:"Position 3"},"D3":{v:[4],d:"Position 4"},
+      "Bb4":{v:[1],d:"Position 1"},"A4":{v:[2],d:"Position 2"},
+      "G4":{v:[4],d:"Position 4"},"F4":{v:[1],d:"Position 1 high partial"}
+    }
+  },
+  "Saxophone":{
+    title:"Saxophone fingering chart", desc:"Highlighted keys (purple) must be pressed.",
+    legend:"Key pressed = purple   Key open = dark",
+    greet:"Saxophone mode. Relax the embouchure — let the reed vibrate!",
+    quickAsks:["Altissimo","Reed strength","Vibrato","Crossing the break","Tone quality"],
+    notes:{
+      "Bb3":{v:["sax-b","sax-a","sax-g","sax-c","sax-e","sax-d","sax-c2","sax-bb"],d:"Low Bb all keys"},
+      "B3":{v:["sax-b","sax-a","sax-g","sax-c","sax-e","sax-d","sax-c2"],d:"Low B"},
+      "C4":{v:["sax-b","sax-a","sax-g","sax-e","sax-d","sax-c2"],d:"Low C"},
+      "C#4":{v:["sax-b","sax-a","sax-g","sax-e","sax-d"],d:"Low C# side key"},
+      "D4":{v:["sax-b","sax-a","sax-g","sax-e"],d:"Low D"},
+      "Eb4":{v:["sax-b","sax-a","sax-g"],d:"Eb left hand"},
+      "E4":{v:["sax-b","sax-a"],d:"E index and middle"},
+      "F4":{v:["sax-b"],d:"F left index only"},
+      "F#4":{v:["sax-b","sax-a","sax-g","sax-e","sax-d","sax-c2","sax-c"],d:"F# front key"},
+      "G4":{v:[],d:"G open no keys"},
+      "G#4":{v:["sax-c"],d:"G# left pinky key"},
+      "A4":{v:["sax-e"],d:"A right index only"},
+      "Bb4":{v:["sax-b","sax-e"],d:"Bb bis key"},
+      "B4":{v:["sax-a"],d:"B left middle only"},
+      "C5":{v:["sax-oct","sax-b","sax-a","sax-g","sax-e"],d:"C octave key on"},
+      "C#5":{v:["sax-oct","sax-b","sax-a","sax-g","sax-e","sax-d"],d:"C# octave key on"},
+      "D5":{v:["sax-oct","sax-b","sax-a","sax-g","sax-e"],d:"D octave key on"},
+      "E5":{v:["sax-oct","sax-b","sax-a"],d:"E octave key on"},
+      "F5":{v:["sax-oct","sax-b"],d:"F octave key on"},
+      "G5":{v:["sax-oct"],d:"G octave key only"}
+    }
+  },
+  "Clarinet":{
+    title:"Clarinet fingering chart", desc:"Covered holes and pressed keys shown in purple.",
+    legend:"Hole covered or key pressed = purple   Open = dark",
+    greet:"Clarinet mode. Smooth air through the register break is everything!",
+    quickAsks:["Register break","Throat tones","Reed position","Articulation","Tone quality"],
+    notes:{
+      "E3":{v:["cl-b","cl-a","cl-g","cl-f","cl-e","cl-d","cl-cs","cl-c"],d:"Low E all holes"},
+      "F3":{v:["cl-b","cl-a","cl-g","cl-f","cl-e","cl-d","cl-cs"],d:"Low F"},
+      "F#3":{v:["cl-b","cl-a","cl-g","cl-e","cl-d","cl-cs"],d:"F#"},
+      "G3":{v:["cl-b","cl-a","cl-g","cl-e","cl-d"],d:"G"},
+      "G#3":{v:["cl-b","cl-a","cl-g","cl-e","cl-d","cl-f"],d:"G# with left pinky"},
+      "A3":{v:["cl-b","cl-a","cl-g","cl-e"],d:"A"},
+      "Bb3":{v:["cl-b"],d:"Throat Bb index only"},
+      "B3":{v:["cl-a"],d:"Throat B middle only"},
+      "C4":{v:[],d:"Throat C open"},
+      "C#4":{v:["cl-g"],d:"C# ring finger only"},
+      "D4":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d"],d:"D clarion register key on"},
+      "E4":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e"],d:"E register key on"},
+      "F4":{v:["cl-reg","cl-b","cl-a","cl-g"],d:"F register plus left"},
+      "G4":{v:["cl-reg","cl-b","cl-a"],d:"G register plus 2"},
+      "A4":{v:["cl-reg","cl-b"],d:"A register plus index"},
+      "Bb4":{v:["cl-reg"],d:"Bb register key only"},
+      "B4":{v:["cl-reg","cl-a"],d:"B register plus middle"},
+      "C5":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d","cl-cs"],d:"High C"},
+      "D5":{v:["cl-reg","cl-b","cl-a","cl-g","cl-e","cl-d"],d:"High D"},
+      "E5":{v:["cl-reg","cl-b","cl-a","cl-e"],d:"High E"},
+      "F5":{v:["cl-reg","cl-b","cl-a"],d:"High F"}
+    }
+  }
+};
+
+var SAX_LAYOUT=[
+  {id:"sax-oct",lbl:"Oct",hint:"Octave thumb",col:0},
+  {id:"sax-b",  lbl:"B",  hint:"Left index", col:0},
+  {id:"sax-a",  lbl:"A",  hint:"Left middle",col:0},
+  {id:"sax-g",  lbl:"G",  hint:"Left ring",  col:0},
+  {id:"sax-c",  lbl:"Pk", hint:"Left pinky", col:0},
+  {id:"sax-e",  lbl:"E",  hint:"Right index",col:1},
+  {id:"sax-d",  lbl:"D",  hint:"Right middle",col:1},
+  {id:"sax-c2", lbl:"C",  hint:"Right ring", col:1},
+  {id:"sax-bb", lbl:"Bb", hint:"Right pinky",col:1}
+];
+var CL_LAYOUT=[
+  {id:"cl-reg",lbl:"Reg",hint:"Register thumb",col:0},
+  {id:"cl-b",  lbl:"B",  hint:"L index hole", col:0},
+  {id:"cl-a",  lbl:"A",  hint:"L middle hole",col:0},
+  {id:"cl-g",  lbl:"G",  hint:"L ring hole",  col:0},
+  {id:"cl-f",  lbl:"F",  hint:"L pinky key",  col:0},
+  {id:"cl-e",  lbl:"E",  hint:"R index hole", col:1},
+  {id:"cl-d",  lbl:"D",  hint:"R middle hole",col:1},
+  {id:"cl-cs", lbl:"C#", hint:"R ring hole",  col:1},
+  {id:"cl-c",  lbl:"C",  hint:"R pinky key",  col:1}
+];
+
+function buildInstrumentDiagram(inst, activeKeys){
+  var wrap=document.getElementById("fing-visual");
+  if(!wrap) return;
+  wrap.innerHTML="";
+  if(inst==="Trombone"){
+    var row=document.createElement("div");
+    row.style.cssText="display:flex;gap:6px;align-items:flex-end;justify-content:center;flex-wrap:wrap";
+    for(var p=1;p<=7;p++){
+      var col=document.createElement("div");
+      col.style.cssText="display:flex;flex-direction:column;align-items:center;gap:4px";
+      var box=document.createElement("div");
+      var act=activeKeys&&activeKeys[0]===p;
+      var ht=28+p*7;
+      box.style.cssText="width:32px;height:"+ht+"px;border-radius:4px;border:1.5px solid "+(act?"var(--pl)":"var(--border2)")+";background:"+(act?"var(--purple)":"var(--bg3)")+";transition:all .25s;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;"+(act?"box-shadow:0 4px 14px rgba(127,119,221,.35);":"");
+      box.innerHTML="<span style='font-size:9px;color:"+(act?"#fff":"var(--text3)")+";font-family:DM Mono,monospace'>"+p+"</span>";
+      var lbl=document.createElement("div");
+      lbl.style.cssText="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace";
+      lbl.textContent="Pos "+p;
+      col.appendChild(box); col.appendChild(lbl); row.appendChild(col);
+    }
+    wrap.appendChild(row);
+    var hint=document.createElement("div");
+    hint.style.cssText="font-size:10px;color:var(--text3);text-align:center;margin-top:4px";
+    hint.textContent="1 = closed   7 = fully extended";
+    wrap.appendChild(hint);
+  } else if(inst==="Saxophone"||inst==="Clarinet"){
+    var layout=inst==="Saxophone"?SAX_LAYOUT:CL_LAYOUT;
+    var isHole=inst==="Clarinet";
+    var grid=document.createElement("div");
+    grid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:6px 22px;align-items:start";
+    var cols=[[],[]];
+    layout.forEach(function(k){ cols[k.col].push(k); });
+    var maxR=Math.max(cols[0].length,cols[1].length);
+    for(var r=0;r<maxR;r++){
+      for(var cc=0;cc<2;cc++){
+        var cell=document.createElement("div");
+        cell.style.cssText="display:flex;align-items:center;gap:7px;min-height:32px";
+        var k=cols[cc][r];
+        if(k){
+          var pressed=activeKeys&&Array.isArray(activeKeys)&&activeKeys.indexOf(k.id)!==-1;
+          var shape=document.createElement("div");
+          if(isHole){
+            shape.style.cssText="width:26px;height:26px;border-radius:50%;flex-shrink:0;border:1.5px solid "+(pressed?"var(--pl)":"var(--border2)")+";background:"+(pressed?"var(--purple)":"var(--bg3)")+";transition:all .25s;"+(pressed?"box-shadow:0 0 10px rgba(127,119,221,.4);":"");
+          } else {
+            shape.style.cssText="width:30px;height:20px;border-radius:4px;flex-shrink:0;border:1.5px solid "+(pressed?"var(--pl)":"var(--border2)")+";background:"+(pressed?"var(--purple)":"var(--bg3)")+";transition:all .25s;"+(pressed?"box-shadow:0 0 10px rgba(127,119,221,.4);":"");
+          }
+          var info=document.createElement("div");
+          var l2=document.createElement("div");
+          l2.style.cssText="font-size:10px;color:var(--text2);font-family:'DM Mono',monospace";
+          l2.textContent=k.lbl;
+          var h2=document.createElement("div");
+          h2.style.cssText="font-size:9px;color:var(--text3);font-family:'DM Mono',monospace";
+          h2.textContent=k.hint;
+          info.appendChild(l2); info.appendChild(h2);
+          cell.appendChild(shape); cell.appendChild(info);
+        }
+        grid.appendChild(cell);
+      }
+    }
+    wrap.appendChild(grid);
+  } else {
+    var isFr=inst==="French Horn";
+    var row2=document.createElement("div");
+    row2.style.cssText="display:flex;gap:16px;justify-content:center";
+    for(var v=1;v<=3;v++){
+      var vc=document.createElement("div");
+      vc.style.cssText="display:flex;flex-direction:column;align-items:center;gap:6px";
+      var vn=document.createElement("div");
+      vn.style.cssText="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace";
+      vn.textContent=isFr?(v===1?"1st":v===2?"2nd":"3rd"):String(v);
+      var vb=document.createElement("div");
+      var va=activeKeys&&activeKeys.indexOf(v)!==-1;
+      vb.style.cssText="width:44px;height:60px;border-radius:8px;border:1.5px solid "+(va?"var(--pl)":"var(--border2)")+";background:"+(va?"var(--purple)":"var(--bg3)")+";transition:all .25s;"+(va?"box-shadow:0 4px 14px rgba(127,119,221,.35);":"");
+      vc.appendChild(vn); vc.appendChild(vb); row2.appendChild(vc);
+    }
+    wrap.appendChild(row2);
+    if(isFr){
+      var rh=document.createElement("div");
+      rh.style.cssText="font-size:10px;color:var(--text3);text-align:center;margin-top:4px";
+      rh.textContent="Rotary valves — right hand";
+      wrap.appendChild(rh);
+    }
+  }
+}
+
+function buildFingeringChart(){
+  var data=INST_DATA[currentInstrument]||INST_DATA["Trumpet"];
+  var titleEl=document.getElementById("fing-chart-title");
+  var descEl=document.getElementById("fing-chart-desc");
+  var legEl=document.getElementById("fing-legend");
+  if(titleEl) titleEl.textContent=data.title;
+  if(descEl)  descEl.textContent=data.desc;
+  if(legEl)   legEl.textContent=data.legend;
+  var wrap=document.querySelector(".fing-note-select");
+  if(wrap){
+    wrap.innerHTML="";
+    Object.keys(data.notes).forEach(function(note){
+      var btn=document.createElement("button");
+      btn.className="fing-note-btn"; btn.textContent=note;
+      btn.onclick=(function(n,b){ return function(){ showFingering(n,b); }; })(note,btn);
+      wrap.appendChild(btn);
+    });
+  }
+  document.getElementById("fing-note-name").textContent="Select a note";
+  document.getElementById("fing-alt").textContent="";
+  buildInstrumentDiagram(currentInstrument, null);
+}
+
+function showFingering(note, btn){
+  var data=INST_DATA[currentInstrument]||INST_DATA["Trumpet"];
+  document.querySelectorAll(".fing-note-btn").forEach(function(b){ b.classList.remove("on"); });
+  btn.classList.add("on");
+  var f=data.notes[note]; if(!f) return;
+  document.getElementById("fing-note-name").textContent=note;
+  document.getElementById("fing-alt").textContent=f.d;
+  buildInstrumentDiagram(currentInstrument, f.v);
+  var spoken="";
+  if(currentInstrument==="Trombone"){
+    spoken="For "+note+" on trombone, use slide "+f.d+".";
+  } else if(currentInstrument==="Saxophone"){
+    spoken=f.v.length===0?note+" on saxophone — open.":note+" on saxophone: "+f.d+".";
+  } else if(currentInstrument==="Clarinet"){
+    spoken=f.v.length===0?note+" on clarinet — open.":note+" on clarinet: "+f.d+".";
+  } else {
+    spoken=f.v.length===0?note+" is open — no valves pressed.":
+      "For "+note+", press "+(f.v.length>1?"valves":"valve")+" "+f.v.join(" and ")+".";
+  }
+  geneSpeak(spoken);
+  if(voiceOn) speak(spoken);
+}
+
+function setInstrument(name){
+  currentInstrument=name;
+  var data=INST_DATA[name]||INST_DATA["Trumpet"];
+  var qa=document.querySelector(".quick-asks");
+  if(qa&&data.quickAsks){
+    qa.innerHTML=data.quickAsks.map(function(q){
+      return "<button class='qa' onclick='setQ(this.textContent)'>"+q+"</button>";
+    }).join("");
+  }
+  buildFingeringChart();
+  geneSpeak(data.greet);
+}
+
+/* ════════════════════════════════════════════════════════
+   AUDIO UPLOAD + SCORING (PRO)
+═══════════════════════════════════════════════════════════ */
+function handleDrop(e){
+  e.preventDefault(); $('upload-zone').classList.remove('drag');
+  const f=e.dataTransfer.files[0];
+  if(f&&f.type.startsWith('audio/')) handleUpload(f);
+}
+async function handleUpload(file){
+  if(!file) return;
+  if(!isPro){ openUpgrade(); return; }
+  showUploadProgress('Reading audio file…', 10);
+  // Decode audio
+  const arrayBuf = await file.arrayBuffer();
+  const tmpCtx = new (window.AudioContext||window.webkitAudioContext)();
+  showUploadProgress('Decoding audio…', 25);
+  let decoded;
+  try { decoded = await tmpCtx.decodeAudioData(arrayBuf); }
+  catch(e){ hideUploadProgress(); alert('Could not decode audio. Please use MP3 or WAV.'); return; }
+  tmpCtx.close();
+  // Extract pitch data from decoded buffer
+  showUploadProgress('Extracting notes…', 50);
+  const pitchData = extractPitchFromBuffer(decoded);
+  showUploadProgress('Sending to Claude for analysis…', 70);
+  await scoreWithClaude(pitchData, file.name);
+}
+
+async function scoreLiveSession(){
+  if(!isPro){ openUpgrade(); return; }
+  if(sessionPitchData.length < 5){ alert('No live session data yet. Record a session first.'); return; }
+  showUploadProgress('Scoring your live session…', 40);
+  await scoreWithClaude(sessionPitchData, 'Live session');
+}
+
+function extractPitchFromBuffer(buffer){
+  const sr=buffer.sampleRate, data=buffer.getChannelData(0);
+  const chunkSize=4096, results=[];
+  for(let i=0;i<data.length-chunkSize;i+=chunkSize){
+    const chunk=data.slice(i,i+chunkSize);
+    let rms=0; for(let s of chunk) rms+=s*s; rms=Math.sqrt(rms/chunkSize);
+    if(rms<0.01) continue;
+    const hz=autoCorrelate(Array.from(chunk),sr);
+    if(hz>50&&hz<2000){
+      const note=hzToNote(hz);
+      const cents=hzToCents(hz,note);
+      results.push({hz,note:note.name,cents,time:i/sr});
+    }
+  }
+  return results;
+}
+
+async function scoreWithClaude(pitchData, sourceName){
+  if(!pitchData.length){ hideUploadProgress(); alert('No pitched notes detected in this audio.'); return; }
+  const notes=[...new Set(pitchData.map(d=>d.note))];
+  const avgCents=pitchData.reduce((s,d)=>s+Math.abs(d.cents),0)/pitchData.length;
+  const pitchAcc=Math.max(0,100-avgCents);
+  const noteCounts={};
+  pitchData.forEach(d=>{ noteCounts[d.note]=(noteCounts[d.note]||0)+1; });
+  const topNotes=Object.entries(noteCounts).sort((a,b)=>b[1]-a[1]).slice(0,8).map(e=>e[0]);
+
+  // Timing consistency (variance of cent deviation over time)
+  const centVals=pitchData.map(d=>d.cents);
+  const mean=centVals.reduce((a,b)=>a+b,0)/centVals.length;
+  const variance=centVals.reduce((s,v)=>s+(v-mean)**2,0)/centVals.length;
+  const timing=Math.max(0,100-Math.sqrt(variance)*2);
+
+  var prompt = "You are Gene, an expert " + currentInstrument + " coach scoring a recording called " + sourceName + ". Data: " + pitchData.length + " samples, pitch accuracy " + pitchAcc.toFixed(1) + "%, timing " + timing.toFixed(1) + "%, notes: " + topNotes.join(", ") + ". Avg deviation: " + avgCents.toFixed(1) + " cents. Write: 1) SCORE:XX (0-100) on first line. 2) Three strengths. 3) Two areas to improve. 4) One motivating sentence. Be specific to " + currentInstrument + ".";
+
+  try {
+    showUploadProgress('Claude is scoring…', 85);
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:300,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'';
+    hideUploadProgress();
+    // Parse score
+    const scoreMatch=text.match(/SCORE:(\d+)/);
+    const overallScore=scoreMatch?+scoreMatch[1]:Math.round(pitchAcc);
+    const coaching=text.replace(/SCORE:\d+\n?/,'').trim();
+    showScoreResult({ overall:overallScore, pitchAcc:pitchAcc.toFixed(0), timing:timing.toFixed(0), notes:topNotes, badNotes:[], coaching, sourceName, pitchData });
+  } catch(e){ hideUploadProgress(); alert('Could not connect to Claude. Check your connection.'); }
+}
+
+function showUploadProgress(label, pct){
+  const wrap=$('upload-progress');
+  wrap.style.display='block';
+  $('upload-prog-label').textContent=label;
+  $('upload-prog-fill').style.width=pct+'%';
+}
+function hideUploadProgress(){ $('upload-progress').style.display='none'; }
+
+function showScoreResult(r){
+  scoreResult=r;
+  const el=$('score-result'); el.style.display='block';
+  const pct=r.overall;
+  $('score-grade').textContent=pct+'/100';
+  $('score-grade').className='score-grade'+(pct>=80?'':pct>=60?' warn':' low');
+  $('score-breakdown').innerHTML=`
+    <div class="score-metric"><div class="score-metric-label">Pitch accuracy</div><div class="score-metric-val">${r.pitchAcc}%</div></div>
+    <div class="score-metric"><div class="score-metric-label">Timing consistency</div><div class="score-metric-val">${r.timing}%</div></div>
+    <div class="score-metric"><div class="score-metric-label">Notes detected</div><div class="score-metric-val">${r.pitchData.length}</div></div>
+    <div class="score-metric"><div class="score-metric-label">Unique notes</div><div class="score-metric-val">${r.notes.length}</div></div>`;
+  $('score-notes-list').innerHTML=r.notes.map(n=>`<span class="score-note-tag">${n}</span>`).join('');
+  $('score-coaching').textContent=r.coaching;
+  renderNotationStaff(r.pitchData);
+  geneSpeak(`Your score is ${pct} out of 100. ${r.coaching.substring(0,80)}…`);
+  if(voiceOn) speak(`Your overall score is ${pct} out of 100.`);
+  // Store in progress
+  progressData.scores.push(r.overall);
+  persistProfile();
+}
+
+/* ════════════════════════════════════════════════════════
+   MUSIC NOTATION RENDERER (on-screen SVG)
+   Draws detected notes on a treble-clef staff.
+   Colour-coded by intonation accuracy.
+=══════════════════════════════════════════════════════════ */
+var NOTE_STAFF_POS = {
+  'C4':6,'C#4':6,'Db4':6,'D4':5.5,'D#4':5.5,'Eb4':5.5,'E4':5,
+  'F4':4.5,'F#4':4.5,'Gb4':4.5,'G4':4,'G#4':4,'Ab4':4,
+  'A4':3.5,'A#4':3.5,'Bb4':3.5,'B4':3,
+  'C5':2.5,'C#5':2.5,'Db5':2.5,'D5':2,'D#5':2,'Eb5':2,'E5':1.5,
+  'F5':1,'F#5':1,'Gb5':1,'G5':0.5,'G#5':0.5,'Ab5':0.5,
+  'A5':0,'A#5':0,'Bb5':0,'B5':-0.5,'C6':-1
+};
+var STAFF_TOP_PX=28, STAFF_STEP_PX=8, STAFF_N=5, MAX_NOTES=22, NOTE_SPC=28, STAFF_L=52;
+
+function renderNotationStaff(pitchData){
+  var svg=document.getElementById('notation-svg');
+  var wrap=document.getElementById('notation-wrap');
+  if(!svg||!pitchData||!pitchData.length) return;
+  var unique=[],seen={};
+  for(var i=0;i<pitchData.length;i++){
+    var n=pitchData[i].note;
+    if(!seen[n]){ seen[n]=true; unique.push(pitchData[i]); }
+    if(unique.length>=MAX_NOTES) break;
+  }
+  var vw=Math.max(680, STAFF_L+unique.length*NOTE_SPC+40);
+  var vh=160;
+  var btmY=STAFF_TOP_PX+(STAFF_N-1)*STAFF_STEP_PX*2;
+  var html='';
+  // Staff lines
+  for(var sl=0;sl<STAFF_N;sl++){
+    var ly=STAFF_TOP_PX+sl*STAFF_STEP_PX*2;
+    html+='<line stroke="#9897b2" stroke-width="0.8" opacity=".6" x1="10" y1="'+ly+'" x2="'+(vw-10)+'" y2="'+ly+'"/>';
+  }
+  // Treble clef
+  html+='<text x="12" y="'+(btmY+6)+'" style="font-size:52px;fill:#9897b2;font-family:serif">&#119070;</text>';
+  // Notes
+  unique.forEach(function(d,idx){
+    var base=d.note.replace(/[0-9]/g,'');
+    var oct=parseInt((d.note.match(/[0-9]+/)||['4'])[0]);
+    var pos=NOTE_STAFF_POS[base+oct];
+    if(pos===undefined) return;
+    var x=STAFF_L+idx*NOTE_SPC+20;
+    var y=btmY-pos*STAFF_STEP_PX*2;
+    var absC=Math.abs(d.cents||0);
+    var col=absC>20?'#d85a30':d.cents>5?'#1d9e75':d.cents<-5?'#378add':'#eeeef5';
+    // Ledger lines below
+    if(y>btmY){
+      for(var ll=btmY+STAFF_STEP_PX*2;ll<=y+2;ll+=STAFF_STEP_PX*2)
+        html+='<line stroke="#9897b2" stroke-width="0.8" x1="'+(x-8)+'" y1="'+ll+'" x2="'+(x+8)+'" y2="'+ll+'"/>';
+    }
+    // Ledger lines above
+    if(y<STAFF_TOP_PX){
+      for(var ll2=STAFF_TOP_PX-STAFF_STEP_PX*2;ll2>=y-2;ll2-=STAFF_STEP_PX*2)
+        html+='<line stroke="#9897b2" stroke-width="0.8" x1="'+(x-8)+'" y1="'+ll2+'" x2="'+(x+8)+'" y2="'+ll2+'"/>';
+    }
+    html+='<ellipse cx="'+x+'" cy="'+y+'" rx="5.5" ry="4.2" fill="'+col+'" stroke="'+col+'" stroke-width="0.5"/>';
+    var midY=STAFF_TOP_PX+4*STAFF_STEP_PX;
+    if(y>=midY)
+      html+='<line stroke="'+col+'" stroke-width="1.2" x1="'+(x+5)+'" y1="'+y+'" x2="'+(x+5)+'" y2="'+(y-26)+'"/>';
+    else
+      html+='<line stroke="'+col+'" stroke-width="1.2" x1="'+(x-5)+'" y1="'+y+'" x2="'+(x-5)+'" y2="'+(y+26)+'"/>';
+    html+='<text x="'+x+'" y="'+(vh-12)+'" style="font-size:9px;fill:'+col+';font-family:DM Mono,monospace;text-anchor:middle">'+d.note+'</text>';
+  });
+  // Bar lines every 4 notes
+  for(var bl=4;bl<unique.length;bl+=4){
+    var bx=STAFF_L+bl*NOTE_SPC+6;
+    html+='<line stroke="#5a5972" stroke-width="1" opacity=".5" x1="'+bx+'" y1="'+STAFF_TOP_PX+'" x2="'+bx+'" y2="'+btmY+'"/>';
+  }
+  svg.setAttribute('viewBox','0 0 '+vw+' '+vh);
+  svg.innerHTML=html;
+  if(wrap) wrap.style.display='block';
+}
+
+/* ════════════════════════════════════════════════════════
+   PDF EXPORT — includes music notation staff
+=══════════════════════════════════════════════════════════ */
+async function exportPDF(){
+  if(!scoreResult){ alert('No score data yet. Analyse a recording first.'); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W=210, margin=20;
+
+  // ── Header band ──
+  doc.setFillColor(127,119,221); doc.rect(0,0,W,28,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(18); doc.setFont('helvetica','bold');
+  doc.text('ToneWise AI — ' + currentInstrument + ' Practice Report', margin, 15);
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text(new Date().toLocaleDateString('en-GB',{weekday:'long',year:'numeric',month:'long',day:'numeric'}), margin, 23);
+
+  // ── Source + score circle ──
+  doc.setTextColor(80,80,120);
+  doc.setFontSize(10); doc.setFont('helvetica','normal');
+  doc.text('Source: '+scoreResult.sourceName, margin, 35);
+
+  const scoreColor = scoreResult.overall>=80?[29,158,117]:scoreResult.overall>=60?[239,159,39]:[216,90,48];
+  doc.setFillColor(...scoreColor);
+  doc.circle(W-margin-14, 42, 13, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(13); doc.setFont('helvetica','bold');
+  doc.text(String(scoreResult.overall), W-margin-14, 43, {align:'center'});
+  doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('/100', W-margin-14, 49, {align:'center'});
+
+  // ── Metrics grid ──
+  let y=39;
+  const metrics=[
+    ['Pitch accuracy', scoreResult.pitchAcc+'%'],
+    ['Timing consistency', scoreResult.timing+'%'],
+    ['Notes detected', String(scoreResult.pitchData.length)],
+    ['Unique notes', String(scoreResult.notes.length)],
+  ];
+  metrics.forEach(([lbl,val],i)=>{
+    const x=margin+(i%2)*75;
+    if(i%2===0 && i>0) y+=19;
+    doc.setFillColor(245,244,255); doc.roundedRect(x,y,67,16,2,2,'F');
+    doc.setFontSize(7); doc.setTextColor(100,97,170); doc.text(lbl.toUpperCase(),x+4,y+6);
+    doc.setFontSize(11); doc.setFont('helvetica','bold'); doc.setTextColor(30,30,50);
+    doc.text(val,x+4,y+13);
+    doc.setFont('helvetica','normal');
+  });
+  y+=25;
+
+  // ── Notes played pills ──
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+  doc.text('NOTES PLAYED', margin, y); y+=5;
+  const noteChunks=scoreResult.notes.reduce((rows,n,i)=>{ const row=Math.floor(i/12); if(!rows[row]) rows[row]=[]; rows[row].push(n); return rows; },[]);
+  noteChunks.forEach(row=>{
+    doc.setFontSize(8); doc.setFont('helvetica','normal');
+    row.forEach((n,i)=>{
+      doc.setFillColor(237,235,254); doc.roundedRect(margin+i*15,y,13,6,1.5,1.5,'F');
+      doc.setTextColor(83,74,183); doc.text(n,margin+i*15+6.5,y+4.5,{align:'center'});
+    });
+    y+=9;
+  });
+  y+=3;
+
+  // ── MUSIC NOTATION STAFF ──────────────────────────────
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+  doc.text('PERFORMANCE — MUSIC NOTATION', margin, y); y+=4;
+
+  const staffL      = margin + 10;
+  const staffW      = W - margin - staffL - 4;
+  const lineGap     = 2.8;
+  const staffTop    = y;
+  const staffBottom = staffTop + 4 * lineGap * 2;
+
+  // 5 staff lines
+  doc.setDrawColor(150,145,180); doc.setLineWidth(0.22);
+  for(let sl=0;sl<5;sl++){
+    const ly = staffTop + sl * lineGap * 2;
+    doc.line(staffL-2, ly, staffL+staffW, ly);
+  }
+
+  // Treble clef
+  doc.setFontSize(20); doc.setFont('helvetica','bold'); doc.setTextColor(140,135,175);
+  doc.text('&', staffL-8, staffBottom+2);
+
+  // Note position table
+  const PDF_POS = {
+    'C4':6,'C#4':6,'Db4':6,'D4':5.5,'D#4':5.5,'Eb4':5.5,'E4':5,
+    'F4':4.5,'F#4':4.5,'Gb4':4.5,'G4':4,'G#4':4,'Ab4':4,
+    'A4':3.5,'A#4':3.5,'Bb4':3.5,'B4':3,
+    'C5':2.5,'C#5':2.5,'Db5':2.5,'D5':2,'D#5':2,'Eb5':2,'E5':1.5,
+    'F5':1,'F#5':1,'Gb5':1,'G5':0.5,'G#5':0.5,'Ab5':0.5,
+    'A5':0,'B5':-0.5,'C6':-1
+  };
+
+  // Deduplicate notes (max 24)
+  const pdfNotes=[]; const pdfSeen=new Set();
+  for(const d of scoreResult.pitchData){
+    if(!pdfSeen.has(d.note)){ pdfSeen.add(d.note); pdfNotes.push(d); }
+    if(pdfNotes.length>=24) break;
+  }
+
+  const noteSpacing = pdfNotes.length > 0 ? Math.min(7, staffW/pdfNotes.length) : 7;
+
+  pdfNotes.forEach((d,idx)=>{
+    const base   = d.note.replace(/\d+$/,'');
+    const octave = parseInt((d.note.match(/\d+/)||['4'])[0]);
+    const pos    = PDF_POS[base+octave];
+    if(pos===undefined) return;
+
+    const nx = staffL + idx*noteSpacing + noteSpacing*0.5;
+    const ny = staffBottom - pos*lineGap*2;
+
+    // Colour by intonation
+    const absC = Math.abs(d.cents||0);
+    let r=238,g=238,b=245;
+    if(absC>20){r=216;g=90;b=48;}
+    else if(d.cents>5){r=29;g=158;b=117;}
+    else if(d.cents<-5){r=55;g=138;b=221;}
+
+    // Ledger lines
+    doc.setDrawColor(150,145,180); doc.setLineWidth(0.22);
+    if(ny>staffBottom+0.5)
+      for(let ll=staffBottom+lineGap*2;ll<=ny+0.5;ll+=lineGap*2)
+        doc.line(nx-2.8,ll,nx+2.8,ll);
+    if(ny<staffTop-0.5)
+      for(let ll=staffTop-lineGap*2;ll>=ny-0.5;ll-=lineGap*2)
+        doc.line(nx-2.8,ll,nx+2.8,ll);
+
+    // Note head
+    doc.setFillColor(r,g,b); doc.setDrawColor(r,g,b);
+    doc.ellipse(nx,ny,1.7,1.25,'F');
+
+    // Stem
+    doc.setLineWidth(0.38);
+    const midY=staffTop+2*lineGap*2;
+    if(ny>=midY){ doc.line(nx+1.6,ny,nx+1.6,ny-6.5); }
+    else          { doc.line(nx-1.6,ny,nx-1.6,ny+6.5); }
+
+    // Note name label
+    doc.setFontSize(5); doc.setFont('helvetica','normal');
+    doc.setTextColor(r,g,b);
+    doc.text(d.note, nx, staffBottom+6.5, {align:'center'});
+  });
+
+  // Bar lines every 4 notes
+  doc.setDrawColor(150,145,180); doc.setLineWidth(0.3);
+  for(let bl=4;bl<pdfNotes.length;bl+=4){
+    const bx=staffL+bl*noteSpacing+noteSpacing*0.1;
+    doc.line(bx,staffTop,bx,staffBottom);
+  }
+
+  // Colour legend
+  y = staffBottom + 10;
+  const legend=[[238,238,245,'In tune'],[29,158,117,'Sharp'],[55,138,221,'Flat'],[216,90,48,'Off (>20c)']];
+  doc.setFontSize(6.5); doc.setFont('helvetica','normal');
+  legend.forEach((l,i)=>{
+    const lx=margin+i*40;
+    doc.setFillColor(l[0],l[1],l[2]); doc.circle(lx+2,y-1,1.5,'F');
+    doc.setTextColor(80,80,100); doc.text(l[3],lx+5,y);
+  });
+  y+=9;
+
+  // ── Coaching notes ──
+  if(y+10>270){ doc.addPage(); y=20; }
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+  doc.text('TONEWISE COACHING NOTES', margin, y); y+=5;
+  doc.setFontSize(8.5); doc.setFont('helvetica','normal'); doc.setTextColor(55,55,75);
+  const lines=doc.splitTextToSize(scoreResult.coaching, W-margin*2);
+  if(y+lines.length*4.5>275){ doc.addPage(); y=20; }
+  doc.text(lines,margin,y); y+=lines.length*4.5+8;
+
+  // ── Pitch accuracy bar chart ──
+  if(scoreResult.pitchData.length>4 && y<255){
+    doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(40,40,60);
+    doc.text('PITCH ACCURACY OVER SESSION', margin, y); y+=4;
+    const cW=W-margin*2, cH=18, chunks=20;
+    const cSize=Math.floor(scoreResult.pitchData.length/chunks);
+    for(let i=0;i<chunks;i++){
+      const slice=scoreResult.pitchData.slice(i*cSize,(i+1)*cSize);
+      if(!slice.length) continue;
+      const avg=slice.reduce((s,d)=>s+Math.abs(d.cents),0)/slice.length;
+      const acc=Math.max(0,100-avg)/100;
+      const bh=acc*cH;
+      const col=acc>0.8?[29,158,117]:acc>0.6?[239,159,39]:[216,90,48];
+      doc.setFillColor(...col);
+      doc.rect(margin+i*(cW/chunks), y+cH-bh, cW/chunks-0.5, bh,'F');
+    }
+    y+=cH+4;
+  }
+
+  // ── Footer ──
+  doc.setFillColor(245,244,255); doc.rect(0,286,W,11,'F');
+  doc.setFontSize(7); doc.setTextColor(127,119,221);
+  doc.text('ToneWise AI · ' + currentInstrument + ' Coach · tonewiseapp.netlify.app', W/2, 293, {align:'center'});
+
+  doc.save('ToneWise_' + currentInstrument + '_Report_' + new Date().toISOString().slice(0,10) + '.pdf');
+  geneSpeak("Your PDF report with music notation has been downloaded!");
+}
+
+/* ════════════════════════════════════════════════════════
+   PROGRESS DASHBOARD
+═══════════════════════════════════════════════════════════ */
+function buildProgressUI(){
+  // Streak dots
+  const dots=$('streak-dots'); dots.innerHTML='';
+  for(let i=0;i<7;i++){
+    const d=document.createElement('div');
+    d.className='streak-dot'+(i<progressData.streak?' done':'');
+    d.setAttribute('aria-label', i<progressData.streak?'Practice day complete':'Not yet');
+    dots.appendChild(d);
+  }
+  $('streak-count').textContent=progressData.streak;
+}
+function refreshProgressUI(){
+  buildProgressUI();
+  const sessions=progressData.sessions.slice(-7);
+  $('prog-sessions').textContent=sessions.length;
+  if(sessions.length){
+    const avg=sessions.reduce((s,d)=>s+d.acc,0)/sessions.length;
+    $('prog-accuracy').textContent=avg.toFixed(0)+'%';
+  }
+  const mins=Math.floor((progressData.totalTime||0)/60);
+  $('prog-time').textContent=mins+'m';
+  $('prog-notes').textContent=progressData.scores.length;
+  buildProgressChart(sessions);
+}
+function buildProgressChart(sessions){
+  const bars=$('prog-bars'); bars.innerHTML='';
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  (sessions.length?sessions:Array(7).fill({acc:0})).slice(-7).forEach((s,i)=>{
+    const wrap=document.createElement('div'); wrap.className='prog-bar-wrap';
+    const bar=document.createElement('div'); bar.className='prog-bar';
+    const pct=(s.acc||0)/100;
+    bar.style.height=(pct*50+2)+'px';
+    bar.style.opacity=pct>0?'0.8':'0.2';
+    bar.title=s.acc?s.acc.toFixed(0)+'%':'No data';
+    const lbl=document.createElement('div'); lbl.className='prog-bar-label'; lbl.textContent=days[i]||'';
+    wrap.appendChild(bar); wrap.appendChild(lbl);
+    bars.appendChild(wrap);
+  });
+}
+async function getWeeklySummary(){
+  $('prog-summary').innerHTML='<div class="dots"><span></span><span></span><span></span></div>';
+  const sessions=progressData.sessions.slice(-7);
+  if(!sessions.length){ $('prog-summary').textContent='Complete a few sessions first.'; return; }
+  const avg=sessions.reduce((s,d)=>s+d.acc,0)/sessions.length;
+  var prompt = "You are Gene, a warm " + currentInstrument + " coach. Give a 3-sentence motivating weekly summary for a student who practised " + sessions.length + " times this week with an average pitch accuracy of " + avg.toFixed(0) + "%. Celebrate their effort and give one specific tip for next week.";
+  try {
+    const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:150,messages:[{role:'user',content:prompt}]})});
+    const data=await res.json();
+    const text=data.content?.[0]?.text||'Great work this week!';
+    $('prog-summary').textContent=text;
+    if(voiceOn) speak(text);
+  } catch(e){ $('prog-summary').textContent='Could not generate summary. Check your connection.'; }
+}
+function startChallenge(){
+  setTab('coach');
+  geneSpeak("Today's challenge: play a C major scale as smoothly as you can. Focus on even tone across all notes. I'll coach you as you go. Press Record when ready!");
+  setTimeout(()=>speak("Today's challenge: play a C major scale as smoothly as you can."),200);
+}
+
+/* ════════════════════════════════════════════════════════
+   GENE MASCOT
+═══════════════════════════════════════════════════════════ */
+const GENE_TIPS=[
+  "Warm up with long tones first — it makes everything else easier.",
+  "Practice slowly. Speed is just accuracy at a faster tempo.",
+  "Focus on your air support — the trumpet is powered by your lungs.",
+  "If a note is flat, try raising your jaw slightly.",
+  "Rest is part of practice. Your embouchure needs recovery time.",
+  "Singing a melody before playing it helps train your ear.",
+  "Tongue placement matters — try 'tu' for articulation.",
+  "Record yourself and listen back — you'll hear things you miss while playing.",
+  "Consistent daily practice beats long occasional sessions.",
+];
+let tipIndex=0;
+function geneGreet(){
+  setTimeout(()=>{
+    geneSpeak('Hi! I am Gene, your AI ' + currentInstrument.toLowerCase() + ' coach. Tap me anytime for tips!');
+  }, 1200);
+}
+function geneSpeak(text){
+  if(geneSilent) return;
+  $('gene-text').textContent=text;
+  $('gene-bubble').style.display='block';
+  $('gene-btn').classList.add('talking');
+  clearTimeout(geneTimeout);
+  geneTimeout=setTimeout(()=>{
+    $('gene-btn').classList.remove('talking');
+  }, Math.min(8000, text.length*60));
+}
+function closeGeneBubble(){ $('gene-bubble').style.display='none'; }
+function toggleGene(){
+  const bubble=$('gene-bubble'), btn=$('gene-btn');
+  if(bubble.style.display==='block'){
+    closeGeneBubble();
+    btn.setAttribute('aria-expanded','false');
+  } else {
+    tipIndex=(tipIndex+1)%GENE_TIPS.length;
+    geneSpeak(GENE_TIPS[tipIndex]);
+    btn.setAttribute('aria-expanded','true');
+  }
+}
+
+/* ════════════════════════════════════════════════════════
+   VOICE COMMANDS
+═══════════════════════════════════════════════════════════ */
+let voiceCmdRecognition=null;
+function initVoiceCommands(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR) return;
+  voiceCmdRecognition=new SR();
+  voiceCmdRecognition.continuous=true;
+  voiceCmdRecognition.interimResults=false;
+  voiceCmdRecognition.lang='en-US';
+  voiceCmdRecognition.onresult=e=>{
+    const t=e.results[e.results.length-1][0].transcript.trim().toLowerCase();
+    handleVoiceCommand(t);
+  };
+  voiceCmdRecognition.onerror=()=>{}; // silent
+  try { voiceCmdRecognition.start(); $('vcmd-banner').style.display='flex'; } catch(_){}
+}
+function handleVoiceCommand(text){
+  if(!text.includes('gene')&&!text.includes('hey')) return;
+  $('vcmd-status').style.display='inline';
+  $('vcmd-text').textContent='Heard: "'+text+'"';
+  setTimeout(()=>{ $('vcmd-status').style.display='none'; $('vcmd-text').textContent='Voice commands active — try "Hey Gene, start recording"'; },2500);
+  if(text.includes('start record')||text.includes('start playing')){ if(!recording) toggleRecord(); }
+  else if(text.includes('stop record')||text.includes('stop playing')){ if(recording) stopRecord(); }
+  else if(text.includes('ear training')){ setTab('ear'); geneSpeak("Opening ear training mode."); }
+  else if(text.includes('ask')||text.includes('question')){ setTab('ask'); geneSpeak("Ask mode is open. What would you like to know?"); }
+  else if(text.includes('metronome')){ setTab('metro'); geneSpeak("Here's the metronome."); }
+  else if(text.includes('fingering')){ setTab('fing'); geneSpeak("Here's the fingering chart."); }
+  else if(text.includes('faster')||text.includes('speed up')){ adjBpm(10); geneSpeak("Tempo increased to "+metroBpm+" BPM."); }
+  else if(text.includes('slower')||text.includes('slow down')){ adjBpm(-10); geneSpeak("Tempo decreased to "+metroBpm+" BPM."); }
+  else if(text.includes('tip')||text.includes('help')){ toggleGene(); }
+  else if(text.includes('upgrade')||text.includes('pro')){ openUpgrade(); }
+}
+
+/* ════════════════════════════════════════════════════════
+   UPGRADE MODAL
+═══════════════════════════════════════════════════════════ */
+let selectedPlan='monthly';
+function openUpgrade(){ $('modal-upgrade').classList.add('open'); }
+function closeUpgrade(){ $('modal-upgrade').classList.remove('open'); }
+function selectPlan(plan){
+  selectedPlan=plan;
+  $('plan-monthly').classList.toggle('on',plan==='monthly');
+  $('plan-annual').classList.toggle('on',plan==='annual');
+}
+function handlePayment(method){
+  const links={
+    stripe:{monthly:STRIPE_MONTHLY,annual:STRIPE_ANNUAL},
+    paypal:{monthly:PAYPAL_MONTHLY,annual:PAYPAL_ANNUAL}
+  };
+  const url=links[method][selectedPlan];
+  if(url&&url!=='#') window.open(url,'_blank');
+  else alert('Payment link not configured yet. Replace STRIPE/PAYPAL links in the config.');
+}
+
+/* ════════════════════════════════════════════════════════
+   SPEECH
+═══════════════════════════════════════════════════════════ */
+function speak(text){
+  if(!voiceOn||!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.rate=1.05; u.pitch=1; u.volume=0.9;
+  setStatus('speaking','Speaking…');
+  u.onend=()=>setStatus(recording?'listening':'idle', recording?'Listening to your trumpet…':'Ready');
+  window.speechSynthesis.speak(u);
+}
+function announce(text){ $('live').textContent=''; requestAnimationFrame(()=>{ $('live').textContent=text; }); }
+
+/* ════════════════════════════════════════════════════════
+   STATUS
+═══════════════════════════════════════════════════════════ */
+function setStatus(type, text){
+  const dot=$('sdot'), st=$('stext');
+  dot.className='sdot '+type; st.textContent=text;
+}
+
+/* ════════════════════════════════════════════════════════
+   PILLS
+═══════════════════════════════════════════════════════════ */
+function setPill(el, group){
+  el.closest('.pills').querySelectorAll('.pill').forEach(p=>p.classList.remove('on'));
+  el.classList.add('on');
+  if(group==='level') currentLevel=el.textContent;
+  if(group==='ear') currentEarType=el.textContent;
+}
+
+/* ════════════════════════════════════════════════════════
+   PERSIST PROFILE
+═══════════════════════════════════════════════════════════ */
+async function persistProfile(){
+  if(!user) return;
+  try {
+    await sb.from('profiles').upsert({
+      id:user.id,
+      sessions_used:sessionsUsed,
+      streak:progressData.streak,
+      last_session_day:progressData.lastDay,
+      progress_data:{ sessions:progressData.sessions.slice(-50), scores:progressData.scores.slice(-100), totalTime:progressData.totalTime }
+    });
+  } catch(_){}
+}
+
+/* ════════════════════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════════════════════ */
+function $(id){ return document.getElementById(id); }
+function showPage(p){
+  document.querySelectorAll('.page').forEach(function(el){
+    el.classList.remove('active');
+    el.style.display='none';
+  });
+  var target=$('page-'+p);
+  if(!target) return;
+  target.classList.add('active');
+  if(p==='auth'){
+    target.style.display='flex';
+    target.style.alignItems='center';
+    target.style.justifyContent='center';
+    target.style.flexDirection='column';
+    target.style.minHeight='100vh';
+  } else {
+    target.style.display='block';
+  }
+  window.scrollTo(0,0);
+  var abw=$('admin-btn-wrap'); if(abw) abw.style.display=(p==='app'&&isAdmin)?'inline-flex':'none';
+}
+
+
+/* ════════════════════════════════════════════════════════
+   ADMIN CONSOLE
+=══════════════════════════════════════════════════════════ */
+let adminUsers = [];
+
+function openAdmin(){
+  if(!isAdmin){ alert('Access denied.'); return; }
+  showPage('admin');
+  loadAdminStats();
+  loadAdminUsers();
+  loadAdminConfig();
+}
+
+async function loadAdminStats(){
+  try {
+    const { data, error } = await sb.from('profiles').select('id, is_pro, sessions_used, last_session_day');
+    if(error || !data) return;
+    const today = new Date().toISOString().slice(0,10);
+    $('adm-total-users').textContent = data.length;
+    $('adm-pro-users').textContent = data.filter(u => u.is_pro).length;
+    $('adm-active-today').textContent = data.filter(u => u.last_session_day === today).length;
+    $('adm-total-sessions').textContent = data.reduce((s,u) => s+(u.sessions_used||0), 0);
+  } catch(e){ console.error('Admin stats:', e); }
+}
+
+async function loadAdminUsers(){
+  const tbody = $('adm-user-tbody');
+  tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:16px">Loading...</td></tr>';
+  try {
+    const { data, error } = await sb.from('profiles')
+      .select('id, email, is_pro, sessions_used, created_at, last_session_day')
+      .order('created_at', { ascending: false });
+    if(error) throw error;
+    adminUsers = data || [];
+    renderAdminUsers(adminUsers);
+  } catch(e){
+    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--coral);font-size:12px;padding:16px">Could not load users: ' + e.message + '</td></tr>';
+  }
+}
+
+function renderAdminUsers(users){
+  var tbody = $('adm-user-tbody');
+  if(!users.length){
+    tbody.innerHTML = '<tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:16px">No users found.</td></tr>';
+    return;
+  }
+  // Build rows without inline onclick strings — use data attributes + delegated events
+  var rows = '';
+  for(var i=0;i<users.length;i++){
+    var u = users[i];
+    var isAdm = (u.email === ADMIN_EMAIL);
+    var joined = u.created_at ? new Date(u.created_at).toLocaleDateString() : '—';
+    var planTag = u.is_pro
+      ? '<span class="atag atag-pro">Pro</span>'
+      : '<span class="atag atag-free">Free</span>';
+    var extraTags = '';
+    if(isAdm) extraTags += ' <span class="atag atag-admin">Admin</span>';
+
+    var actionCell = '';
+    if(!isAdm){
+      if(u.is_pro){
+        actionCell += '<button class="admin-action-btn danger" data-action="plan" data-id="'+escAttr(u.id||'')+'" data-val="false" data-email="'+escAttr(u.email||'')+'">Remove Pro</button>';
+      } else {
+        actionCell += '<button class="admin-action-btn success" data-action="plan" data-id="'+escAttr(u.id||'')+'" data-val="true" data-email="'+escAttr(u.email||'')+'">Grant Pro</button>';
+      }
+
+      actionCell += '<button class="admin-action-btn" data-action="reset" data-id="'+escAttr(u.id||'')+'" data-email="'+escAttr(u.email||'')+'">Reset</button>';
+    } else {
+      actionCell = '<span style="font-size:11px;color:var(--text3)">—</span>';
+    }
+    rows += '<tr>'
+      + '<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'
+      + escHtml(u.email||'—') + extraTags + '</td>'
+      + '<td>' + planTag + '</td>'
+      + '<td style="font-family:DM Mono,monospace;font-size:12px">' + (u.sessions_used||0) + '</td>'
+      + '<td style="font-size:11px;color:var(--text3)">' + joined + '</td>'
+      + '<td style="white-space:nowrap">' + actionCell + '</td>'
+      + '</tr>';
+  }
+  tbody.innerHTML = rows;
+  // Attach delegated click handlers
+  tbody.onclick = function(ev){
+    var btn = ev.target.closest('button[data-action]');
+    if(!btn) return;
+    var action = btn.getAttribute('data-action');
+    var id     = btn.getAttribute('data-id');
+    var val    = btn.getAttribute('data-val');
+    var email  = btn.getAttribute('data-email');
+    if(action === 'plan')   togglePlan(id, val === 'true', email);
+    if(action === 'active') toggleActive(id, val === 'true', email);
+    if(action === 'reset')  resetUserSessions(id, email);
+  };
+}
+
+function filterAdminUsers(q){
+  q = q.trim().toLowerCase();
+  renderAdminUsers(q ? adminUsers.filter(function(u){ return (u.email||'').toLowerCase().includes(q); }) : adminUsers);
+}
+
+async function togglePlan(userId, makePro, email){
+  if(!confirm((makePro?'Grant Pro to ':'Remove Pro from ')+email+'?')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ is_pro: makePro }).eq('id', userId);
+    if(error) throw error;
+    const u = adminUsers.find(function(x){ return x.id===userId; });
+    if(u) u.is_pro = makePro;
+    renderAdminUsers(adminUsers);
+    loadAdminStats();
+    showAdminToast(email+(makePro?' upgraded to Pro.':' reverted to Free.'));
+  } catch(e){ alert('Could not update plan: '+e.message); }
+}
+
+async function toggleActive(userId, makeActive, email){
+  showAdminToast('Suspend/reactivate requires is_active column in profiles table. See Supabase dashboard.');
+}
+
+async function resetUserSessions(userId, email){
+  if(!confirm('Reset session count for '+email+'?')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ sessions_used: 0 }).eq('id', userId);
+    if(error) throw error;
+    const u = adminUsers.find(function(x){ return x.id===userId; });
+    if(u) u.sessions_used = 0;
+    renderAdminUsers(adminUsers);
+    loadAdminStats();
+    showAdminToast(email+' sessions reset.');
+  } catch(e){ alert('Could not reset: '+e.message); }
+}
+
+async function resetAllSessions(){
+  if(!confirm('Reset ALL free user sessions? Cannot be undone.')) return;
+  try {
+    const { error } = await sb.from('profiles').update({ sessions_used: 0 }).eq('is_pro', false);
+    if(error) throw error;
+    adminUsers.forEach(function(u){ if(!u.is_pro) u.sessions_used=0; });
+    renderAdminUsers(adminUsers);
+    loadAdminStats();
+    showAdminToast('All free sessions reset.');
+  } catch(e){ alert('Could not reset: '+e.message); }
+}
+
+function loadAdminConfig(){
+  try {
+    const cfg = JSON.parse(localStorage.getItem('tw_admin_cfg')||'{}');
+    if(cfg.freeSessions)  $('adm-free-sessions').value  = cfg.freeSessions;
+    if(cfg.sessionDur)    $('adm-session-dur').value    = cfg.sessionDur;
+    if(cfg.priceMonthly)  $('adm-price-monthly').value  = cfg.priceMonthly;
+    if(cfg.priceAnnual)   $('adm-price-annual').value   = cfg.priceAnnual;
+    if(cfg.stripeMonthly) $('adm-stripe-monthly').value = cfg.stripeMonthly;
+    if(cfg.paypalMonthly) $('adm-paypal-monthly').value = cfg.paypalMonthly;
+  } catch(_){}
+}
+
+function saveAdminConfig(){
+  const cfg = {
+    freeSessions:  parseInt($('adm-free-sessions').value)||FREE_SESSIONS,
+    sessionDur:    parseInt($('adm-session-dur').value)||180,
+    priceMonthly:  $('adm-price-monthly').value.trim()||'$9.99',
+    priceAnnual:   $('adm-price-annual').value.trim()||'$79',
+    stripeMonthly: $('adm-stripe-monthly').value.trim(),
+    paypalMonthly: $('adm-paypal-monthly').value.trim(),
+  };
+  localStorage.setItem('tw_admin_cfg', JSON.stringify(cfg));
+  if(cfg.stripeMonthly) window._admStripe = cfg.stripeMonthly;
+  if(cfg.paypalMonthly) window._admPaypal = cfg.paypalMonthly;
+  $('adm-save-msg').style.display='block';
+  setTimeout(function(){ $('adm-save-msg').style.display='none'; }, 2500);
+  showAdminToast('Settings saved.');
+}
+
+function exportUsers(){
+  if(!adminUsers.length){ alert('No users loaded.'); return; }
+  const rows = adminUsers.map(function(u){
+    return ['"'+(u.email||'').replace(/"/g,'""')+'"', u.is_pro?'Pro':'Free', u.sessions_used||0,
+            u.created_at?new Date(u.created_at).toLocaleDateString():'',
+            'Active'].join(',');
+  });
+  var csv = 'Email,Plan,Sessions,Joined\n' + rows.join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = 'tonewise_users_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function showAdminToast(msg){
+  var t = $('adm-toast');
+  if(!t){
+    t = document.createElement('div'); t.id='adm-toast';
+    t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--bg2);border:0.5px solid var(--border2);border-radius:8px;padding:10px 18px;font-size:13px;color:var(--text);z-index:9999;transition:opacity .3s;pointer-events:none;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.opacity='1';
+  clearTimeout(t._t); t._t=setTimeout(function(){ t.style.opacity='0'; },2800);
+}
+
+function escHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escAttr(s){ return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+
+function closeAdmin(){ showPage('app'); }
+
+/* close upgrade modal on backdrop click */
+$('modal-upgrade').addEventListener('click', e=>{ if(e.target===$('modal-upgrade')) closeUpgrade(); });
+
+/* keyboard: Escape closes modal */
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeUpgrade(); });
+</script>
+
+<!-- ══ PAGE: ADMIN ════════════════════════════════════ -->
+<div class="page" id="page-admin" style="display:none">
+  <header class="admin-topbar" role="banner">
+    <div class="logo-spin" style="width:22px;height:22px" aria-hidden="true"><div class="logo-inner" style="width:11px;height:11px"></div></div>
+    <span class="topbar-logo" style="font-family:'DM Serif Display',serif;font-size:16px">Tone<em style="font-style:italic;color:var(--pl)">Wise</em></span>
+    <span class="admin-badge">Admin Console</span>
+    <nav style="margin-left:auto;display:flex;align-items:center;gap:8px">
+      <button class="btn-sm" onclick="showPage('app')" aria-label="Back to app">Back to app</button>
+      <button class="btn-sm btn-logout" onclick="signOut()">Log out</button>
+    </nav>
+  </header>
+  <div class="admin-body">
+    <div class="admin-notice"><strong>Admin access:</strong> You are logged in as the platform administrator. All changes here affect live users immediately. Use with care.</div>
+    <div class="admin-section">
+      <div class="admin-section-title">Platform overview</div>
+      <div class="admin-stats-grid">
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-total-users">—</div><div class="admin-stat-label">Total users</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-pro-users">—</div><div class="admin-stat-label">Pro subscribers</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-active-today">—</div><div class="admin-stat-label">Active today</div></div>
+        <div class="admin-stat"><div class="admin-stat-val" id="adm-total-sessions">—</div><div class="admin-stat-label">Total sessions</div></div>
+      </div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">User management</div>
+      <input type="search" class="admin-search" id="adm-search" placeholder="Search by email…" oninput="filterAdminUsers(this.value)">
+      <div style="overflow-x:auto">
+        <table class="admin-table">
+          <thead><tr><th>Email</th><th>Plan</th><th>Sessions</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="adm-user-tbody"><tr><td colspan="5" style="color:var(--text3);font-size:12px;padding:16px">Loading…</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">Platform settings</div>
+      <div class="admin-config-grid">
+        <div class="admin-input-group"><label>Free sessions per month</label><input type="number" id="adm-free-sessions" min="1" max="100" value="5"></div>
+        <div class="admin-input-group"><label>Free session duration (seconds)</label><input type="number" id="adm-session-dur" min="30" max="3600" value="180"></div>
+        <div class="admin-input-group"><label>Monthly price (display only)</label><input type="text" id="adm-price-monthly" placeholder="$9.99"></div>
+        <div class="admin-input-group"><label>Annual price (display only)</label><input type="text" id="adm-price-annual" placeholder="$79"></div>
+        <div class="admin-input-group"><label>Stripe monthly link</label><input type="url" id="adm-stripe-monthly" placeholder="https://buy.stripe.com/…"></div>
+        <div class="admin-input-group"><label>PayPal monthly link</label><input type="url" id="adm-paypal-monthly" placeholder="https://www.paypal.com/…"></div>
+      </div>
+      <button class="admin-save-btn" onclick="saveAdminConfig()">Save settings</button>
+      <div id="adm-save-msg" style="font-size:12px;color:var(--tl);margin-top:8px;display:none">Settings saved.</div>
+    </div>
+    <div class="admin-section">
+      <div class="admin-section-title">Admin tools</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="admin-action-btn success" onclick="resetAllSessions()">Reset all free sessions</button>
+        <button class="admin-action-btn" onclick="exportUsers()">Export users (CSV)</button>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
