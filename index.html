@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ToneWise — Practice Smarter. Play in Tune. Wind & Brass Coaching.</title>
+<meta name="description" content="Real-time pitch feedback and spoken coaching for trumpet, saxophone, clarinet, flugelhorn, French horn, trombone and more. Pitch analysis, ear training, and spoken feedback — available 24/7.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#04030a;
+  --dark:#0b0a14;
+  --panel:#0f0e1c;
+  --panel2:#161527;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.13);
+  --text:#e8e6f0;
+  --text2:#9896b8;
+  --text3:#4e4c6a;
+  --gold:#d4a843;
+  --gold2:#f0cc76;
+  --gold3:#fae9a8;
+  --violet:#7b6de8;
+  --teal:#22c9a0;
+  --teal2:#4fe8c0;
+  --r:4px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:'Jost',sans-serif;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+
+/* ────────────────────────────────────────────
+   AMBIENT BACKGROUND
+──────────────────────────────────────────── */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.glow-1{position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(123,109,232,.07) 0%,transparent 70%);top:-300px;right:-200px}
+.glow-2{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(34,201,160,.05) 0%,transparent 70%);bottom:-200px;left:-150px}
+.glow-3{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,.04) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* ────────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 5vw;
+  transition:background .3s,padding .3s;
+}
+nav.scrolled{
+  background:rgba(4,3,10,.92);
+  backdrop-filter:blur(16px);
+  padding:14px 5vw;
+  border-bottom:0.5px solid var(--border);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  color:var(--text);text-decoration:none;letter-spacing:.04em;
+}
+.nav-logo em{font-style:italic;color:var(--gold)}
+.nav-links{
+  display:flex;gap:32px;align-items:center;
+  font-size:12px;font-weight:400;letter-spacing:.06em;
+  color:var(--text2);
+}
+.nav-links a{color:inherit;text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  background:transparent;border:1px solid var(--gold);color:var(--gold);
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 22px;cursor:pointer;text-decoration:none;
+  transition:all .25s;
+}
+.nav-cta:hover{background:var(--gold);color:var(--void)}
+
+/* ────────────────────────────────────────────
+   HERO
+──────────────────────────────────────────── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:120px 5vw 80px;
+  overflow:hidden;
+}
+.hero-bg{position:absolute;inset:0;overflow:hidden}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;object-position:center 40%;
+  filter:grayscale(100%) brightness(.22) contrast(1.3);
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom,var(--void) 0%,transparent 20%,transparent 65%,var(--void) 100%),
+    linear-gradient(to right,var(--void) 0%,transparent 20%,transparent 80%,var(--void) 100%);
+}
+.hero-content{position:relative;z-index:2;max-width:860px}
+
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:28px;
+  display:inline-flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';display:inline-block;width:32px;height:1px;background:var(--gold);opacity:.5;
+}
+
+/* Instrument selector pills in hero */
+.instrument-pills{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.inst-pill{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 14px;border-radius:999px;
+  border:0.5px solid var(--border2);
+  color:var(--text2);cursor:pointer;
+  transition:all .25s;background:transparent;
+}
+.inst-pill:hover,.inst-pill.active{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(212,168,67,.08);
+}
+.inst-pill.active{font-weight:700}
+
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,8.5vw,114px);
+  font-weight:600;line-height:.9;
+  letter-spacing:-.025em;
+  color:var(--text);margin-bottom:8px;
+}
+.hero-title em{font-style:italic;color:var(--gold)}
+
+.hero-instrument-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,3vw,34px);
+  font-weight:300;font-style:italic;
+  color:var(--gold2);
+  min-height:44px;
+  transition:opacity .3s;
+  margin-bottom:16px;
+}
+
+.hero-subtitle{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(17px,2.2vw,24px);
+  font-weight:300;font-style:italic;
+  color:var(--text2);margin-bottom:24px;line-height:1.5;
+}
+.hero-body{
+  font-size:15px;font-weight:300;color:var(--text2);
+  max-width:560px;margin:0 auto 36px;line-height:1.8;
+}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-gold{
+  background:var(--gold);color:var(--void);
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 32px;cursor:pointer;text-decoration:none;
+  border:none;transition:all .25s;font-weight:700;display:inline-block;
+}
+.btn-gold:hover{background:var(--gold2)}
+.btn-ghost{
+  border:1px solid var(--border2);color:var(--text2);
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:13px 32px;cursor:pointer;text-decoration:none;
+  transition:all .25s;background:transparent;display:inline-block;
+}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text)}
+.hero-scroll{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--text3);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:bob 2.2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ────────────────────────────────────────────
+   PROOF STRIP
+──────────────────────────────────────────── */
+.proof{
+  position:relative;z-index:1;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:0 5vw;
+  display:flex;justify-content:center;flex-wrap:wrap;
+}
+.proof-item{
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 36px;border-right:1px solid var(--border);
+}
+.proof-item:last-child{border-right:none}
+.proof-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:600;color:var(--gold);line-height:1;
+}
+.proof-label{
+  font-size:11px;font-weight:300;letter-spacing:.04em;
+  color:var(--text2);margin-top:4px;
+}
+
+/* ────────────────────────────────────────────
+   INSTRUMENTS SECTION
+──────────────────────────────────────────── */
+.instruments{
+  position:relative;z-index:1;
+  padding:100px 5vw;
+}
+.section-tag{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--teal);
+  margin-bottom:12px;
+}
+.section-h{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,4.5vw,56px);
+  font-weight:600;line-height:1.1;margin-bottom:16px;
+}
+.section-h em{font-style:italic;color:var(--gold)}
+.section-sub{
+  font-size:15px;font-weight:300;color:var(--text2);
+  max-width:580px;line-height:1.75;margin-bottom:52px;
+}
+
+/* Instrument cards grid */
+.inst-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;background:var(--panel);
+  border:1px solid var(--border);
+}
+.inst-card{
+  background:var(--dark);
+  padding:32px 28px;
+  cursor:pointer;
+  transition:background .2s;
+  position:relative;overflow:hidden;
+  border-bottom:2px solid transparent;
+  transition:border-color .2s,background .2s;
+}
+.inst-card:hover{background:rgba(123,109,232,.05);border-bottom-color:var(--gold)}
+.inst-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,67,.2),transparent);
+}
+.inst-emoji{
+  font-size:28px;margin-bottom:12px;display:block;
+  filter:grayscale(30%);
+}
+.inst-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--text);
+  margin-bottom:4px;
+}
+.inst-family{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:12px;
+}
+.inst-desc{
+  font-size:13px;font-weight:300;
+  color:var(--text2);line-height:1.6;
+  margin-bottom:14px;
+}
+.inst-features{
+  display:flex;flex-wrap:wrap;gap:5px;
+}
+.inst-tag{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:2px;
+  background:rgba(212,168,67,.08);
+  border:0.5px solid rgba(212,168,67,.2);
+  color:var(--gold);
+}
+
+/* ────────────────────────────────────────────
+   COMPARE
+──────────────────────────────────────────── */
+.compare{
+  position:relative;z-index:1;
+  padding:100px 5vw;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.vs-wrap{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2px;margin-top:48px;
+}
+.vs-col{
+  background:var(--dark);
+  border:1px solid var(--border);
+  padding:36px 30px;
+}
+.vs-col.tw{border-color:rgba(212,168,67,.25)}
+.vs-head{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;margin-bottom:4px;
+}
+.vs-col.tw .vs-head{color:var(--gold)}
+.vs-sub{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:28px;
+}
+.vs-row{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:12px 0;border-top:1px solid var(--border);
+  font-size:14px;font-weight:300;line-height:1.55;color:var(--text2);
+}
+.vs-icon{
+  flex-shrink:0;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;margin-top:1px;
+}
+.vs-icon.no{background:rgba(200,50,50,.15);color:#e05555}
+.vs-icon.yes{background:rgba(34,201,160,.12);color:var(--teal)}
+.vs-col.tw .vs-row{color:rgba(232,230,240,.8)}
+
+/* ────────────────────────────────────────────
+   FEATURES
+──────────────────────────────────────────── */
+.features{position:relative;z-index:1;padding:100px 5vw}
+.feat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  margin-top:48px;border:1px solid var(--border);
+}
+.feat{
+  background:var(--dark);padding:36px 28px;
+  transition:background .2s;position:relative;overflow:hidden;
+}
+.feat::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--violet),var(--teal));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s ease;
+}
+.feat:hover{background:rgba(123,109,232,.05)}
+.feat:hover::before{transform:scaleX(1)}
+.feat-num{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.1em;color:var(--text3);margin-bottom:14px;
+}
+.feat-icon{
+  width:40px;height:40px;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;color:var(--gold);
+}
+.feat-title{
+  font-family:'Cormorant Garamond',serif;font-size:20px;
+  font-weight:600;margin-bottom:8px;color:var(--text);
+}
+.feat-text{font-size:13px;font-weight:300;line-height:1.7;color:var(--text2)}
+
+/* ────────────────────────────────────────────
+   PHOTO QUOTE BREAK
+──────────────────────────────────────────── */
+.photo-break{
+  position:relative;z-index:1;
+  height:380px;overflow:hidden;
+}
+.photo-break img{
+  width:100%;height:100%;object-fit:cover;object-position:center 25%;
+  filter:grayscale(100%) brightness(.32) contrast(1.25);
+}
+.photo-break-over{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to right,rgba(4,3,10,.9) 0%,rgba(4,3,10,.2) 50%,rgba(4,3,10,.85) 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.photo-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,3.2vw,40px);
+  font-style:italic;font-weight:300;
+  color:var(--text);text-align:center;
+  max-width:720px;padding:0 5vw;
+  text-shadow:0 2px 24px rgba(0,0,0,.8);
+  line-height:1.25;
+}
+.photo-quote em{font-style:normal;color:var(--gold);font-weight:600}
+
+/* ────────────────────────────────────────────
+   PRICING
+──────────────────────────────────────────── */
+.pricing{position:relative;z-index:1;padding:100px 5vw}
+.plans{
+  display:flex;gap:20px;justify-content:center;flex-wrap:wrap;
+  margin-top:48px;
+}
+.plan{
+  flex:1;min-width:230px;max-width:320px;
+  background:var(--panel);border:1px solid var(--border);
+  padding:36px 26px;position:relative;transition:border-color .2s;
+}
+.plan:hover{border-color:var(--border2)}
+.plan.featured{border-color:rgba(212,168,67,.4)}
+.plan-badge{
+  position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  background:var(--gold);color:var(--void);
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 14px;white-space:nowrap;font-weight:700;
+}
+.plan-tier{
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:8px;
+}
+.plan.featured .plan-tier{color:var(--gold2)}
+.plan-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:54px;font-weight:600;
+  color:var(--text);line-height:1;margin-bottom:4px;
+}
+.plan.featured .plan-price{color:var(--gold)}
+.plan-period{font-size:12px;font-weight:300;color:var(--text2);margin-bottom:22px}
+.plan-line{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:8px 0;border-top:1px solid var(--border);
+  font-size:13px;font-weight:300;line-height:1.45;color:var(--text2);
+}
+.plan-check{color:var(--teal);flex-shrink:0;font-weight:700}
+.plan-btn{
+  display:block;width:100%;text-align:center;
+  margin-top:22px;padding:12px;
+  font-family:'Space Mono',monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;transition:all .25s;
+  border:1px solid var(--border2);color:var(--text2);background:transparent;
+}
+.plan-btn:hover{border-color:var(--text2);color:var(--text)}
+.plan.featured .plan-btn{
+  background:var(--gold);color:var(--void);
+  border-color:var(--gold);font-weight:700;
+}
+.plan.featured .plan-btn:hover{background:var(--gold2)}
+.pricing-note{
+  text-align:center;margin-top:20px;
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.08em;color:var(--text3);
+}
+
+/* ────────────────────────────────────────────
+   TESTIMONIALS
+──────────────────────────────────────────── */
+.testimonials{
+  position:relative;z-index:1;padding:100px 5vw;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.test-card{
+  background:var(--void);border:1px solid var(--border);
+  padding:28px 24px;transition:border-color .2s;
+}
+.test-card:hover{border-color:var(--border2)}
+.test-instrument{
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.test-instrument::before{
+  content:'';width:16px;height:1px;background:var(--gold);opacity:.5;
+}
+.test-quote-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:56px;line-height:.7;color:var(--gold);
+  opacity:.25;margin-bottom:6px;
+}
+.test-text{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:16px;
+  line-height:1.65;color:var(--text2);margin-bottom:16px;
+}
+.test-author{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text3);
+}
+.test-stars{color:var(--gold);font-size:11px;letter-spacing:2px;margin-bottom:8px}
+
+/* ────────────────────────────────────────────
+   FINAL CTA
+──────────────────────────────────────────── */
+.final{
+  position:relative;z-index:1;
+  padding:120px 5vw;text-align:center;overflow:hidden;
+}
+.final-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 55% at 50% 50%,rgba(123,109,232,.07) 0%,transparent 100%);
+}
+.final-content{position:relative;z-index:2}
+.final-eyebrow{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--teal);
+  margin-bottom:16px;
+}
+.final-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,5.5vw,68px);
+  font-weight:300;line-height:1.1;margin-bottom:16px;
+}
+.final-title em{font-style:italic;color:var(--gold);font-weight:600}
+.final-body{
+  font-size:15px;font-weight:300;color:var(--text2);
+  max-width:460px;margin:0 auto 40px;line-height:1.75;
+}
+.final-instruments{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:36px;
+}
+
+/* ────────────────────────────────────────────
+   FOOTER
+──────────────────────────────────────────── */
+footer{
+  position:relative;z-index:1;
+  background:var(--panel);border-top:1px solid var(--border);
+  padding:48px 5vw 32px;
+}
+.footer-top{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:40px;padding-bottom:40px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:24px;
+}
+.footer-brand .footer-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--text);margin-bottom:10px;
+}
+.footer-brand .footer-logo em{font-style:italic;color:var(--gold)}
+.footer-brand p{
+  font-size:13px;font-weight:300;color:var(--text2);
+  line-height:1.65;margin-bottom:14px;
+}
+.footer-instruments{
+  display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;
+}
+.foot-tag{
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border:0.5px solid var(--border2);
+  color:var(--text3);border-radius:2px;
+}
+.footer-col h4{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:14px;
+}
+.footer-col a{
+  display:block;font-size:13px;font-weight:300;
+  color:var(--text2);text-decoration:none;
+  margin-bottom:8px;transition:color .2s;
+}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.08em;color:var(--text3);
+}
+
+/* ────────────────────────────────────────────
+   RESPONSIVE
+──────────────────────────────────────────── */
+@media(max-width:900px){
+  .inst-grid{grid-template-columns:repeat(2,1fr)}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}
+  .test-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .inst-grid,.feat-grid,.test-grid,.vs-wrap{grid-template-columns:1fr}
+  .plans{flex-direction:column;align-items:center}
+  .plan{max-width:100%}
+  nav .nav-links{display:none}
+  .proof-item{border-right:none;border-bottom:1px solid var(--border);width:100%;text-align:center}
+  .proof{flex-direction:column}
+  .footer-top{grid-template-columns:1fr}
+  .hero-instrument-name{min-height:auto}
+}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+  <div class="glow-3"></div>
+</div>
+
+<!-- ── NAV ────────────────────────────────────────── -->
+<nav id="main-nav">
+  <a class="nav-logo" href="#">Tone<em>Wise</em></a>
+  <div class="nav-links">
+    <a href="#instruments">Instruments</a>
+    <a href="#compare">Why ToneWise</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="app.html" style="font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:.04em;margin-right:4px;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">Sign in</a>
+  <a href="app.html" class="nav-cta">Start free</a>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1600&q=80&auto=format&fit=crop" alt="Musician with brass instrument" onerror="this.style.display='none'">
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Real feedback. Every practice session.</div>
+
+    <!-- Instrument switcher -->
+    <div class="instrument-pills" role="group" aria-label="Select your instrument">
+      <button class="inst-pill active" onclick="switchInstrument(this,'Trumpet','the original brass coach')">Trumpet</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Saxophone','from alto to baritone')">Saxophone</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Clarinet','single-reed precision')">Clarinet</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Flugelhorn','warm, velvety tone')">Flugelhorn</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'French Horn','orchestral depth')">French Horn</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Trombone','slide to perfection')">Trombone</button>
+    </div>
+
+    <h1 class="hero-title">Tone<em>Wise</em></h1>
+    <div class="hero-instrument-name" id="hero-instrument-name">Your trumpet. Finally in tune.</div>
+    <p class="hero-subtitle">The coach that hears exactly what you play — and tells you what to fix</p>
+    <p class="hero-body">Real-time pitch analysis. Spoken coaching feedback. Powered by advanced voice technology — no teacher required. Ear training, fingering charts, session scoring — everything a serious wind player needs, available any hour on any device.</p>
+    <div class="hero-actions">
+      <a href="app.html" class="btn-gold">Start for free →</a>
+      <a href="#instruments" class="btn-ghost">See all instruments</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll ↓</div>
+</section>
+
+<!-- ── PROOF STRIP ─────────────────────────────────── -->
+<div class="proof">
+  <div class="proof-item"><div class="proof-val">8</div><div class="proof-label">Instruments supported</div></div>
+  <div class="proof-item"><div class="proof-val">±2¢</div><div class="proof-label">Pitch precision</div></div>
+  <div class="proof-item"><div class="proof-val">24/7</div><div class="proof-label">Always available</div></div>
+  <div class="proof-item"><div class="proof-val">$0</div><div class="proof-label">To get started</div></div>
+  <div class="proof-item"><div class="proof-val">100%</div><div class="proof-label">Accessible design</div></div>
+</div>
+
+<!-- ── INSTRUMENTS ─────────────────────────────────── -->
+<section class="instruments" id="instruments">
+  <div class="section-tag">Your instrument. Your coach.</div>
+  <h2 class="section-h">One platform.<br><em>Every wind instrument.</em></h2>
+  <p class="section-sub">ToneWise adapts its coaching to the specific technique, range, and challenges of each instrument. Select yours and get feedback that's actually relevant to how you play.</p>
+
+  <div class="inst-grid">
+    <div class="inst-card">
+      <span class="inst-emoji">🎺</span>
+      <div class="inst-name">Trumpet</div>
+      <div class="inst-family">Brass · Bb · Concert pitch</div>
+      <div class="inst-desc">The instrument that started it all. ToneWise coaches trumpet range from low F# to double high C, analyses embouchure tension from overtone patterns, and covers every style from classical to jazz.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Valve fingerings</span>
+        <span class="inst-tag">Lip slurs</span>
+        <span class="inst-tag">Jazz improv</span>
+        <span class="inst-tag">High register</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎷</span>
+      <div class="inst-name">Saxophone</div>
+      <div class="inst-family">Woodwind · Alto · Tenor · Soprano · Baritone</div>
+      <div class="inst-desc">From Charlie Parker to Kenny G — ToneWise coaches all four sax voices. Analyses altissimo register accuracy, vibrato consistency, and tone colour across all dynamic levels.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Altissimo</span>
+        <span class="inst-tag">Vibrato</span>
+        <span class="inst-tag">All 4 voices</span>
+        <span class="inst-tag">Jazz phrasing</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎵</span>
+      <div class="inst-name">Clarinet</div>
+      <div class="inst-family">Woodwind · Bb · Single reed</div>
+      <div class="inst-desc">The register break is one of the most challenging transitions in all of music. ToneWise specifically coaches clarinet throat tones, the break, and chalumeau-to-clarion smoothness.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Register break</span>
+        <span class="inst-tag">Throat tones</span>
+        <span class="inst-tag">Articulation</span>
+        <span class="inst-tag">Intonation</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎶</span>
+      <div class="inst-name">Flugelhorn</div>
+      <div class="inst-family">Brass · Bb · Conical bore</div>
+      <div class="inst-desc">The flugelhorn's warm, velvety tone requires a softer embouchure and a different approach to intonation than its trumpet cousin. ToneWise coaches the distinct tone colour and relaxed air stream this instrument demands.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Tone colour</span>
+        <span class="inst-tag">Air stream</span>
+        <span class="inst-tag">Jazz ballads</span>
+        <span class="inst-tag">Intonation</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">📯</span>
+      <div class="inst-name">French Horn</div>
+      <div class="inst-family">Brass · F · Orchestral</div>
+      <div class="inst-desc">The most technically demanding brass instrument. ToneWise coaches the French horn's extreme range, hand position effects on intonation, and the precision required for orchestral passage work.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Extended range</span>
+        <span class="inst-tag">Hand stopping</span>
+        <span class="inst-tag">Orchestral</span>
+        <span class="inst-tag">Transposition</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎸</span>
+      <div class="inst-name">Trombone</div>
+      <div class="inst-family">Brass · Tenor · Slide</div>
+      <div class="inst-desc">Slide position accuracy is unique to trombone — there's no fret or valve to save you. ToneWise analyses your pitch against ideal slide positions, coaches glissandi, and tracks legato tone across all seven positions.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Slide positions</span>
+        <span class="inst-tag">Glissandi</span>
+        <span class="inst-tag">Legato tone</span>
+        <span class="inst-tag">Bass clef</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:24px">
+    <p style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Also works with · Cornet · Euphonium · Oboe · Flute · Bassoon · Recorder · Recorder · Bass Clarinet</p>
+  </div>
+</section>
+
+<!-- ── COMPARE ──────────────────────────────────────── -->
+<section class="compare" id="compare">
+  <div class="section-tag">The honest truth</div>
+  <h2 class="section-h">Why players choose<br><em>ToneWise</em> over everything else</h2>
+  <div class="vs-wrap">
+    <div class="vs-col">
+      <div class="vs-head">Traditional Methods</div>
+      <div class="vs-sub">Lessons · YouTube · Generic tuner apps</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Scheduled only — unavailable at 11pm when inspiration strikes</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>$60–$120 per lesson limits how often you get real feedback</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>YouTube can't hear you — you practise wrong for days before anyone notices</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Tuner apps show a number but give no coaching on why you're flat</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Instrument-specific advice is generic — no sax teacher coaching a trumpet player well</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Zero accessibility for blind or vision-impaired wind players</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Progress tracking is whatever you write in a notebook</div>
+    </div>
+    <div class="vs-col tw">
+      <div class="vs-head">ToneWise</div>
+      <div class="vs-sub">Instrument-aware · Live feedback · Always on</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Available 24/7 — practice at 3am before a gig, ToneWise is ready</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Starts free — Pro at $9.99/month, less than a single lesson</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Hears every note live — corrects pitch errors to ±2 cents in real time</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Explains the why — "your D is sharp because your embouchure is tight" style feedback</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Instrument-specific coaching — sax players get sax feedback, not trumpet tips</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Full VoiceOver / TalkBack / haptic support — built for blind musicians</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Automatic progress charts, streaks, and session scoring PDF reports</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ──────────────────────────────────────── -->
+<section class="features" id="features">
+  <div class="section-tag">Inside ToneWise</div>
+  <h2 class="section-h">Every tool a wind player<br><em>actually needs</em></h2>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="feat-num">01 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      </div>
+      <div class="feat-title">Live Pitch Coaching</div>
+      <div class="feat-text">Your microphone captures every note in real time. ToneWise analyses pitch, timing, and dynamics — then speaks coaching in plain language, exactly as a teacher beside you would.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">02 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="15" r="3"/></svg>
+      </div>
+      <div class="feat-title">Ear Training System</div>
+      <div class="feat-text">Intervals, scales, chord tones, melody recall, rhythm. Generated fresh for your instrument and level. No sheet music needed — pure aural learning for ear-based players of every wind instrument.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">03 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      </div>
+      <div class="feat-title">Ask the Teacher</div>
+      <div class="feat-text">Ask anything about technique, music theory, or practice strategy for your instrument. Gene answers in 3–5 spoken sentences. "Hey Gene, why is my altissimo register breaking?" — answered instantly.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">04 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="feat-title">Full Accessibility</div>
+      <div class="feat-text">The only music coaching platform built from day one for blind and vision-impaired musicians. Full VoiceOver + TalkBack. Haptic rhythm feedback. Voice commands. WCAG 2.2 AA throughout.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">05 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      </div>
+      <div class="feat-title">Session Scoring</div>
+      <div class="feat-text">After each session, see your performance on a real music notation staff — notes colour-coded by intonation accuracy. Export a full PDF coaching report. Track your development over weeks and months.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">06 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+      </div>
+      <div class="feat-title">Instrument Fingering Charts</div>
+      <div class="feat-text">Interactive fingering and position charts for every supported instrument. Trumpet valve combinations, trombone slide positions, saxophone key diagrams — Gene reads each one aloud.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">07 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="20" height="14" rx="2"/><path d="M16 8V6a4 4 0 0 0-8 0v2"/><line x1="12" y1="13" x2="12" y2="17"/></svg>
+      </div>
+      <div class="feat-title">Metronome + Practice Tools</div>
+      <div class="feat-text">Professional web-audio metronome with tap tempo, subdivisions, and beat accents. Daily practice challenges. Streak tracking. Everything needed for a structured, progressive practice routine.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHOTO QUOTE ──────────────────────────────────── -->
+<div class="photo-break">
+  <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80&auto=format&fit=crop" alt="Musician" onerror="this.style.display='none'">
+  <div class="photo-break-over">
+    <div class="photo-quote">"Whether you play trumpet, saxophone, or French horn — the fastest path to mastery is <em>immediate, accurate feedback</em> every single session."</div>
+  </div>
+</div>
+
+<!-- ── PRICING ──────────────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="section-tag">Simple pricing</div>
+  <h2 class="section-h">Less than one lesson.<br><em>Unlimited</em> coaching.</h2>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-tier">Free forever</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-period">10 sessions per month · all instruments</div>
+      <div class="plan-line"><span class="plan-check">✓</span>10 coaching sessions/month</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All 8 supported instruments</div>
+      <div class="plan-line"><span class="plan-check">✓</span>3-minute sessions</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Metronome + fingering charts</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Ask the teacher mode</div>
+      <a href="app.html" class="plan-btn">Get started free →</a>
+    </div>
+
+    <div class="plan featured">
+      <div class="plan-badge">Most popular</div>
+      <div class="plan-tier">Pro</div>
+      <div class="plan-price">$9.99</div>
+      <div class="plan-period">per month · cancel any time</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Unlimited coaching sessions</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All instruments · 10-minute sessions</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Advanced ear training + play-by-ear</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Session scoring + notation view</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Progress dashboard + PDF reports</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Daily challenges + streak tracking</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Stripe + PayPal accepted</div>
+      <a href="app.html" class="plan-btn">Start Pro →</a>
+    </div>
+
+    <div class="plan">
+      <div class="plan-tier">School / Institution</div>
+      <div class="plan-price" style="font-size:38px">$199</div>
+      <div class="plan-period">per month · up to 25 students</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All Pro features × 25 students</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All instruments — full wind section</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Teacher dashboard + assignments</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Progress reports per student</div>
+      <div class="plan-line"><span class="plan-check">✓</span>ADA / WCAG compliance docs</div>
+      <a href="mailto:godigitsall@gmail.com" class="plan-btn">Contact us →</a>
+    </div>
+  </div>
+  <p class="pricing-note">One professional lesson costs more than 3 months of ToneWise Pro · Works on all devices · No download required</p>
+</section>
+
+<!-- ── TESTIMONIALS ──────────────────────────────────── -->
+<section class="testimonials" id="testimonials">
+  <div class="section-tag">Player reviews</div>
+  <h2 class="section-h">What musicians are<br><em>saying</em></h2>
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-instrument">Trumpet · Johannesburg</div>
+      <div class="test-quote-mark">"</div>
+      <p class="test-text">I've played for 8 years. ToneWise caught intonation issues my teacher missed. My high register improved more in 3 weeks than in the previous year combined.</p>
+      <div class="test-author">James M. · Intermediate player</div>
+    </div>
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-instrument">Saxophone · London</div>
+      <div class="test-quote-mark">"</div>
+      <p class="test-text">As a visually impaired saxophone player, every other app was built for sighted users. ToneWise is the first tool that actually works for me. The voice coaching is extraordinary.</p>
+      <div class="test-author">Sarah O. · Advanced player</div>
+    </div>
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-instrument">Clarinet · Cape Town</div>
+      <div class="test-quote-mark">"</div>
+      <p class="test-text">The register break coaching alone is worth the subscription. I've struggled with that transition for two years. ToneWise identified my exact problem in the first session.</p>
+      <div class="test-author">David K. · Intermediate player</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ─────────────────────────────────────── -->
+<section class="final">
+  <div class="final-glow"></div>
+  <div class="final-content">
+    <div class="final-eyebrow">Start today · No card required</div>
+    <h2 class="final-title">Ready to play<br><em>in tune</em>?</h2>
+    <p class="final-body">Start with 10 free coaching sessions. Feel the difference. Upgrade when you're ready — and you will be.</p>
+    <div class="final-instruments">Trumpet · Saxophone · Clarinet · Flugelhorn · French Horn · Trombone · and more</div>
+    <a href="app.html" class="btn-gold" style="font-size:12px;padding:16px 44px">Begin your free sessions →</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">Tone<em>Wise</em></div>
+      <p>Real-time pitch coaching for trumpet, saxophone, clarinet, flugelhorn, French horn, trombone and more. Always available. No download required.</p>
+      <div class="footer-instruments">
+        <span class="foot-tag">Trumpet</span>
+        <span class="foot-tag">Saxophone</span>
+        <span class="foot-tag">Clarinet</span>
+        <span class="foot-tag">Flugelhorn</span>
+        <span class="foot-tag">French Horn</span>
+        <span class="foot-tag">Trombone</span>
+        <span class="foot-tag">Cornet</span>
+        <span class="foot-tag">Euphonium</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#instruments">Instruments</a>
+      <a href="#pricing">Pricing</a>
+      <a href="app.html">Open ToneWise</a>
+    </div>
+    <div class="footer-col">
+      <h4>Get in touch</h4>
+      <a href="mailto:godigitsall@gmail.com">godigitsall@gmail.com</a>
+      <p style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.5">Questions, feedback or partnership enquiries — we read every message.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Early access</h4>
+      <p style="font-size:12px;color:var(--text3);line-height:1.5">ToneWise is in active development. Features are added weekly based on player feedback.</p>
+      <a href="app.html" style="display:inline-block;margin-top:8px;font-size:12px;color:var(--gold);text-decoration:none">Start free →</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ToneWise. All rights reserved.</span>
+    <span>Available 24/7 · Works on all devices · No download required</span>
+  </div>
+</footer>
+
+<script>
+/* ── Navbar scroll behaviour ── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Instrument switcher ── */
+const instrumentLines = {
+  'Trumpet':    'Your trumpet. Finally in tune.',
+  'Saxophone':  'From alto to baritone — coached by ear',
+  'Clarinet':   'Conquer the register break at last',
+  'Flugelhorn': 'Warm, velvety tone — refined in real time',
+  'French Horn':'Orchestral precision — coached live',
+  'Trombone':   'Slide position accuracy — note by note',
+};
+
+function switchInstrument(btn, name, sub) {
+  document.querySelectorAll('.inst-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const el = document.getElementById('hero-instrument-name');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = instrumentLines[name] || `Your ${name}. Finally in tune.`;
+    el.style.opacity = '1';
+    el.style.transition = 'opacity .35s';
+  }, 200);
+}
+</script>
+
+</body>
+</html>
