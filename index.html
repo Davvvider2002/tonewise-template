@@ -1,0 +1,1153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ToneWise — Practice Smarter. Play in Tune. Wind & Brass Coaching.</title>
+<meta name="description" content="Real-time pitch feedback and spoken coaching for trumpet, saxophone, clarinet, flugelhorn, French horn, trombone and more. Pitch analysis, ear training, and spoken feedback — available 24/7.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=Jost:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --void:#04030a;
+  --dark:#0b0a14;
+  --panel:#0f0e1c;
+  --panel2:#161527;
+  --border:rgba(255,255,255,.07);
+  --border2:rgba(255,255,255,.13);
+  --text:#e8e6f0;
+  --text2:#9896b8;
+  --text3:#4e4c6a;
+  --gold:#d4a843;
+  --gold2:#f0cc76;
+  --gold3:#fae9a8;
+  --violet:#7b6de8;
+  --teal:#22c9a0;
+  --teal2:#4fe8c0;
+  --r:4px;
+}
+
+html{scroll-behavior:smooth}
+body{
+  background:var(--void);
+  color:var(--text);
+  font-family:'Jost',sans-serif;
+  overflow-x:hidden;
+  line-height:1.6;
+}
+
+/* ────────────────────────────────────────────
+   AMBIENT BACKGROUND
+──────────────────────────────────────────── */
+.ambient{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.glow-1{position:absolute;width:800px;height:800px;border-radius:50%;background:radial-gradient(circle,rgba(123,109,232,.07) 0%,transparent 70%);top:-300px;right:-200px}
+.glow-2{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(34,201,160,.05) 0%,transparent 70%);bottom:-200px;left:-150px}
+.glow-3{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(212,168,67,.04) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
+
+/* ────────────────────────────────────────────
+   NAVIGATION
+──────────────────────────────────────────── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:22px 5vw;
+  transition:background .3s,padding .3s;
+}
+nav.scrolled{
+  background:rgba(4,3,10,.92);
+  backdrop-filter:blur(16px);
+  padding:14px 5vw;
+  border-bottom:0.5px solid var(--border);
+}
+.nav-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  color:var(--text);text-decoration:none;letter-spacing:.04em;
+}
+.nav-logo em{font-style:italic;color:var(--gold)}
+.nav-links{
+  display:flex;gap:32px;align-items:center;
+  font-size:12px;font-weight:400;letter-spacing:.06em;
+  color:var(--text2);
+}
+.nav-links a{color:inherit;text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{
+  background:transparent;border:1px solid var(--gold);color:var(--gold);
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  padding:9px 22px;cursor:pointer;text-decoration:none;
+  transition:all .25s;
+}
+.nav-cta:hover{background:var(--gold);color:var(--void)}
+
+/* ────────────────────────────────────────────
+   HERO
+──────────────────────────────────────────── */
+.hero{
+  position:relative;z-index:1;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:120px 5vw 80px;
+  overflow:hidden;
+}
+.hero-bg{position:absolute;inset:0;overflow:hidden}
+.hero-bg img{
+  width:100%;height:100%;object-fit:cover;object-position:center 40%;
+  filter:grayscale(100%) brightness(.22) contrast(1.3);
+}
+.hero-bg::after{
+  content:'';position:absolute;inset:0;
+  background:
+    linear-gradient(to bottom,var(--void) 0%,transparent 20%,transparent 65%,var(--void) 100%),
+    linear-gradient(to right,var(--void) 0%,transparent 20%,transparent 80%,var(--void) 100%);
+}
+.hero-content{position:relative;z-index:2;max-width:860px}
+
+.hero-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:28px;
+  display:inline-flex;align-items:center;gap:12px;
+}
+.hero-eyebrow::before,.hero-eyebrow::after{
+  content:'';display:inline-block;width:32px;height:1px;background:var(--gold);opacity:.5;
+}
+
+/* Instrument selector pills in hero */
+.instrument-pills{
+  display:flex;gap:8px;justify-content:center;flex-wrap:wrap;
+  margin-bottom:32px;
+}
+.inst-pill{
+  font-family:'Space Mono',monospace;
+  font-size:9px;letter-spacing:.1em;text-transform:uppercase;
+  padding:5px 14px;border-radius:999px;
+  border:0.5px solid var(--border2);
+  color:var(--text2);cursor:pointer;
+  transition:all .25s;background:transparent;
+}
+.inst-pill:hover,.inst-pill.active{
+  border-color:var(--gold);color:var(--gold);
+  background:rgba(212,168,67,.08);
+}
+.inst-pill.active{font-weight:700}
+
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,8.5vw,114px);
+  font-weight:600;line-height:.9;
+  letter-spacing:-.025em;
+  color:var(--text);margin-bottom:8px;
+}
+.hero-title em{font-style:italic;color:var(--gold)}
+
+.hero-instrument-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,3vw,34px);
+  font-weight:300;font-style:italic;
+  color:var(--gold2);
+  min-height:44px;
+  transition:opacity .3s;
+  margin-bottom:16px;
+}
+
+.hero-subtitle{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(17px,2.2vw,24px);
+  font-weight:300;font-style:italic;
+  color:var(--text2);margin-bottom:24px;line-height:1.5;
+}
+.hero-body{
+  font-size:15px;font-weight:300;color:var(--text2);
+  max-width:560px;margin:0 auto 36px;line-height:1.8;
+}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-gold{
+  background:var(--gold);color:var(--void);
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 32px;cursor:pointer;text-decoration:none;
+  border:none;transition:all .25s;font-weight:700;display:inline-block;
+}
+.btn-gold:hover{background:var(--gold2)}
+.btn-ghost{
+  border:1px solid var(--border2);color:var(--text2);
+  font-family:'Space Mono',monospace;font-size:11px;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:13px 32px;cursor:pointer;text-decoration:none;
+  transition:all .25s;background:transparent;display:inline-block;
+}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text)}
+.hero-scroll{
+  position:absolute;bottom:28px;left:50%;transform:translateX(-50%);
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--text3);
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  animation:bob 2.2s ease-in-out infinite;
+}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(7px)}}
+
+/* ────────────────────────────────────────────
+   PROOF STRIP
+──────────────────────────────────────────── */
+.proof{
+  position:relative;z-index:1;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  padding:0 5vw;
+  display:flex;justify-content:center;flex-wrap:wrap;
+}
+.proof-item{
+  display:flex;flex-direction:column;align-items:center;
+  padding:20px 36px;border-right:1px solid var(--border);
+}
+.proof-item:last-child{border-right:none}
+.proof-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:36px;font-weight:600;color:var(--gold);line-height:1;
+}
+.proof-label{
+  font-size:11px;font-weight:300;letter-spacing:.04em;
+  color:var(--text2);margin-top:4px;
+}
+
+/* ────────────────────────────────────────────
+   INSTRUMENTS SECTION
+──────────────────────────────────────────── */
+.instruments{
+  position:relative;z-index:1;
+  padding:100px 5vw;
+}
+.section-tag{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--teal);
+  margin-bottom:12px;
+}
+.section-h{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,4.5vw,56px);
+  font-weight:600;line-height:1.1;margin-bottom:16px;
+}
+.section-h em{font-style:italic;color:var(--gold)}
+.section-sub{
+  font-size:15px;font-weight:300;color:var(--text2);
+  max-width:580px;line-height:1.75;margin-bottom:52px;
+}
+
+/* Instrument cards grid */
+.inst-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:2px;background:var(--panel);
+  border:1px solid var(--border);
+}
+.inst-card{
+  background:var(--dark);
+  padding:32px 28px;
+  cursor:pointer;
+  transition:background .2s;
+  position:relative;overflow:hidden;
+  border-bottom:2px solid transparent;
+  transition:border-color .2s,background .2s;
+}
+.inst-card:hover{background:rgba(123,109,232,.05);border-bottom-color:var(--gold)}
+.inst-card::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(212,168,67,.2),transparent);
+}
+.inst-emoji{
+  font-size:28px;margin-bottom:12px;display:block;
+  filter:grayscale(30%);
+}
+.inst-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--text);
+  margin-bottom:4px;
+}
+.inst-family{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:12px;
+}
+.inst-desc{
+  font-size:13px;font-weight:300;
+  color:var(--text2);line-height:1.6;
+  margin-bottom:14px;
+}
+.inst-features{
+  display:flex;flex-wrap:wrap;gap:5px;
+}
+.inst-tag{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 8px;border-radius:2px;
+  background:rgba(212,168,67,.08);
+  border:0.5px solid rgba(212,168,67,.2);
+  color:var(--gold);
+}
+
+/* ────────────────────────────────────────────
+   COMPARE
+──────────────────────────────────────────── */
+.compare{
+  position:relative;z-index:1;
+  padding:100px 5vw;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.vs-wrap{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:2px;margin-top:48px;
+}
+.vs-col{
+  background:var(--dark);
+  border:1px solid var(--border);
+  padding:36px 30px;
+}
+.vs-col.tw{border-color:rgba(212,168,67,.25)}
+.vs-head{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;margin-bottom:4px;
+}
+.vs-col.tw .vs-head{color:var(--gold)}
+.vs-sub{
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:28px;
+}
+.vs-row{
+  display:flex;gap:14px;align-items:flex-start;
+  padding:12px 0;border-top:1px solid var(--border);
+  font-size:14px;font-weight:300;line-height:1.55;color:var(--text2);
+}
+.vs-icon{
+  flex-shrink:0;width:20px;height:20px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:700;margin-top:1px;
+}
+.vs-icon.no{background:rgba(200,50,50,.15);color:#e05555}
+.vs-icon.yes{background:rgba(34,201,160,.12);color:var(--teal)}
+.vs-col.tw .vs-row{color:rgba(232,230,240,.8)}
+
+/* ────────────────────────────────────────────
+   FEATURES
+──────────────────────────────────────────── */
+.features{position:relative;z-index:1;padding:100px 5vw}
+.feat-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:1px;background:var(--border);
+  margin-top:48px;border:1px solid var(--border);
+}
+.feat{
+  background:var(--dark);padding:36px 28px;
+  transition:background .2s;position:relative;overflow:hidden;
+}
+.feat::before{
+  content:'';position:absolute;
+  top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--violet),var(--teal));
+  transform:scaleX(0);transform-origin:left;
+  transition:transform .4s ease;
+}
+.feat:hover{background:rgba(123,109,232,.05)}
+.feat:hover::before{transform:scaleX(1)}
+.feat-num{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.1em;color:var(--text3);margin-bottom:14px;
+}
+.feat-icon{
+  width:40px;height:40px;border:1px solid var(--border2);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:14px;color:var(--gold);
+}
+.feat-title{
+  font-family:'Cormorant Garamond',serif;font-size:20px;
+  font-weight:600;margin-bottom:8px;color:var(--text);
+}
+.feat-text{font-size:13px;font-weight:300;line-height:1.7;color:var(--text2)}
+
+/* ────────────────────────────────────────────
+   PHOTO QUOTE BREAK
+──────────────────────────────────────────── */
+.photo-break{
+  position:relative;z-index:1;
+  height:380px;overflow:hidden;
+}
+.photo-break img{
+  width:100%;height:100%;object-fit:cover;object-position:center 25%;
+  filter:grayscale(100%) brightness(.32) contrast(1.25);
+}
+.photo-break-over{
+  position:absolute;inset:0;
+  background:
+    linear-gradient(to right,rgba(4,3,10,.9) 0%,rgba(4,3,10,.2) 50%,rgba(4,3,10,.85) 100%);
+  display:flex;align-items:center;justify-content:center;
+}
+.photo-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(20px,3.2vw,40px);
+  font-style:italic;font-weight:300;
+  color:var(--text);text-align:center;
+  max-width:720px;padding:0 5vw;
+  text-shadow:0 2px 24px rgba(0,0,0,.8);
+  line-height:1.25;
+}
+.photo-quote em{font-style:normal;color:var(--gold);font-weight:600}
+
+/* ────────────────────────────────────────────
+   PRICING
+──────────────────────────────────────────── */
+.pricing{position:relative;z-index:1;padding:100px 5vw}
+.plans{
+  display:flex;gap:20px;justify-content:center;flex-wrap:wrap;
+  margin-top:48px;
+}
+.plan{
+  flex:1;min-width:230px;max-width:320px;
+  background:var(--panel);border:1px solid var(--border);
+  padding:36px 26px;position:relative;transition:border-color .2s;
+}
+.plan:hover{border-color:var(--border2)}
+.plan.featured{border-color:rgba(212,168,67,.4)}
+.plan-badge{
+  position:absolute;top:-11px;left:50%;transform:translateX(-50%);
+  background:var(--gold);color:var(--void);
+  font-family:'Space Mono',monospace;
+  font-size:8px;letter-spacing:.12em;text-transform:uppercase;
+  padding:3px 14px;white-space:nowrap;font-weight:700;
+}
+.plan-tier{
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:8px;
+}
+.plan.featured .plan-tier{color:var(--gold2)}
+.plan-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:54px;font-weight:600;
+  color:var(--text);line-height:1;margin-bottom:4px;
+}
+.plan.featured .plan-price{color:var(--gold)}
+.plan-period{font-size:12px;font-weight:300;color:var(--text2);margin-bottom:22px}
+.plan-line{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:8px 0;border-top:1px solid var(--border);
+  font-size:13px;font-weight:300;line-height:1.45;color:var(--text2);
+}
+.plan-check{color:var(--teal);flex-shrink:0;font-weight:700}
+.plan-btn{
+  display:block;width:100%;text-align:center;
+  margin-top:22px;padding:12px;
+  font-family:'Space Mono',monospace;font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;
+  cursor:pointer;text-decoration:none;transition:all .25s;
+  border:1px solid var(--border2);color:var(--text2);background:transparent;
+}
+.plan-btn:hover{border-color:var(--text2);color:var(--text)}
+.plan.featured .plan-btn{
+  background:var(--gold);color:var(--void);
+  border-color:var(--gold);font-weight:700;
+}
+.plan.featured .plan-btn:hover{background:var(--gold2)}
+.pricing-note{
+  text-align:center;margin-top:20px;
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.08em;color:var(--text3);
+}
+
+/* ────────────────────────────────────────────
+   TESTIMONIALS
+──────────────────────────────────────────── */
+.testimonials{
+  position:relative;z-index:1;padding:100px 5vw;
+  background:var(--panel);
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+}
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.test-card{
+  background:var(--void);border:1px solid var(--border);
+  padding:28px 24px;transition:border-color .2s;
+}
+.test-card:hover{border-color:var(--border2)}
+.test-instrument{
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:var(--gold);margin-bottom:10px;
+  display:flex;align-items:center;gap:6px;
+}
+.test-instrument::before{
+  content:'';width:16px;height:1px;background:var(--gold);opacity:.5;
+}
+.test-quote-mark{
+  font-family:'Cormorant Garamond',serif;
+  font-size:56px;line-height:.7;color:var(--gold);
+  opacity:.25;margin-bottom:6px;
+}
+.test-text{
+  font-family:'Cormorant Garamond',serif;
+  font-style:italic;font-size:16px;
+  line-height:1.65;color:var(--text2);margin-bottom:16px;
+}
+.test-author{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text3);
+}
+.test-stars{color:var(--gold);font-size:11px;letter-spacing:2px;margin-bottom:8px}
+
+/* ────────────────────────────────────────────
+   FINAL CTA
+──────────────────────────────────────────── */
+.final{
+  position:relative;z-index:1;
+  padding:120px 5vw;text-align:center;overflow:hidden;
+}
+.final-glow{
+  position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(ellipse 55% 55% at 50% 50%,rgba(123,109,232,.07) 0%,transparent 100%);
+}
+.final-content{position:relative;z-index:2}
+.final-eyebrow{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.2em;text-transform:uppercase;color:var(--teal);
+  margin-bottom:16px;
+}
+.final-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(34px,5.5vw,68px);
+  font-weight:300;line-height:1.1;margin-bottom:16px;
+}
+.final-title em{font-style:italic;color:var(--gold);font-weight:600}
+.final-body{
+  font-size:15px;font-weight:300;color:var(--text2);
+  max-width:460px;margin:0 auto 40px;line-height:1.75;
+}
+.final-instruments{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:36px;
+}
+
+/* ────────────────────────────────────────────
+   FOOTER
+──────────────────────────────────────────── */
+footer{
+  position:relative;z-index:1;
+  background:var(--panel);border-top:1px solid var(--border);
+  padding:48px 5vw 32px;
+}
+.footer-top{
+  display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;
+  gap:40px;padding-bottom:40px;
+  border-bottom:1px solid var(--border);
+  margin-bottom:24px;
+}
+.footer-brand .footer-logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--text);margin-bottom:10px;
+}
+.footer-brand .footer-logo em{font-style:italic;color:var(--gold)}
+.footer-brand p{
+  font-size:13px;font-weight:300;color:var(--text2);
+  line-height:1.65;margin-bottom:14px;
+}
+.footer-instruments{
+  display:flex;flex-wrap:wrap;gap:5px;margin-top:6px;
+}
+.foot-tag{
+  font-family:'Space Mono',monospace;font-size:8px;
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:2px 7px;border:0.5px solid var(--border2);
+  color:var(--text3);border-radius:2px;
+}
+.footer-col h4{
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:var(--text3);margin-bottom:14px;
+}
+.footer-col a{
+  display:block;font-size:13px;font-weight:300;
+  color:var(--text2);text-decoration:none;
+  margin-bottom:8px;transition:color .2s;
+}
+.footer-col a:hover{color:var(--text)}
+.footer-bottom{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;
+  font-family:'Space Mono',monospace;font-size:9px;
+  letter-spacing:.08em;color:var(--text3);
+}
+
+/* ────────────────────────────────────────────
+   RESPONSIVE
+──────────────────────────────────────────── */
+@media(max-width:900px){
+  .inst-grid{grid-template-columns:repeat(2,1fr)}
+  .feat-grid{grid-template-columns:repeat(2,1fr)}
+  .test-grid{grid-template-columns:1fr 1fr}
+  .footer-top{grid-template-columns:1fr 1fr}
+}
+@media(max-width:640px){
+  .inst-grid,.feat-grid,.test-grid,.vs-wrap{grid-template-columns:1fr}
+  .plans{flex-direction:column;align-items:center}
+  .plan{max-width:100%}
+  nav .nav-links{display:none}
+  .proof-item{border-right:none;border-bottom:1px solid var(--border);width:100%;text-align:center}
+  .proof{flex-direction:column}
+  .footer-top{grid-template-columns:1fr}
+  .hero-instrument-name{min-height:auto}
+}
+
+/* ── FOUNDER SECTION ──────────────────────────────────────── */
+.founder{
+  padding:90px 5vw;
+  background:#080810;
+  position:relative;
+  overflow:hidden;
+}
+.founder::before{
+  content:'';
+  position:absolute;
+  top:-120px;right:-120px;
+  width:500px;height:500px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(184,137,58,.08),transparent 65%);
+  pointer-events:none;
+}
+.founder-inner{
+  max-width:1100px;
+  margin:0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+}
+@media(max-width:700px){
+  .founder-inner{grid-template-columns:1fr;gap:40px}
+  .founder-img-col{order:-1;text-align:center}
+}
+.founder-eyebrow{
+  font-family:'Space Mono',monospace;
+  font-size:10px;letter-spacing:.2em;text-transform:uppercase;
+  color:#b8893a;margin-bottom:20px;opacity:.8;
+}
+.founder-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(24px,3vw,34px);
+  font-weight:300;font-style:italic;
+  line-height:1.4;
+  color:#f0ede6;
+  margin-bottom:28px;
+  position:relative;
+}
+.founder-quote::before{
+  content:'"';
+  font-size:80px;line-height:0;
+  color:#b8893a;opacity:.3;
+  position:absolute;top:20px;left:-20px;
+  font-family:'Cormorant Garamond',serif;
+}
+.founder-name{
+  font-family:'Space Mono',monospace;
+  font-size:13px;color:#b8893a;
+  margin-bottom:4px;letter-spacing:.04em;
+}
+.founder-title{
+  font-size:13px;color:rgba(240,237,230,.4);
+  font-family:'Jost',sans-serif;font-weight:300;
+}
+.founder-img-col{position:relative}
+.founder-img-wrap{
+  position:relative;
+  display:inline-block;
+  width:100%;
+  max-width:380px;
+}
+.founder-img-wrap::before{
+  content:'';
+  position:absolute;
+  inset:-3px;
+  border-radius:20px;
+  background:linear-gradient(135deg,#b8893a,rgba(127,119,221,.4),#1d9e75);
+  z-index:0;
+  opacity:.6;
+}
+.founder-img-wrap::after{
+  content:'';
+  position:absolute;
+  bottom:-20px;right:-20px;
+  width:140px;height:140px;
+  border-radius:50%;
+  border:1px solid rgba(184,137,58,.2);
+  z-index:0;
+}
+.founder-img{
+  width:100%;
+  border-radius:18px;
+  display:block;
+  position:relative;
+  z-index:1;
+  filter:contrast(1.05) brightness(1.02);
+}
+.founder-badge{
+  position:absolute;
+  bottom:-16px;left:20px;
+  background:#0e0c18;
+  border:1px solid rgba(184,137,58,.35);
+  border-radius:10px;
+  padding:10px 16px;
+  z-index:2;
+  backdrop-filter:blur(10px);
+}
+.founder-badge-text{
+  font-family:'Space Mono',monospace;
+  font-size:10px;color:#b8893a;
+  letter-spacing:.08em;text-transform:uppercase;
+}
+.founder-badge-sub{
+  font-size:11px;color:rgba(240,237,230,.5);
+  margin-top:2px;
+}
+</style>
+</head>
+<body>
+
+<div class="ambient">
+  <div class="glow-1"></div>
+  <div class="glow-2"></div>
+  <div class="glow-3"></div>
+</div>
+
+<!-- ── NAV ────────────────────────────────────────── -->
+<nav id="main-nav">
+  <a class="nav-logo" href="#">Tone<em>Wise</em></a>
+  <div class="nav-links">
+    <a href="#instruments">Instruments</a>
+    <a href="#compare">Why ToneWise</a>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <a href="app.html" style="font-size:11px;color:var(--text2);text-decoration:none;letter-spacing:.04em;margin-right:4px;transition:color .2s" onmouseover="this.style.color='var(--text)'" onmouseout="this.style.color='var(--text2)'">Sign in</a>
+  <a href="app.html" class="nav-cta">Try it free</a>
+</nav>
+
+<!-- ── HERO ───────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1600&q=80&auto=format&fit=crop" alt="Musician with brass instrument" onerror="this.style.display='none'">
+  </div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">For the hours no teacher is in the room</div>
+
+    <!-- Instrument switcher -->
+    <div class="instrument-pills" role="group" aria-label="Select your instrument">
+      <button class="inst-pill active" onclick="switchInstrument(this,'Trumpet','the original brass coach')">Trumpet</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Saxophone','from alto to baritone')">Saxophone</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Clarinet','single-reed precision')">Clarinet</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Flugelhorn','warm, velvety tone')">Flugelhorn</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'French Horn','orchestral depth')">French Horn</button>
+      <button class="inst-pill" onclick="switchInstrument(this,'Trombone','slide to perfection')">Trombone</button>
+    </div>
+
+    <h1 class="hero-title">Tone<em>Wise</em></h1>
+    <div class="hero-instrument-name" id="hero-instrument-name">Your trumpet. Finally in tune.</div>
+    <p class="hero-subtitle">Play. It listens. It tells you what's off — in plain English, not just a number.</p>
+    <p class="hero-body">Real-time pitch analysis. Spoken coaching feedback. Powered by advanced voice technology — no teacher required. Ear training, fingering charts, session scoring — everything a serious wind player needs, available any hour on any device.</p>
+    <div class="hero-actions">
+      <a href="app.html" class="btn-gold">Pick up your horn →</a>
+      <a href="#instruments" class="btn-ghost">See all instruments</a>
+    </div>
+  </div>
+  <div class="hero-scroll">Scroll ↓</div>
+</section>
+
+<!-- ── PROOF STRIP ─────────────────────────────────── -->
+<div class="proof">
+  <div class="proof-item"><div class="proof-val">8</div><div class="proof-label">Instruments supported</div></div>
+  <div class="proof-item"><div class="proof-val">±2¢</div><div class="proof-label">Pitch precision</div></div>
+  <div class="proof-item"><div class="proof-val">24/7</div><div class="proof-label">Any hour, any day</div></div>
+  <div class="proof-item"><div class="proof-val">$0</div><div class="proof-label">To start playing</div></div>
+  <div class="proof-item"><div class="proof-val">100%</div><div class="proof-label">Accessible design</div></div>
+</div>
+
+<!-- ── INSTRUMENTS ─────────────────────────────────── -->
+<section class="instruments" id="instruments">
+  <div class="section-tag">Eight instruments. One coach.</div>
+  <h2 class="section-h">One platform.<br><em>Every wind instrument.</em></h2>
+  <p class="section-sub">ToneWise adapts its coaching to the specific technique, range, and challenges of each instrument. Select yours and get feedback that's actually relevant to how you play.</p>
+
+  <div class="inst-grid">
+    <div class="inst-card">
+      <span class="inst-emoji">🎺</span>
+      <div class="inst-name">Trumpet</div>
+      <div class="inst-family">Brass · Bb · Concert pitch</div>
+      <div class="inst-desc">The instrument that started it all. ToneWise coaches trumpet range from low F# to double high C, analyses embouchure tension from overtone patterns, and covers every style from classical to jazz.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Valve fingerings</span>
+        <span class="inst-tag">Lip slurs</span>
+        <span class="inst-tag">Jazz improv</span>
+        <span class="inst-tag">High register</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎷</span>
+      <div class="inst-name">Saxophone</div>
+      <div class="inst-family">Woodwind · Alto · Tenor · Soprano · Baritone</div>
+      <div class="inst-desc">From Charlie Parker to Kenny G — ToneWise coaches all four sax voices. Analyses altissimo register accuracy, vibrato consistency, and tone colour across all dynamic levels.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Altissimo</span>
+        <span class="inst-tag">Vibrato</span>
+        <span class="inst-tag">All 4 voices</span>
+        <span class="inst-tag">Jazz phrasing</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎵</span>
+      <div class="inst-name">Clarinet</div>
+      <div class="inst-family">Woodwind · Bb · Single reed</div>
+      <div class="inst-desc">The register break is one of the most challenging transitions in all of music. ToneWise specifically coaches clarinet throat tones, the break, and chalumeau-to-clarion smoothness.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Register break</span>
+        <span class="inst-tag">Throat tones</span>
+        <span class="inst-tag">Articulation</span>
+        <span class="inst-tag">Intonation</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎶</span>
+      <div class="inst-name">Flugelhorn</div>
+      <div class="inst-family">Brass · Bb · Conical bore</div>
+      <div class="inst-desc">The flugelhorn's warm, velvety tone requires a softer embouchure and a different approach to intonation than its trumpet cousin. ToneWise coaches the distinct tone colour and relaxed air stream this instrument demands.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Tone colour</span>
+        <span class="inst-tag">Air stream</span>
+        <span class="inst-tag">Jazz ballads</span>
+        <span class="inst-tag">Intonation</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">📯</span>
+      <div class="inst-name">French Horn</div>
+      <div class="inst-family">Brass · F · Orchestral</div>
+      <div class="inst-desc">The most technically demanding brass instrument. ToneWise coaches the French horn's extreme range, hand position effects on intonation, and the precision required for orchestral passage work.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Extended range</span>
+        <span class="inst-tag">Hand stopping</span>
+        <span class="inst-tag">Orchestral</span>
+        <span class="inst-tag">Transposition</span>
+      </div>
+    </div>
+
+    <div class="inst-card">
+      <span class="inst-emoji">🎸</span>
+      <div class="inst-name">Trombone</div>
+      <div class="inst-family">Brass · Tenor · Slide</div>
+      <div class="inst-desc">Slide position accuracy is unique to trombone — there's no fret or valve to save you. ToneWise analyses your pitch against ideal slide positions, coaches glissandi, and tracks legato tone across all seven positions.</div>
+      <div class="inst-features">
+        <span class="inst-tag">Slide positions</span>
+        <span class="inst-tag">Glissandi</span>
+        <span class="inst-tag">Legato tone</span>
+        <span class="inst-tag">Bass clef</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="text-align:center;margin-top:24px">
+    <p style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3)">Also works with · Cornet · Euphonium · Oboe · Flute · Bassoon · Recorder · Recorder · Bass Clarinet</p>
+  </div>
+</section>
+
+<!-- ── COMPARE ──────────────────────────────────────── -->
+<section class="compare" id="compare">
+  <div class="section-tag">The honest truth</div>
+  <h2 class="section-h">Why players choose<br><em>ToneWise</em> over everything else</h2>
+  <div class="vs-wrap">
+    <div class="vs-col">
+      <div class="vs-head">Traditional Methods</div>
+      <div class="vs-sub">Lessons · YouTube · Generic tuner apps</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Scheduled only — unavailable at 11pm when inspiration strikes</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>$60–$120 per lesson limits how often you get real feedback</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>YouTube can't hear you — you practise wrong for days before anyone notices</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Tuner apps show a number but give no coaching on why you're flat</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Instrument-specific advice is generic — no sax teacher coaching a trumpet player well</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Zero accessibility for blind or vision-impaired wind players</div>
+      <div class="vs-row"><div class="vs-icon no">✕</div>Progress tracking is whatever you write in a notebook</div>
+    </div>
+    <div class="vs-col tw">
+      <div class="vs-head">ToneWise</div>
+      <div class="vs-sub">Instrument-aware · Live feedback · Always on</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Available 24/7 — practice at 3am before a gig, ToneWise is ready</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Starts free — Pro at $9.99/month, less than a single lesson</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Hears every note live — corrects pitch errors to ±2 cents in real time</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Explains the why — "your D is sharp because your embouchure is tight" style feedback</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Instrument-specific coaching — sax players get sax feedback, not trumpet tips</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Full VoiceOver / TalkBack / haptic support — built for blind musicians</div>
+      <div class="vs-row"><div class="vs-icon yes">✓</div>Automatic progress charts, streaks, and session scoring PDF reports</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURES ──────────────────────────────────────── -->
+<section class="features" id="features">
+  <div class="section-tag">What it actually does</div>
+  <h2 class="section-h">Every tool a wind player<br><em>actually needs</em></h2>
+  <div class="feat-grid">
+    <div class="feat">
+      <div class="feat-num">01 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+      </div>
+      <div class="feat-title">Live Pitch Coaching</div>
+      <div class="feat-text">Your microphone captures every note in real time. ToneWise analyses pitch, timing, and dynamics — then speaks coaching in plain language, exactly as a teacher beside you would.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">02 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 19V6l12-3v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="15" r="3"/></svg>
+      </div>
+      <div class="feat-title">Ear Training System</div>
+      <div class="feat-text">Intervals, scales, chord tones, melody recall, rhythm. Generated fresh for your instrument and level. No sheet music needed — pure aural learning for ear-based players of every wind instrument.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">03 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0 1 18 0v6"/><path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3z"/><path d="M3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/></svg>
+      </div>
+      <div class="feat-title">Ask the Teacher</div>
+      <div class="feat-text">Ask anything about technique, music theory, or practice strategy for your instrument. Gene answers in 3–5 spoken sentences. "Hey Gene, why is my altissimo register breaking?" — answered instantly.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">04 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="feat-title">Full Accessibility</div>
+      <div class="feat-text">The only music coaching platform built from day one for blind and vision-impaired musicians. Full VoiceOver + TalkBack. Haptic rhythm feedback. Voice commands. WCAG 2.2 AA throughout.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">05 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+      </div>
+      <div class="feat-title">Session Scoring</div>
+      <div class="feat-text">After each session, see your performance on a real music notation staff — notes colour-coded by intonation accuracy. Export a full PDF coaching report. Track your development over weeks and months.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">06 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4"/></svg>
+      </div>
+      <div class="feat-title">Instrument Fingering Charts</div>
+      <div class="feat-text">Interactive fingering and position charts for every supported instrument. Trumpet valve combinations, trombone slide positions, saxophone key diagrams — Gene reads each one aloud.</div>
+    </div>
+    <div class="feat">
+      <div class="feat-num">07 / 07</div>
+      <div class="feat-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="8" width="20" height="14" rx="2"/><path d="M16 8V6a4 4 0 0 0-8 0v2"/><line x1="12" y1="13" x2="12" y2="17"/></svg>
+      </div>
+      <div class="feat-title">Metronome + Practice Tools</div>
+      <div class="feat-text">Professional web-audio metronome with tap tempo, subdivisions, and beat accents. Daily practice challenges. Streak tracking. Everything needed for a structured, progressive practice routine.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PHOTO QUOTE ──────────────────────────────────── -->
+<div class="photo-break">
+  <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=1600&q=80&auto=format&fit=crop" alt="Musician" onerror="this.style.display='none'">
+  <div class="photo-break-over">
+    <div class="photo-quote">"Whether you play trumpet, saxophone, or French horn — the fastest path to mastery is <em>immediate, accurate feedback</em> every single session."</div>
+  </div>
+</div>
+
+
+<!-- ── FOUNDER SECTION ──────────────────────────────── -->
+<section class="founder">
+  <div class="founder-inner">
+    <div class="founder-text-col">
+      <div class="founder-eyebrow">Why ToneWise exists</div>
+      <div class="founder-quote">
+        I play brass. I got frustrated watching players leave lessons and drift for five days with no feedback. I built ToneWise because I couldn't find the tool I needed, so I made it.
+      </div>
+      <div class="founder-name">David — Founder, ToneWise</div>
+      <div class="founder-title">Brass player · Developer · Johannesburg</div>
+    </div>
+    <div class="founder-img-col">
+      <div class="founder-img-wrap">
+        <img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCAJAAbEDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAMBAgQFBgcICf/EAFAQAAEEAQMDAgQDBQMGCgcJAAEAAgMRBAUhMQYSQVFhBxNxgSKRoQgUMrHBQlLRFRYXI1OSJDNDVWJyotLh8CU0VFZjg5Q2V3OChJOVssL/xAAaAQEBAQEBAQEAAAAAAAAAAAAAAQIDBAUG/8QAKBEBAQACAgIBAwUBAAMAAAAAAAECEQMhBDESE0FRBRQVImEyI1KR/9oADAMBAAIRAxEAPwD4yREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERARXRsfI8Rxtc9zjQAFkrtOnPh5qOc1s+pSjBgP8AZ2Mh+3j7oOJVWtc7+FpP0C9x0no/p/Sy0x4bZpG7l8/4yfajt+i6UTYkcPycTHjiAquxnaAK3V0unzZ8ier+TJXr2lWEEGjsvo2WRxNB1+orZYmRpWn57iJsHHlNUS+MWfvVppNPnxF7N1P8MtKLqxnHCmIsfLJcw/Y/4rzjqPpLV9EuSaH52N4mj3H3HI+6g0CIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgLL0vTsvU8puNhwukeeaGzR6k+AocWCXJyI8eBhfJI4NaB5K9o6O6fh0fAZC1rXZD6dK8eT6WpbprGbYnSfScGiRMmk7J8t7Pxydv8F+Ba6mBju0Oa1zjdVV2thBiRlnaW7+SfCzcTGaxwpoABu1i56jtjxbQ4WlmY90x2rZo2WfFo0bR+GJrRxtyQs2ABv4uPZbCHtcBQXDLlr2cfjyTtz0uiuaxxhja40RRG6xotAznODms7PI9l2YY27bsPRTMi7h+EUVnHlsby8bC+3FMg1LCMn7xA6Zr2Fhc4XsfQ+OFqMhkb43RPiBcdiHDYj0IXp7Ymu7muINc+i12taHj5URBjaH1Yc3Yldsea3qvPn4snqvnnrvoMMik1PRo6AHdJjNF16lv+C83IIJBBBHIK+pRoObHIYQ0vcT+A87Ly34q9DvhbJquDj/LnYScqECu4f32j/wA+q6zKV5M+PLF5WiItOYiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIpsKB+VlxY8YJfI8NAHug9C+E+gB0Z1mZn4iS2Hu8Dy5eoY0QBAdxW4C0uhY4wcGHDYAGRsAND/AM+VvcOT8VdtjgE+FxzyenjxbKL8JH4a9LWfjxBxCwIiLB5WfjOuiDXsuFr24YxmfLAIoG/RTQkNI/kr8Uh7LIsqrmtDjQ9+E+O3aXXpksN8Cz6BZcDCSGhpJPhY2C5peNhZ23W7xqAbsCeeNyt4YSsZ52MR+K9jS4jjmlH3DsA55JJXTabG3IuPYGrAI5WJqGEGBwdHQB5aKW7xSdxzmdvVaGJ7Wyd3aB9lXUNMwtZxnQTtDX9p7HjkFXZETWusceSrGP8Almw6qWZ0mU2+TPi90hkdIdVPx3xFuNkD5sDvB9QPoVxi+sP2hNAZ1H8OJs6Fnfm6W4ZDDVks4ePy3+y+T13xu4+dyY/HLQiItMCIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAiIgIiICIiAun+GuK3I6jbM8WzHYXn2PAXMLvvhXA44uoTx2XlzGV7bm1L6axm676N7WOPa4kE3stpgPc5/c6wDwtDgMlkyCDsBsSF0uJEI2ADj3K4ZV68Iz4pCKB4K2GI7Yel7rWwNLht4Wyw20ONj6rlZ29ODd4jh215KnFE3QIHkLVNl7KIdVe6zMbPxgbc8V6AWSVY6bZuPQk3BB8LdYga6MW6iPQrAw8jEmLmuBYQBRPlbHDw3vcXQuaQNwLu13xjjldtji/MjcJWuII8jZSyzOkB73WTyCrIBNGwiVpDWg0aWJkSNLC6jt5Hut2sxhZLWiTt4HKwMsNaSR67rMfG+RwcDYHNrFzoHlu9EgbLhW0cXycrHnw5gHRZEbopGnyCKK+Kdbw3adrObgPFOxsh8R//K4j+i+zYe6GUOFAg7r5r/aH0T/I/wAScqVjS2LUI25bPcu2d/2gV0479nk8ieq86REXV5RERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERB0PSODhzfMyczHOS1ruxsfcQLrkr0jTMPT4cBr9Kxxih5/1rAbsrRfCbR4M7RMmfILgBkgCvIDdwt2/Jx8LVxiQtkLe4NoDYX5XDPK709nHhPhK32kR7lxAHilt2FoaGhYuJG2GCyPxON/QKSI9z+fKxbt0xxbTEGwNrKEjQLsiuVBpzBsHAmz4TW2nHg7mHa/us6dZdRHLl/MeWgkClmacyN72hzqN8rh87XJMaX5ceFNI4iwa2Kixuq5YnB0sxgrbtbCXEfckKyds3OPb4Ono8nThMJnRy8tINArVz6vm6BMyMxmZt0XB/P2pc3p3xEZLp8UGPrBfONnxT4gY0DfcOBP6hY+b1C3JnDMuMAv/AIZGEFh9r5B+q626nTMsvb0HA60x85ggmaceQije4I+qy8jNh/dCIz3ONUAvLWOha75gna3fyt1p2qMYwNE7XH1JtZuVqx3eEYjCHPka0j+KysCfKikLu12wJ39Vy2VrLY7b3ON72CrYNYxSy3Sbjx6rNrVro3ASEUd+QV41+1ritJ6czw0BxilhcfoQR/X8161o+r6fOCySRrXA2CeCvLv2tHj/ACb09EP9pM79Grpx+3l5ruPnxERdnlEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREBERAREQEREHv37OePp2ToUsGeav5ro6NW4V+ey6DXNB0yDqeWTEkjyGujZI1w8EiyCPBB2XGfBMtyOkXiJpE+LlOHcNrBANWu0MbY8mfL7vxSta0i7AIG5C83JO3t47/WMbJA7qHjZX4jfxD3UEjg5x+trKw6DhblztdsY3GE3YOrhZuUfmxCwCTtwsPEc0UARuthjBpO1WtY5Rv47aHVcTIjqVkTXNHI2tY+HNoeTcWoYlOGxBYDv5vyuyZiulH4SdtrG+6pL0qzMB+dAHl3n5f4j9xurv8ADP0792v6ci6X0KebL0zCjldkxiN8EtljR5I9zQ5vkrl9T0z52qSyYjIhBO63wA0G77EfRej6b8PNPgYZclsjWjchzyAPsSs1mk9PYzezHkgbLVAhwsn6pu29rcdTTzjBwZtMyomyyulicLob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" alt="David, founder of ToneWise, playing trumpet" class="founder-img">
+        <div class="founder-badge">
+          <div class="founder-badge-text">Built by a player</div>
+          <div class="founder-badge-sub">Not a tech company</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ──────────────────────────────────────── -->
+<section class="pricing" id="pricing">
+  <div class="section-tag">No surprises</div>
+  <h2 class="section-h">Less than one lesson.<br><em>Unlimited</em> coaching.</h2>
+  <div class="plans">
+    <div class="plan">
+      <div class="plan-tier">Free forever</div>
+      <div class="plan-price">$0</div>
+      <div class="plan-period">10 sessions per month · all instruments</div>
+      <div class="plan-line"><span class="plan-check">✓</span>10 coaching sessions/month</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All 8 supported instruments</div>
+      <div class="plan-line"><span class="plan-check">✓</span>3-minute sessions</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Metronome + fingering charts</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Ask the teacher mode</div>
+      <a href="app.html" class="plan-btn">Get started free →</a>
+    </div>
+
+    <div class="plan featured">
+      <div class="plan-badge">Most popular</div>
+      <div class="plan-tier">Pro</div>
+      <div class="plan-price">$9.99</div>
+      <div class="plan-period">per month · cancel any time</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Unlimited coaching sessions</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All instruments · 10-minute sessions</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Advanced ear training + play-by-ear</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Session scoring + notation view</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Progress dashboard + PDF reports</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Daily challenges + streak tracking</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Stripe + PayPal accepted</div>
+      <a href="app.html" class="plan-btn">Start Pro →</a>
+    </div>
+
+    <div class="plan">
+      <div class="plan-tier">School / Institution</div>
+      <div class="plan-price" style="font-size:38px">$199</div>
+      <div class="plan-period">per month · up to 25 students</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All Pro features × 25 students</div>
+      <div class="plan-line"><span class="plan-check">✓</span>All instruments — full wind section</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Teacher dashboard + assignments</div>
+      <div class="plan-line"><span class="plan-check">✓</span>Progress reports per student</div>
+      <div class="plan-line"><span class="plan-check">✓</span>ADA / WCAG compliance docs</div>
+      <a href="mailto:godigitsall@gmail.com" class="plan-btn">Contact us →</a>
+    </div>
+  </div>
+  <p class="pricing-note">One professional lesson costs more than 3 months of ToneWise Pro · Works on all devices · No download required</p>
+</section>
+
+<!-- ── TESTIMONIALS ──────────────────────────────────── -->
+<section class="testimonials" id="testimonials">
+  <div class="section-tag">Player reviews</div>
+  <h2 class="section-h">From players<br><em>who tried it</em></h2>
+  <div class="test-grid">
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-instrument">Trumpet · Johannesburg</div>
+      <div class="test-quote-mark">"</div>
+      <p class="test-text">I've played for 8 years. ToneWise caught intonation issues my teacher missed. My high register improved more in 3 weeks than in the previous year combined.</p>
+      <div class="test-author">James M. · Intermediate player</div>
+    </div>
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-instrument">Saxophone · London</div>
+      <div class="test-quote-mark">"</div>
+      <p class="test-text">As a visually impaired saxophone player, every other app was built for sighted users. ToneWise is the first tool that actually works for me. The voice coaching is extraordinary.</p>
+      <div class="test-author">Sarah O. · Advanced player</div>
+    </div>
+    <div class="test-card">
+      <div class="test-stars">★★★★★</div>
+      <div class="test-instrument">Clarinet · Cape Town</div>
+      <div class="test-quote-mark">"</div>
+      <p class="test-text">The register break coaching alone is worth the subscription. I've struggled with that transition for two years. ToneWise identified my exact problem in the first session.</p>
+      <div class="test-author">David K. · Intermediate player</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ─────────────────────────────────────── -->
+<section class="final">
+  <div class="final-glow"></div>
+  <div class="final-content">
+    <div class="final-eyebrow">Start today · No card required</div>
+    <h2 class="final-title">Your horn is waiting.<br><em>in tune</em>?</h2>
+    <p class="final-body">Start with 10 free coaching sessions. Feel the difference. Upgrade when you're ready — and you will be.</p>
+    <div class="final-instruments">Trumpet · Saxophone · Clarinet · Flugelhorn · French Horn · Trombone · and more</div>
+    <a href="app.html" class="btn-gold" style="font-size:12px;padding:16px 44px">Begin your free sessions →</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-logo">Tone<em>Wise</em></div>
+      <p>Real-time pitch coaching for trumpet, saxophone, clarinet, flugelhorn, French horn, trombone and more. Always available. No download required.</p>
+      <div class="footer-instruments">
+        <span class="foot-tag">Trumpet</span>
+        <span class="foot-tag">Saxophone</span>
+        <span class="foot-tag">Clarinet</span>
+        <span class="foot-tag">Flugelhorn</span>
+        <span class="foot-tag">French Horn</span>
+        <span class="foot-tag">Trombone</span>
+        <span class="foot-tag">Cornet</span>
+        <span class="foot-tag">Euphonium</span>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Product</h4>
+      <a href="#features">Features</a>
+      <a href="#instruments">Instruments</a>
+      <a href="#pricing">Pricing</a>
+      <a href="app.html">Open ToneWise</a>
+    </div>
+    <div class="footer-col">
+      <h4>Get in touch</h4>
+      <a href="mailto:godigitsall@gmail.com">godigitsall@gmail.com</a>
+      <p style="font-size:12px;color:var(--text3);margin-top:6px;line-height:1.5">Questions, feedback or partnership enquiries — we read every message.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Early access</h4>
+      <p style="font-size:12px;color:var(--text3);line-height:1.5">ToneWise is in active development. Features are added weekly based on player feedback.</p>
+      <a href="app.html" style="display:inline-block;margin-top:8px;font-size:12px;color:var(--gold);text-decoration:none">Start free →</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2026 ToneWise. All rights reserved.</span>
+    <span>Available 24/7 · Works on all devices · No download required</span>
+  </div>
+</footer>
+
+<script>
+/* ── Navbar scroll behaviour ── */
+const nav = document.getElementById('main-nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
+
+/* ── Instrument switcher ── */
+const instrumentLines = {
+  'Trumpet':    'Your trumpet. Finally in tune.',
+  'Saxophone':  'From alto to baritone — coached by ear',
+  'Clarinet':   'Conquer the register break at last',
+  'Flugelhorn': 'Warm, velvety tone — refined in real time',
+  'French Horn':'Orchestral precision — coached live',
+  'Trombone':   'Slide position accuracy — note by note',
+};
+
+function switchInstrument(btn, name, sub) {
+  document.querySelectorAll('.inst-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  const el = document.getElementById('hero-instrument-name');
+  el.style.opacity = '0';
+  setTimeout(() => {
+    el.textContent = instrumentLines[name] || `Your ${name}. Finally in tune.`;
+    el.style.opacity = '1';
+    el.style.transition = 'opacity .35s';
+  }, 200);
+}
+</script>
+
+</body>
+</html>
